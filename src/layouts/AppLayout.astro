@@ -1,0 +1,113 @@
+---
+import GlobalStyles from "../components/GlobalStyles.astro";
+const { title } = Astro.props;
+
+const steps = [
+  { id: "upload", n: "01", label: "Upload" },
+  { id: "map", n: "02", label: "Map Columns" },
+  { id: "configure", n: "03", label: "Configure" },
+  { id: "preview", n: "04", label: "Preview" },
+  { id: "generate", n: "05", label: "Generate" },
+];
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+    <meta name="robots" content="noindex" />
+  </head>
+  <body class="app-body">
+    <GlobalStyles />
+    <a href="#main" class="skip-link">Skip to content</a>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <a class="logo" href="/">
+          <svg width="20" height="20" viewBox="0 0 22 22" aria-hidden="true">
+            <rect x="0" y="0" width="9" height="9" fill="#fff" />
+            <rect x="13" y="0" width="9" height="9" fill="var(--red)" />
+            <rect x="0" y="13" width="9" height="9" fill="var(--red)" />
+            <rect x="13" y="13" width="9" height="9" fill="#fff" />
+          </svg>
+          <span>QR<b>GRID</b></span>
+        </a>
+
+        <div class="side-group">
+          <div class="side-label">Workflow</div>
+          <nav>
+            {steps.map((s) => (
+              <a href={`#${s.id}`} class="side-link" data-step={s.id}>
+                <span class="side-n">{s.n}</span>{s.label}
+              </a>
+            ))}
+          </nav>
+        </div>
+
+        <div class="side-group">
+          <div class="side-label">Help</div>
+          <nav>
+            <a class="side-link" href="/docs">Documentation</a>
+          </nav>
+        </div>
+
+        <div class="go-pro">
+          <strong>Go Pro</strong>
+          <p>Unlimited bulk generation<br />Printable labels (soon)<br />Custom naming · more</p>
+          <a class="btn btn-accent" href="/#pricing">Upgrade now</a>
+        </div>
+      </aside>
+
+      <main id="main" class="workspace">
+        <slot />
+      </main>
+    </div>
+  </body>
+</html>
+
+<style>
+  .app-body { overflow-x: hidden; }
+  .app-shell { display: flex; min-height: 100vh; align-items: stretch; }
+  .sidebar {
+    flex: 0 0 240px; background: var(--ink); color: #F0F0EE;
+    display: flex; flex-direction: column; padding: 1.4rem 1.2rem 1.6rem;
+    position: sticky; top: 0; height: 100vh; overflow-y: auto;
+  }
+  .sidebar .logo { display: flex; align-items: center; gap: 0.5rem; color: #fff; text-decoration: none; margin-bottom: 2rem; }
+  .sidebar .logo span { font-weight: 700; font-size: 1rem; }
+  .sidebar .logo b { color: var(--red); }
+
+  .side-group { margin-bottom: 1.8rem; }
+  .side-label { font-family: var(--mono); font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.08em; color: #7D7D79; margin-bottom: 0.6rem; padding-left: 0.2rem; }
+  .side-group nav { display: flex; flex-direction: column; gap: 0.15rem; }
+  .side-link {
+    display: flex; align-items: center; gap: 0.65rem; padding: 0.55rem 0.6rem; border-radius: 4px;
+    color: #C7C7C3; text-decoration: none; font-size: 0.83rem; font-weight: 500;
+    transition: background var(--dur-fast) var(--ease-standard), color var(--dur-fast) var(--ease-standard);
+  }
+  .side-link:hover { background: #201D1A; color: #fff; }
+  .side-link.is-active { background: #201D1A; color: #fff; }
+  .side-link.is-done .side-n { background: var(--success); color: #fff; }
+  .side-n {
+    font-family: var(--mono); font-size: 0.62rem; width: 18px; height: 18px; border-radius: 50%;
+    background: #33302C; color: #A9A9A5; display: inline-flex; align-items: center; justify-content: center; flex: none;
+  }
+
+  .go-pro { margin-top: auto; background: #201512; border: 1px solid #3A241E; border-radius: 8px; padding: 1rem; }
+  .go-pro strong { color: var(--red); font-size: 0.85rem; }
+  .go-pro p { font-size: 0.72rem; line-height: 1.5; color: #C7C7C3; margin: 0.5rem 0 0.9rem; }
+  .go-pro .btn { width: 100%; text-align: center; font-size: 0.76rem; padding: 0.65rem; }
+
+  .workspace { flex: 1 1 auto; min-width: 0; padding: 2.2rem 2.4rem 4rem; }
+
+  @media (max-width: 900px) {
+    .app-shell { flex-direction: column; }
+    .sidebar { position: static; height: auto; flex-direction: row; flex-wrap: wrap; align-items: center; gap: 1rem 1.6rem; }
+    .sidebar .logo { margin-bottom: 0; }
+    .side-group { margin-bottom: 0; }
+    .side-group nav { flex-direction: row; flex-wrap: wrap; }
+    .go-pro { margin-top: 0; flex: 1 1 220px; }
+    .workspace { padding: 1.6rem 1.2rem 3rem; }
+  }
+</style>

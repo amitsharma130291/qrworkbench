@@ -1,0 +1,275 @@
+---
+import Layout from "../layouts/Layout.astro";
+import ToolIcon from "../components/ToolIcon.astro";
+
+const tools = [
+  { icon: "url", name: "URL", desc: "Any link, encoded directly." },
+  { icon: "wifi", name: "WiFi", desc: "SSID, password, security type." },
+  { icon: "vcard", name: "vCard", desc: "Name, phone, company, email." },
+  { icon: "email", name: "Email", desc: "Compose email, ready to send." },
+  { icon: "pdf", name: "PDF", desc: "Encode a link to a hosted PDF." },
+  { icon: "form", name: "Google Forms", desc: "Forms, surveys and more." },
+];
+const moreTools = ["Instagram", "Facebook", "LinkedIn", "WhatsApp", "SMS", "Phone"];
+
+const plans = [
+  {
+    name: "Free",
+    price: "$0",
+    note: "",
+    features: ["Unlimited single codes (soon)", "All six formats (soon)", "PNG export (soon)"],
+    cta: "Coming soon",
+    href: "",
+    style: "",
+  },
+  {
+    name: "Single batch",
+    price: "$4.99",
+    note: "",
+    features: ["One CSV, any size", "SVG + ZIP export", "Custom filenames"],
+    cta: "Try free (beta)",
+    href: "/bulk",
+    style: "",
+  },
+  {
+    name: "Pro — lifetime",
+    price: "$19",
+    note: "once",
+    features: ["Unlimited batches", "Print-ready sheets (soon)", "Logo + presets (soon)"],
+    cta: "Try free (beta)",
+    href: "/bulk",
+    style: "hi",
+  },
+];
+---
+<Layout
+  title="QRGRID — Bulk QR code generator, CSV to ZIP, in your browser"
+  description="Upload a CSV, map the columns, generate a ZIP of correctly named QR codes — entirely in your browser. No account, no redirects, no expiry."
+>
+  <div class="hero">
+    <div class="frame hero-grid">
+      <div class="hero-text">
+        <div class="index-no">A1 — STATIC QR</div>
+        <h1>A grid that turns <span class="rd">anything</span> into a scan.</h1>
+        <p class="lede">
+          Every QR code is a grid of black and white modules. The bulk workspace below generates
+          them entirely in your browser — no tracking, no redirect server keeping watch after you
+          scan. Single-code generators (WiFi, vCard, URL and more) are next up.
+        </p>
+        <div class="cta-row">
+          <a class="btn btn-accent" href="/bulk">Open the bulk workspace</a>
+          <a class="btn" href="#tools">See what's coming</a>
+        </div>
+      </div>
+
+      <div class="hero-visual">
+        <div class="qr-panel">
+          <span class="corner c-tl" aria-hidden="true"></span>
+          <span class="corner c-tr" aria-hidden="true"></span>
+          <span class="corner c-bl" aria-hidden="true"></span>
+          <span class="corner c-br" aria-hidden="true"></span>
+          <canvas id="hero-qr" width="480" height="480" aria-label="Live example QR code, generated in your browser"></canvas>
+        </div>
+        <dl class="qr-meta">
+          <div><dt>Module</dt><dd id="meta-module">—</dd></div>
+          <div><dt>Version</dt><dd id="meta-version">—</dd></div>
+          <div><dt>Error correction</dt><dd>M</dd></div>
+          <div><dt>Density</dt><dd id="meta-density">—</dd></div>
+        </dl>
+      </div>
+    </div>
+  </div>
+
+  <div class="frame">
+    <section id="tools" class="grid-row">
+      <div class="row-label">
+        <div class="idx">B — 01</div>
+        <h2>Free, single-code generation <span class="soon-badge">Coming soon</span></h2>
+      </div>
+      <div class="row-content">
+        <p class="section-note">Not live yet — the bulk workspace is the one working generator today. This is the free tier we're building next.</p>
+        <div class="tool-strip">
+          {tools.map((t) => (
+            <div class="tool-item">
+              <ToolIcon name={t.icon} />
+              <div>
+                <h3>{t.name} <span class="soon-tag">Soon</span></h3>
+                <p>{t.desc}</p>
+              </div>
+            </div>
+          ))}
+          <details class="tool-item tool-more">
+            <summary>
+              <ToolIcon name="more" />
+              <div>
+                <h3>More <span class="soon-tag">Soon</span></h3>
+                <p>{moreTools.length} additional formats</p>
+              </div>
+            </summary>
+            <div class="more-panel">
+              {moreTools.map((m) => <span>{m}</span>)}
+            </div>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <section id="bulk" class="grid-row">
+      <div class="row-label">
+        <div class="idx">C — 02</div>
+        <h2>Bulk generation, the paid layer</h2>
+      </div>
+      <div class="row-content">
+        <div class="flow">
+          <div class="flow-step"><span class="n">01</span><h4>Upload the sheet</h4><p>A CSV of names, SKUs or links — any number of rows.</p></div>
+          <div class="flow-step"><span class="n">02</span><h4>Map the columns</h4><p>Filename, caption, content, format, size, color.</p></div>
+          <div class="flow-step"><span class="n">03</span><h4>Export the set</h4><p>Named SVGs or PNGs, packed into a ZIP.</p></div>
+        </div>
+        <p class="section-note">Free to try while payment isn't wired up yet — pricing below is what we're building toward.</p>
+        <a class="btn btn-fill bulk-link" href="/bulk">Open the bulk workspace →</a>
+      </div>
+    </section>
+
+    <section id="pricing" class="grid-row">
+      <div class="row-label">
+        <div class="idx">D — 03</div>
+        <h2>Pricing</h2>
+      </div>
+      <div class="row-content">
+        <div class="plan-row">
+          {plans.map((p) => (
+            <div class:list={["plan", p.style]}>
+              <div class="name">{p.name}</div>
+              <div class="price">{p.price}{p.note && <span> {p.note}</span>}</div>
+              <ul>{p.features.map((f) => <li>{f}</li>)}</ul>
+              {p.href ? (
+                <a class:list={["btn", p.style === "hi" ? "btn-accent" : ""]} href={p.href}>{p.cta}</a>
+              ) : (
+                <button class="btn" disabled>{p.cta}</button>
+              )}
+            </div>
+          ))}
+        </div>
+        <p class="section-note pricing-note">Payment and licensing aren't live yet — "Try free (beta)" opens the full bulk workspace at no charge while this is being built.</p>
+      </div>
+    </section>
+  </div>
+</Layout>
+
+<script>
+  import { renderQR, inspectQR } from "../lib/qr.js";
+
+  const canvas = document.getElementById("hero-qr");
+  const text = typeof location !== "undefined" ? location.origin + "/" : "https://qrgrid.app";
+
+  const info = inspectQR(text);
+  renderQR(canvas, text, { width: 480 });
+
+  const setText = (id, value) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = value;
+  };
+  setText("meta-module", `${info.size}×${info.size}`);
+  setText("meta-version", String(info.version));
+  setText("meta-density", info.density);
+</script>
+
+<style>
+  .hero { border-bottom: 1px solid var(--line); position: relative; overflow: hidden; }
+  .hero-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 3rem; align-items: center; padding: 3.5rem 1.75rem; }
+  .index-no { font-family: var(--mono); font-size: 0.72rem; color: var(--red); margin-bottom: 1.2rem; letter-spacing: 0.04em; }
+  h1 {
+    font-weight: 700; font-size: clamp(2.4rem, 4.6vw, 3.6rem); line-height: 1.04;
+    letter-spacing: -0.02em; margin: 0 0 1.4rem; text-wrap: balance; max-width: 15ch;
+  }
+  h1 .rd { color: var(--red); }
+  .lede { font-size: 1.05rem; color: var(--ink-dim); max-width: 46ch; line-height: 1.6; margin: 0 0 2rem; }
+  .cta-row { display: flex; gap: 0.9rem; flex-wrap: wrap; }
+
+  .hero-visual { display: flex; flex-direction: column; align-items: center; gap: 1.1rem; }
+  .qr-panel {
+    position: relative; width: 100%; max-width: 300px; aspect-ratio: 1;
+    display: flex; align-items: center; justify-content: center; padding: 1.4rem;
+    background-image: radial-gradient(var(--line) 1px, transparent 1px);
+    background-size: 14px 14px;
+    border: 1px solid var(--line);
+  }
+  .qr-panel canvas { width: 100%; height: auto; background: var(--surface); }
+  .qr-panel .corner { position: absolute; width: 22px; height: 22px; }
+  .qr-panel .corner::before, .qr-panel .corner::after { content: ""; position: absolute; background: var(--red); }
+  .qr-panel .corner::before { width: 100%; height: 2px; }
+  .qr-panel .corner::after { width: 2px; height: 100%; }
+  .c-tl { top: 8px; left: 8px; } .c-tl::before, .c-tl::after { top: 0; left: 0; }
+  .c-tr { top: 8px; right: 8px; } .c-tr::before, .c-tr::after { top: 0; right: 0; }
+  .c-bl { bottom: 8px; left: 8px; } .c-bl::before, .c-bl::after { bottom: 0; left: 0; }
+  .c-br { bottom: 8px; right: 8px; } .c-br::before, .c-br::after { bottom: 0; right: 0; }
+
+  .qr-meta { display: flex; gap: 1.6rem; margin: 0; width: 100%; max-width: 300px; justify-content: space-between; flex-wrap: wrap; }
+  .qr-meta div { display: flex; flex-direction: column; gap: 0.25rem; }
+  .qr-meta dt { font-family: var(--mono); font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-faint); margin: 0; }
+  .qr-meta dd { font-family: var(--mono); font-size: 0.82rem; font-weight: 600; margin: 0; color: var(--ink); }
+
+  .grid-row { display: grid; grid-template-columns: repeat(12, 1fr); border-bottom: 1px solid var(--line); }
+  .row-label { grid-column: 1 / 4; padding: 3rem 1.5rem 3rem 0; border-right: 1px solid var(--line); }
+  .row-label .idx { font-family: var(--mono); font-size: 0.72rem; color: var(--red); margin-bottom: 0.7rem; }
+  .row-label h2 { font-size: 1.15rem; font-weight: 700; margin: 0; letter-spacing: -0.01em; line-height: 1.25; }
+  .row-content { grid-column: 4 / 13; padding: 3rem 0 3rem 2.5rem; }
+
+  .soon-badge {
+    display: inline-block; margin-top: 0.5rem; font-family: var(--mono); font-size: 0.6rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.05em; background: var(--line); color: var(--ink-dim);
+    padding: 0.18rem 0.4rem; border-radius: 3px; vertical-align: middle;
+  }
+  .soon-tag {
+    font-family: var(--mono); font-size: 0.58rem; font-weight: 700; text-transform: uppercase;
+    color: var(--ink-faint); border: 1px solid var(--line); border-radius: 3px; padding: 0.08rem 0.3rem; vertical-align: middle;
+  }
+  .section-note { font-size: 0.8rem; color: var(--ink-faint); margin: 0 0 1.6rem; max-width: 52ch; }
+  .pricing-note { margin: 1.6rem 0 0; }
+
+  .tool-strip { display: flex; flex-wrap: wrap; gap: 0; }
+  .tool-item {
+    flex: 1 1 190px; display: flex; gap: 0.8rem; padding: 0 1.4rem 1.4rem 0;
+    border-left: 1px solid var(--line); padding-left: 1.4rem;
+  }
+  .tool-item:first-child, .tool-strip > .tool-item:nth-child(1) { border-left: none; padding-left: 0; }
+  .tool-item svg { flex: none; margin-top: 0.1rem; }
+  .tool-item h3 { margin: 0 0 0.3rem; font-size: 0.92rem; font-weight: 700; }
+  .tool-item p { margin: 0; font-size: 0.8rem; color: var(--ink-dim); line-height: 1.45; }
+  .tool-more summary { display: flex; gap: 0.8rem; cursor: pointer; list-style: none; }
+  .tool-more summary::-webkit-details-marker { display: none; }
+  .tool-more[open] summary { margin-bottom: 0.8rem; }
+  .more-panel { display: flex; flex-wrap: wrap; gap: 0.5rem; padding-left: 2.8rem; }
+  .more-panel span { font-family: var(--mono); font-size: 0.72rem; border: 1px solid var(--line); padding: 0.3rem 0.6rem; color: var(--ink-dim); }
+
+  .flow { display: flex; margin-bottom: 1.8rem; }
+  .flow-step { flex: 1; padding-right: 1.8rem; }
+  .flow-step + .flow-step { padding-left: 1.8rem; border-left: 1px solid var(--line); }
+  .flow-step .n { font-family: var(--mono); font-size: 1.3rem; font-weight: 700; color: var(--red); display: block; margin-bottom: 0.7rem; }
+  .flow-step h4 { margin: 0 0 0.5rem; font-size: 0.95rem; font-weight: 700; }
+  .flow-step p { margin: 0; font-size: 0.83rem; color: var(--ink-dim); line-height: 1.5; }
+  .bulk-link { font-size: 0.8rem; }
+
+  .plan-row { display: grid; grid-template-columns: repeat(3, 1fr); }
+  .plan { padding: 0 1.8rem 0 0; }
+  .plan + .plan { padding-left: 1.8rem; border-left: 1px solid var(--line); }
+  .plan .name { font-family: var(--mono); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-faint); }
+  .plan.hi .name { color: var(--red); }
+  .plan .price { font-size: 2.2rem; font-weight: 700; margin: 0.5rem 0 1.2rem; letter-spacing: -0.02em; }
+  .plan .price span { font-size: 0.8rem; color: var(--ink-faint); font-weight: 400; }
+  .plan ul { list-style: none; padding: 0; margin: 0 0 1.5rem; font-size: 0.85rem; color: var(--ink-dim); }
+  .plan li { padding: 0.4rem 0; border-top: 1px solid var(--line); }
+  .plan li:first-child { border-top: none; }
+
+  @media (max-width: 860px) {
+    .hero-grid { grid-template-columns: 1fr; padding: 2.5rem 1.75rem; }
+    .grid-row { grid-template-columns: 1fr; }
+    .row-label, .row-content { grid-column: 1 / -1; padding: 2.2rem 0; border: none; }
+    .tool-item { border-left: none !important; padding-left: 0 !important; flex-basis: 100%; }
+    .more-panel { padding-left: 0; }
+    .flow { flex-direction: column; gap: 1.6rem; }
+    .flow-step + .flow-step { border-left: none; padding-left: 0; }
+    .plan-row { grid-template-columns: 1fr; gap: 1.8rem; }
+    .plan + .plan { padding-left: 0; border-left: none; }
+  }
+</style>

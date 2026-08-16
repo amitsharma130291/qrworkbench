@@ -1,0 +1,63 @@
+---
+---
+<style is:global>
+  *, *::before, *::after { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    * { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; }
+  }
+
+  :root {
+    /* ---- QRGRID brand palette — black, warm white, signal red. One
+       accent, no gradients: the site should read as a technical product,
+       not another purple-gradient SaaS template. ---- */
+    --bg: #F8F8F5;
+    --surface: #FFFFFF;
+    --ink: #111111;
+    --ink-dim: #4A4C4F;
+    --ink-faint: #6B6D70;
+    --line: #D9D9D4;
+    --red: #E63312;
+    --red-ink: #FFFFFF;
+    --success: #168A55;
+
+    --sans: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    --mono: "SF Mono", SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace;
+
+    --dur-fast: 150ms;
+    --dur-base: 220ms;
+    --ease-standard: cubic-bezier(.22,.61,.36,1);
+  }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--red); }
+  img, svg { max-width: 100%; display: block; }
+  button { font: inherit; }
+  :focus-visible { outline: 2px solid var(--red); outline-offset: 2px; }
+
+  .skip-link { position: absolute; left: 8px; top: -48px; background: var(--ink); color: var(--bg); padding: .6em 1em; z-index: 200; transition: top var(--dur-fast); }
+  .skip-link:focus { top: 8px; }
+
+  .frame { max-width: 1120px; margin: 0 auto; padding: 0 1.75rem; }
+
+  .btn {
+    font-family: var(--sans); font-weight: 700; font-size: 0.85rem;
+    padding: 0.95rem 1.5rem; border: 1px solid var(--ink); background: transparent; color: var(--ink);
+    cursor: pointer; text-decoration: none; display: inline-block;
+    transition: background var(--dur-fast) var(--ease-standard), color var(--dur-fast) var(--ease-standard), border-color var(--dur-fast) var(--ease-standard);
+  }
+  .btn-fill { background: var(--ink); color: var(--bg); }
+  .btn-fill:hover { background: var(--red); border-color: var(--red); color: var(--red-ink); }
+  .btn:hover:not(.btn-fill) { border-color: var(--red); color: var(--red); }
+  .btn-accent { background: var(--red); border-color: var(--red); color: var(--red-ink); }
+  .btn-accent:hover { background: #c92a0d; border-color: #c92a0d; color: var(--red-ink); }
+  .btn:disabled { opacity: 0.45; cursor: not-allowed; }
+  .btn:disabled:hover { background: inherit; border-color: var(--ink); color: var(--ink); }
+</style>

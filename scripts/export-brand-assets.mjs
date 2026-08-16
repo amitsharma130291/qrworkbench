@@ -18,13 +18,13 @@ async function run() {
     .png()
     .toFile("public/apple-touch-icon.png");
 
-  // Trimmed wordmark lockup for on-page use (nav, sidebar) -- tight bounding box,
-  // exported tall enough to stay crisp on retina displays at a ~46px display height.
+  // Trimmed wordmark lockup for on-page use (nav) -- tight bounding box, sized
+  // for ~2x retina sharpness at its ~330px display width (58px tall), not the
+  // much larger 920px master this used to ship at full-size on every page.
   const logoTrimmed = await sharp("src/assets/logo-source.png").trim({ threshold: 10 }).png().toBuffer();
-  await sharp(logoTrimmed)
-    .resize(920, null, { withoutEnlargement: true })
-    .png({ compressionLevel: 9 })
-    .toFile("public/logo.png");
+  const logoDisplay = await sharp(logoTrimmed).resize(680, null, { withoutEnlargement: true }).toBuffer();
+  await sharp(logoDisplay).png({ compressionLevel: 9 }).toFile("public/logo.png");
+  await sharp(logoDisplay).webp({ quality: 90 }).toFile("public/logo.webp");
 
   // Social preview card: the wordmark lockup centered on the site's warm-white ground.
   const logo = await sharp(logoTrimmed)
@@ -47,7 +47,7 @@ async function run() {
   console.log("public/favicon-32.png", f32.width, "x", f32.height);
   console.log("public/favicon-128.png", f128.width, "x", f128.height);
   console.log("public/apple-touch-icon.png 180x180");
-  console.log("public/logo.png", logoOut.width, "x", logoOut.height);
+  console.log("public/logo.png / logo.webp", logoOut.width, "x", logoOut.height);
   console.log("public/og-image.png", og.width, "x", og.height);
 }
 

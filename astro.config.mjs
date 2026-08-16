@@ -3,9 +3,7 @@ import sitemap from "@astrojs/sitemap";
 import vercel from "@astrojs/vercel";
 
 export default defineConfig({
-  // TODO: swap in the real domain once registered — sitemap URLs, canonical
-  // tags, and OG tags are all keyed off this.
-  site: "https://qrgrid.example.com",
+  site: "https://qrworkbench.com",
   trailingSlash: "never",
   devToolbar: { enabled: false },
   redirects: {

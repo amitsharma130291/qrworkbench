@@ -48,7 +48,7 @@ const plans = [
 ];
 ---
 <Layout
-  title="QRGRID — Free QR Code Generator, Plus Bulk CSV to ZIP"
+  title="QR Workbench — Free QR Code Generator, Plus Bulk CSV to ZIP"
   description="Free QR codes for URLs, WiFi, vCards, email and more — generated in your browser. Need a few thousand at once? Upload a CSV and export a ZIP."
 >
   <div class="hero">
@@ -164,7 +164,7 @@ const plans = [
   import { renderQR, inspectQR } from "../lib/qr.js";
 
   const canvas = document.getElementById("hero-qr");
-  const text = typeof location !== "undefined" ? location.origin + "/" : "https://qrgrid.app";
+  const text = typeof location !== "undefined" ? location.origin + "/" : "https://qrworkbench.com";
 
   const info = inspectQR(text);
   renderQR(canvas, text, { width: 480 });

@@ -1,17 +1,32 @@
 ---
 ---
 <footer class="site-footer">
-  <div class="frame footer-row">
+  <div class="frame footer-top">
     <span>QR Workbench — codes render in your browser and never touch our servers</span>
+    <nav class="footer-links" aria-label="Legal">
+      <a href="/about">About</a>
+      <a href="/privacy-policy">Privacy</a>
+      <a href="/terms">Terms</a>
+      <a href="/disclaimer">Disclaimer</a>
+    </nav>
+  </div>
+  <div class="frame footer-row">
     <span>No account · No expiry · No dynamic redirects</span>
   </div>
 </footer>
 
 <style>
   .site-footer { border-top: 1px solid var(--ink); margin-top: 5rem; }
+  .footer-top {
+    display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.9rem;
+    padding: 1.6rem 1.75rem 1rem;
+    font-family: var(--mono); font-size: 0.72rem; color: var(--ink-faint);
+  }
+  .footer-links { display: flex; gap: 1.1rem; }
+  .footer-links a { color: var(--ink-faint); text-decoration: none; }
+  .footer-links a:hover { color: var(--red); text-decoration: underline; }
   .footer-row {
-    display: flex; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem;
-    padding: 1.6rem 1.75rem 2.5rem;
+    padding: 0 1.75rem 2.5rem;
     font-family: var(--mono); font-size: 0.72rem; color: var(--ink-faint);
   }
 </style>

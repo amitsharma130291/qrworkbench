@@ -1,0 +1,28 @@
+---
+import SimplePageLayout from "../layouts/SimplePageLayout.astro";
+---
+<SimplePageLayout
+  title="Disclaimer | QR Workbench"
+  description="QR Workbench encodes the data you provide -- it doesn't verify that data, and doesn't guarantee scan reliability at every size or print quality."
+  eyebrow="Disclaimer"
+  h1="Disclaimer"
+  updated="August 17, 2026"
+>
+  <h2>QR Workbench encodes what you give it — it doesn't verify it</h2>
+  <p>Every generator on this site builds a real, correctly-encoded QR code from the values you enter. It does not check that a URL is safe or still live, that a WiFi password is correct, that a phone number is real, or that contact details are accurate. If you type it in wrong, the code will faithfully encode the wrong information — QR Workbench has no way to know the difference.</p>
+
+  <h2>Bulk mode encodes raw values, not formatted payloads</h2>
+  <p>The <a href="/bulk">bulk workspace</a> encodes whatever text or URL is in your mapped CSV column directly. It does not build WiFi- or vCard-formatted codes the way the individual <a href="/wifi-qr-code-generator">WiFi</a> and <a href="/vcard-qr-code-generator">vCard</a> generators do. If you need properly formatted WiFi or contact-card codes in bulk, that's on the roadmap but not built yet — use the individual generators for those formats in the meantime.</p>
+
+  <h2>Scan reliability depends on how you print or display it</h2>
+  <p>A QR code generated here is built correctly, but whether a printed or displayed copy scans reliably also depends on factors QR Workbench doesn't control: print resolution, paper and ink quality, screen brightness, code size relative to scanning distance, and the specific app or camera reading it. Higher error correction (Q or H) and a larger print size both improve reliability for codes that will see rough handling, low light, or scanning from a distance — test a real printed or displayed sample before relying on a code for anything important.</p>
+
+  <h2>Trademarks</h2>
+  <p>References to WiFi, Google Forms, Facebook, Instagram, LinkedIn, and other platform or format names on this site refer to those platforms and specifications for descriptive purposes — identifying what a given generator produces. QR Workbench is not affiliated with, endorsed by, or officially connected to any of these companies or organizations.</p>
+
+  <h2>Not compliance or legal advice</h2>
+  <p>Some use cases — safety signage, regulated product labeling, official access-control systems — have specific requirements beyond "the code scans correctly." QR Workbench is a general-purpose encoding tool, not a compliance product, and using it doesn't by itself satisfy any industry-specific regulatory requirement. If your use case is regulated, consult the relevant standard or a qualified professional before relying on QR Workbench's output for that purpose.</p>
+
+  <h2>No liability for business use</h2>
+  <p>QR Workbench isn't liable for losses arising from a QR code that fails to scan after printing, from a WiFi or contact code that was configured incorrectly, or from relying on QR Workbench's output to satisfy a regulatory requirement it wasn't designed to meet. See the <a href="/terms">Terms of Service</a> for the full liability terms.</p>
+</SimplePageLayout>

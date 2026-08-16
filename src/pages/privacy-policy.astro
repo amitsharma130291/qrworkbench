@@ -1,0 +1,47 @@
+---
+import SimplePageLayout from "../layouts/SimplePageLayout.astro";
+---
+<SimplePageLayout
+  title="Privacy Policy | QR Workbench"
+  description="How QR Workbench handles data: every generator, individual and bulk, runs entirely in your browser -- nothing you type is sent to a server."
+  eyebrow="Privacy"
+  h1="Privacy Policy"
+  updated="August 17, 2026"
+>
+  <h2>The short version</h2>
+  <p>Every QR generator on this site — the eleven individual formats and the bulk workspace — runs entirely in your browser. Nothing you type into them, upload to them, or generate with them is ever sent to a server. There is currently no other feature on this site that transmits data anywhere.</p>
+
+  <h2>QR generation</h2>
+  <p>Whatever you enter into a generator — a URL, a WiFi password, contact details, an uploaded CSV — stays in your browser's memory for as long as the page is open, and is discarded when you close the tab or navigate away. QR Workbench has no server-side component for QR generation and cannot see what you typed, what format you chose, or what you downloaded. This isn't a policy we could quietly reverse — the code that builds a QR code runs entirely client-side, so there's no server-side code path capable of receiving that data even if we wanted it to.</p>
+
+  <h2>The bulk workspace specifically</h2>
+  <p>Uploading a CSV to the <a href="/bulk">bulk workspace</a> reads the file directly in your browser using standard web file APIs. The file is never uploaded to a server, and the ZIP you download is assembled locally on your device.</p>
+
+  <h2>Information we do not collect</h2>
+  <ul>
+    <li>No account credentials — there are no accounts.</li>
+    <li>No payment information — nothing is stored beyond what a future third-party payment processor will handle directly, once payment launches.</li>
+    <li>No device fingerprinting.</li>
+    <li>No QR content, CSV files, or generated output — see above.</li>
+    <li>No analytics or tracking of any kind, currently. Unlike many sites, QR Workbench doesn't run Google Analytics, an ad pixel, or any other tracking script today.</li>
+  </ul>
+  <p>If that last point changes — for example, if basic analytics get added later to understand which pages get traffic — this page will be updated first, with the change clearly described, not folded into a rewrite.</p>
+
+  <h2>Cookies</h2>
+  <p>QR Workbench does not currently set any cookies.</p>
+
+  <h2>Hosting</h2>
+  <p>The site is hosted on Vercel. Like most hosting providers, Vercel's infrastructure may log basic technical request data (IP address, request timing, browser user-agent) as a normal part of serving web traffic — the same baseline logging virtually every website generates by default. QR Workbench does not access or use this data beyond what's needed to keep the site running and diagnose outages.</p>
+
+  <h2>Paid features</h2>
+  <p>Bulk generation is currently free while payment and licensing are still being built. When payment processing launches, it will be handled by a third-party payment processor — QR Workbench will not store your payment card details directly, and won't at any point in the future either.</p>
+
+  <h2>Accounts</h2>
+  <p>QR Workbench doesn't have user accounts, and doesn't plan to add them. There's no password to store, no profile, and no cross-device history to sync.</p>
+
+  <h2>Children's privacy</h2>
+  <p>QR Workbench is a general-purpose utility, not a service directed at children, and knowingly collecting personal information from children isn't something the site is designed to do given that it collects essentially no personal information from anyone in the first place.</p>
+
+  <h2>Changes to this policy</h2>
+  <p>If what QR Workbench collects or how it's used changes, this page will be updated with a new date at the top, and any material change affecting the generators' client-side-only processing will be called out explicitly.</p>
+</SimplePageLayout>

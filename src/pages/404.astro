@@ -1,0 +1,42 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { TOOLS } from "../data/tools.js";
+
+const popular = TOOLS.filter((t) => ["wifi", "vcard", "url", "email"].includes(t.slug));
+---
+<Layout title="Page Not Found — QR Workbench" description="This page doesn't exist on QR Workbench." noindex>
+  <div class="frame stub">
+    <div class="index-no">404 — NOT FOUND</div>
+    <h1>This page doesn't exist</h1>
+    <p>The link that brought you here is broken, or the page moved. Nothing was generated, nothing was lost — here's where to go instead.</p>
+
+    <div class="actions">
+      <a class="btn btn-fill" href="/">Back to homepage →</a>
+      <a class="btn" href="/bulk-qr-code-generator">See the bulk workspace →</a>
+    </div>
+
+    <div class="quick-links">
+      <div class="quick-label">Or jump to a generator</div>
+      <nav>
+        {popular.map((t) => <a href={t.href}>{t.name}</a>)}
+      </nav>
+    </div>
+  </div>
+</Layout>
+
+<style>
+  .stub { padding: 5rem 1.75rem 6rem; max-width: 640px; }
+  .index-no { font-family: var(--mono); font-size: 0.72rem; color: var(--red); margin-bottom: 1.2rem; letter-spacing: 0.04em; }
+  h1 { font-size: 2rem; margin: 0 0 1rem; letter-spacing: -0.01em; }
+  p { color: var(--ink-dim); line-height: 1.6; margin: 0 0 1.8rem; }
+  .actions { display: flex; gap: 0.9rem; flex-wrap: wrap; margin-bottom: 2.5rem; }
+
+  .quick-links { border-top: 1px solid var(--line); padding-top: 1.4rem; }
+  .quick-label { font-family: var(--mono); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-faint); margin-bottom: 0.8rem; }
+  .quick-links nav { display: flex; gap: 0.6rem; flex-wrap: wrap; }
+  .quick-links nav a {
+    font-size: 0.82rem; font-weight: 600; color: var(--ink-dim); text-decoration: none;
+    border: 1px solid var(--line); padding: 0.5rem 0.85rem;
+  }
+  .quick-links nav a:hover { border-color: var(--red); color: var(--red); }
+</style>

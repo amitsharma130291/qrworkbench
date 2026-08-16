@@ -30,11 +30,11 @@ import SimplePageLayout from "../layouts/SimplePageLayout.astro";
     </div>
 
     <p class="form-error" data-role="cf-error" role="alert"></p>
+    <p class="form-success" data-role="cf-success" role="status" aria-live="polite" hidden></p>
 
     <button class="btn btn-accent" type="submit" data-role="cf-submit">
       <span data-role="cf-submit-label">Send message</span>
     </button>
-    <p class="sr-only" data-role="cf-status" role="status" aria-live="polite"></p>
   </form>
 
   <h2>What to include</h2>
@@ -55,7 +55,10 @@ import SimplePageLayout from "../layouts/SimplePageLayout.astro";
   .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
   .honeypot { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
   .form-error { min-height: 1.2em; margin: 0; font-size: 0.82rem; color: var(--red); font-weight: 600; }
-  .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+  .form-success {
+    margin: 0; font-size: 0.85rem; font-weight: 600; color: var(--success);
+    background: #E8F5EE; border: 1px solid var(--success); padding: 0.7rem 0.9rem;
+  }
 
   @media (max-width: 560px) {
     .field-row { grid-template-columns: 1fr; }
@@ -71,7 +74,7 @@ import SimplePageLayout from "../layouts/SimplePageLayout.astro";
     message: form.querySelector('[data-role="cf-message"]'),
     website: form.querySelector('[data-role="cf-website"]'),
     error: form.querySelector('[data-role="cf-error"]'),
-    status: form.querySelector('[data-role="cf-status"]'),
+    success: form.querySelector('[data-role="cf-success"]'),
     submitBtn: form.querySelector('[data-role="cf-submit"]'),
     submitLabel: form.querySelector('[data-role="cf-submit-label"]'),
   };
@@ -79,6 +82,8 @@ import SimplePageLayout from "../layouts/SimplePageLayout.astro";
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
     els.error.textContent = "";
+    els.success.hidden = true;
+    els.success.textContent = "";
 
     const payload = {
       name: els.name.value.trim(),
@@ -95,7 +100,6 @@ import SimplePageLayout from "../layouts/SimplePageLayout.astro";
 
     els.submitBtn.disabled = true;
     els.submitLabel.textContent = "Sending…";
-    els.status.textContent = "Sending your message.";
 
     try {
       const res = await fetch("/api/contact", {
@@ -110,15 +114,12 @@ import SimplePageLayout from "../layouts/SimplePageLayout.astro";
       }
 
       form.reset();
-      els.submitLabel.textContent = "Sent ✓";
-      els.status.textContent = "Message sent — we'll get back to you soon.";
-      setTimeout(() => {
-        els.submitLabel.textContent = "Send message";
-        els.submitBtn.disabled = false;
-      }, 2500);
+      els.submitLabel.textContent = "Send message";
+      els.submitBtn.disabled = false;
+      els.success.textContent = "Message sent — we'll get back to you soon.";
+      els.success.hidden = false;
     } catch (err) {
       els.error.textContent = err.message;
-      els.status.textContent = `Error: ${err.message}`;
       els.submitLabel.textContent = "Send message";
       els.submitBtn.disabled = false;
     }

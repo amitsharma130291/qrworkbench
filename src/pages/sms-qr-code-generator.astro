@@ -1,0 +1,46 @@
+---
+import GeneratorPageLayout from "../layouts/GeneratorPageLayout.astro";
+import GeneratorShell from "../components/GeneratorShell.astro";
+
+const faq = [
+  { q: "Does this text message send automatically?", a: "No — scanning opens the messaging app with the number and message pre-filled. The person still has to tap send." },
+  { q: "Can I leave the message blank?", a: "Yes — the code will just open a new text thread to that number with nothing pre-filled." },
+  { q: "Will this work on both iPhone and Android?", a: "Yes, it uses the standard sms: format supported by the default messaging app on both platforms." },
+];
+---
+<GeneratorPageLayout
+  title="SMS QR Code Generator — Pre-Filled Text Message QR, Free | QRGRID"
+  description="Generate a QR code that opens a pre-filled text message — number and message ready to send. Free, static, generated in your browser."
+  eyebrow="SMS QR Code Generator"
+  h1="A QR code that pre-fills a text message"
+  intro="Scanning this opens a text message to your number with the message already typed — handy for RSVPs, quick orders, or support requests. They still have to tap send."
+  bulkNote="Need this for multiple numbers or locations? Generate from CSV →"
+  faq={faq}
+>
+  <GeneratorShell filenamePrefix="sms-qr-code">
+    <Fragment slot="fields">
+      <label for="f-number">Phone number
+        <input id="f-number" type="tel" placeholder="+1 555 123 4567" autocomplete="off" />
+      </label>
+      <label for="f-message">Message <em>(optional)</em>
+        <textarea id="f-message" placeholder="I'd like to order..."></textarea>
+      </label>
+    </Fragment>
+  </GeneratorShell>
+</GeneratorPageLayout>
+
+<script>
+  import { initGeneratorTool } from "../lib/generatorUI.js";
+  import { buildSmsPayload } from "../lib/formats.js";
+
+  const number = document.getElementById("f-number");
+  const message = document.getElementById("f-message");
+
+  const tool = initGeneratorTool({
+    getText: () => buildSmsPayload({ number: number.value.trim(), message: message.value.trim() }),
+    filenamePrefix: "sms-qr-code",
+  });
+
+  [number, message].forEach((el) => el.addEventListener("input", tool.update));
+  tool.update();
+</script>

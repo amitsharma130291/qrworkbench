@@ -1,0 +1,67 @@
+---
+import GeneratorPageLayout from "../layouts/GeneratorPageLayout.astro";
+import GeneratorShell from "../components/GeneratorShell.astro";
+
+const faq = [
+  { q: "Is my WiFi password sent anywhere?", a: "No. The QR code is generated entirely in your browser — your SSID and password never leave your device or touch a server." },
+  { q: "Will this work with WPA3 networks?", a: "Yes. Choose WPA/WPA2 — it's the security type most scanners expect, and it works for WPA3 networks in practice on virtually every phone." },
+  { q: "What if my network is hidden?", a: "Tick \"Hidden network\" — it tells scanning apps to actively search for the SSID instead of assuming it's broadcasting." },
+  { q: "Can I print this and put it on the wall?", a: "Yes — that's exactly what it's for. Download the SVG for a crisp print at any size, and consider changing your WiFi password if the sign will be visible to the public." },
+];
+---
+<GeneratorPageLayout
+  title="WiFi QR Code Generator — Scan to Connect, Free | QRGRID"
+  description="Generate a WiFi QR code so guests can join your network by scanning — no typing passwords. Free, static, generated in your browser."
+  eyebrow="WiFi QR Code Generator"
+  h1="Scan to join your WiFi, no typing"
+  intro="Enter your network name and password once, and anyone can join by scanning — no reading a password off a sticky note, letter by letter. Nothing you type here leaves your browser."
+  bulkNote="Setting up WiFi cards for every room or desk? Generate a batch from CSV →"
+  faq={faq}
+>
+  <GeneratorShell filenamePrefix="wifi-qr-code">
+    <Fragment slot="fields">
+      <label for="f-ssid">Network name (SSID)
+        <input id="f-ssid" type="text" placeholder="Office WiFi" autocomplete="off" />
+      </label>
+      <label for="f-pass">Password
+        <input id="f-pass" type="text" placeholder="••••••••" autocomplete="off" />
+      </label>
+      <label for="f-sec">Security type
+        <select id="f-sec">
+          <option value="WPA" selected>WPA / WPA2</option>
+          <option value="WEP">WEP</option>
+          <option value="nopass">Open (no password)</option>
+        </select>
+      </label>
+      <label class="check-row" for="f-hidden">
+        <input id="f-hidden" type="checkbox" />
+        <span>Hidden network</span>
+      </label>
+    </Fragment>
+  </GeneratorShell>
+</GeneratorPageLayout>
+
+<script>
+  import { initGeneratorTool } from "../lib/generatorUI.js";
+  import { buildWifiPayload } from "../lib/formats.js";
+
+  const ssid = document.getElementById("f-ssid");
+  const password = document.getElementById("f-pass");
+  const security = document.getElementById("f-sec");
+  const hidden = document.getElementById("f-hidden");
+
+  const tool = initGeneratorTool({
+    getText: () =>
+      buildWifiPayload({
+        ssid: ssid.value.trim(),
+        password: password.value,
+        security: security.value,
+        hidden: hidden.checked,
+      }),
+    filenamePrefix: "wifi-qr-code",
+  });
+
+  [ssid, password, security, hidden].forEach((el) => el.addEventListener("input", tool.update));
+  security.addEventListener("change", tool.update);
+  tool.update();
+</script>

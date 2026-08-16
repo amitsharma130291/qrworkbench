@@ -1,0 +1,34 @@
+---
+import GeneratorPageLayout from "../layouts/GeneratorPageLayout.astro";
+import GeneratorShell from "../components/GeneratorShell.astro";
+
+const faq = [
+  { q: "What URL do I use for my Instagram profile?", a: "https://instagram.com/yourusername — visit your profile in a browser and copy the address bar if you're not sure of the exact format." },
+  { q: "Can I link to a specific post or reel instead of my profile?", a: "Yes — paste that post or reel's share link instead of your profile URL." },
+];
+---
+<GeneratorPageLayout
+  title="Instagram QR Code Generator — Link to Your Profile, Free | QRGRID"
+  description="Turn your Instagram profile or post link into a scannable QR code. Free, static, generated in your browser."
+  eyebrow="Instagram QR Code Generator"
+  h1="Get scanned straight to your Instagram"
+  intro="Paste your Instagram profile or post link and get a QR code for packaging, business cards, or in-store signage — follows in one scan, no typing a handle."
+  bulkNote="Need codes for multiple accounts or campaigns? Generate a batch from CSV →"
+  faq={faq}
+>
+  <GeneratorShell filenamePrefix="instagram-qr-code">
+    <Fragment slot="fields">
+      <label for="f-url">Instagram profile or post URL
+        <input id="f-url" type="url" placeholder="https://instagram.com/yourusername" autocomplete="off" />
+      </label>
+    </Fragment>
+  </GeneratorShell>
+</GeneratorPageLayout>
+
+<script>
+  import { initGeneratorTool } from "../lib/generatorUI.js";
+  const url = document.getElementById("f-url");
+  const tool = initGeneratorTool({ getText: () => url.value.trim(), filenamePrefix: "instagram-qr-code" });
+  url.addEventListener("input", tool.update);
+  tool.update();
+</script>

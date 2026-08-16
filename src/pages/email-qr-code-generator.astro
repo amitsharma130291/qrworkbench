@@ -1,0 +1,50 @@
+---
+import GeneratorPageLayout from "../layouts/GeneratorPageLayout.astro";
+import GeneratorShell from "../components/GeneratorShell.astro";
+
+const faq = [
+  { q: "Does this send the email for me?", a: "No — scanning opens the person's own email app with the to, subject and body already filled in. They still have to hit send." },
+  { q: "Can I leave the subject or body blank?", a: "Yes, both are optional. At minimum you need a destination email address." },
+  { q: "Will this work with Gmail and Outlook apps?", a: "Yes — it uses the standard mailto: format that every mail app on iOS, Android and desktop recognizes." },
+];
+---
+<GeneratorPageLayout
+  title="Email QR Code Generator — Pre-Filled mailto: QR, Free | QRGRID"
+  description="Generate a QR code that opens a pre-filled email — address, subject and body ready to send. Free, static, generated in your browser."
+  eyebrow="Email QR Code Generator"
+  h1="A QR code that opens a ready-to-send email"
+  intro="Scanning this opens the visitor's email app with your address, subject and message already filled in. Nothing is sent on your behalf — they still choose to hit send."
+  bulkNote="Need this for every team member's contact page? Generate from CSV →"
+  faq={faq}
+>
+  <GeneratorShell filenamePrefix="email-qr-code">
+    <Fragment slot="fields">
+      <label for="f-to">Email address
+        <input id="f-to" type="email" placeholder="hello@example.com" autocomplete="off" />
+      </label>
+      <label for="f-subject">Subject <em>(optional)</em>
+        <input id="f-subject" type="text" placeholder="Let's talk" autocomplete="off" />
+      </label>
+      <label for="f-body">Message <em>(optional)</em>
+        <textarea id="f-body" placeholder="Hi, I saw your QR code and..."></textarea>
+      </label>
+    </Fragment>
+  </GeneratorShell>
+</GeneratorPageLayout>
+
+<script>
+  import { initGeneratorTool } from "../lib/generatorUI.js";
+  import { buildEmailPayload } from "../lib/formats.js";
+
+  const to = document.getElementById("f-to");
+  const subject = document.getElementById("f-subject");
+  const body = document.getElementById("f-body");
+
+  const tool = initGeneratorTool({
+    getText: () => buildEmailPayload({ to: to.value.trim(), subject: subject.value.trim(), body: body.value.trim() }),
+    filenamePrefix: "email-qr-code",
+  });
+
+  [to, subject, body].forEach((el) => el.addEventListener("input", tool.update));
+  tool.update();
+</script>

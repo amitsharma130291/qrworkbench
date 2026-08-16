@@ -1,0 +1,41 @@
+---
+import GeneratorPageLayout from "../layouts/GeneratorPageLayout.astro";
+import GeneratorShell from "../components/GeneratorShell.astro";
+
+const faq = [
+  { q: "Does this place the call automatically?", a: "No — scanning opens the phone's dialer with the number entered. The person still has to tap call." },
+  { q: "What format should I use for the number?", a: "Include the country code with a leading + (e.g. +1 555 123 4567) so it dials correctly regardless of where the scanner is." },
+];
+---
+<GeneratorPageLayout
+  title="Phone Number QR Code Generator — Tap to Call, Free | QRGRID"
+  description="Generate a QR code that opens the dialer with your number ready to call. Free, static, generated in your browser."
+  eyebrow="Phone QR Code Generator"
+  h1="A QR code that's ready to dial"
+  intro="Scanning this opens the phone app with your number already entered — one tap to call. No app, no account, generated entirely in your browser."
+  bulkNote="Need a code per location or extension? Generate from CSV →"
+  faq={faq}
+>
+  <GeneratorShell filenamePrefix="phone-qr-code">
+    <Fragment slot="fields">
+      <label for="f-number">Phone number
+        <input id="f-number" type="tel" placeholder="+1 555 123 4567" autocomplete="off" />
+      </label>
+    </Fragment>
+  </GeneratorShell>
+</GeneratorPageLayout>
+
+<script>
+  import { initGeneratorTool } from "../lib/generatorUI.js";
+  import { buildPhonePayload } from "../lib/formats.js";
+
+  const number = document.getElementById("f-number");
+
+  const tool = initGeneratorTool({
+    getText: () => buildPhonePayload({ number: number.value.trim() }),
+    filenamePrefix: "phone-qr-code",
+  });
+
+  number.addEventListener("input", tool.update);
+  tool.update();
+</script>

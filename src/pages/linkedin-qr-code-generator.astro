@@ -1,0 +1,34 @@
+---
+import GeneratorPageLayout from "../layouts/GeneratorPageLayout.astro";
+import GeneratorShell from "../components/GeneratorShell.astro";
+
+const faq = [
+  { q: "Should I use my personal profile or company page?", a: "Either — paste whichever LinkedIn URL you want people scanning to reach." },
+  { q: "Is this good for conference badges or resumes?", a: "Yes, that's a common use — print it small in a corner so people can connect without typing your name into search." },
+];
+---
+<GeneratorPageLayout
+  title="LinkedIn QR Code Generator — Link to Your Profile, Free | QRGRID"
+  description="Turn your LinkedIn profile or company page link into a scannable QR code. Free, static, generated in your browser."
+  eyebrow="LinkedIn QR Code Generator"
+  h1="Get scanned straight to your LinkedIn"
+  intro="Paste your LinkedIn profile or company page link and get a QR code for badges, resumes, or business cards — connect in one scan."
+  bulkNote="Need codes for a whole team's profiles? Generate a batch from CSV →"
+  faq={faq}
+>
+  <GeneratorShell filenamePrefix="linkedin-qr-code">
+    <Fragment slot="fields">
+      <label for="f-url">LinkedIn profile or page URL
+        <input id="f-url" type="url" placeholder="https://linkedin.com/in/yourname" autocomplete="off" />
+      </label>
+    </Fragment>
+  </GeneratorShell>
+</GeneratorPageLayout>
+
+<script>
+  import { initGeneratorTool } from "../lib/generatorUI.js";
+  const url = document.getElementById("f-url");
+  const tool = initGeneratorTool({ getText: () => url.value.trim(), filenamePrefix: "linkedin-qr-code" });
+  url.addEventListener("input", tool.update);
+  tool.update();
+</script>

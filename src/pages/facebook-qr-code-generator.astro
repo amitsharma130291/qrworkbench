@@ -1,0 +1,34 @@
+---
+import GeneratorPageLayout from "../layouts/GeneratorPageLayout.astro";
+import GeneratorShell from "../components/GeneratorShell.astro";
+
+const faq = [
+  { q: "What link should I use — my page or a specific post?", a: "Either works. Paste your Page URL to send people to your profile, or a specific post/event URL to send them there directly." },
+  { q: "Does this need a Facebook developer account or app?", a: "No. It just encodes whatever Facebook URL you paste — no API, no login." },
+];
+---
+<GeneratorPageLayout
+  title="Facebook QR Code Generator — Link to Your Page, Free | QRGRID"
+  description="Turn your Facebook page, post or event link into a scannable QR code. Free, static, generated in your browser."
+  eyebrow="Facebook QR Code Generator"
+  h1="Get scanned straight to your Facebook page"
+  intro="Paste your Facebook page, post, or event link and get a QR code for flyers, storefronts, or packaging — no app or login required to generate it."
+  bulkNote="Managing QR codes for multiple locations or pages? Generate a batch from CSV →"
+  faq={faq}
+>
+  <GeneratorShell filenamePrefix="facebook-qr-code">
+    <Fragment slot="fields">
+      <label for="f-url">Facebook page or post URL
+        <input id="f-url" type="url" placeholder="https://facebook.com/yourpage" autocomplete="off" />
+      </label>
+    </Fragment>
+  </GeneratorShell>
+</GeneratorPageLayout>
+
+<script>
+  import { initGeneratorTool } from "../lib/generatorUI.js";
+  const url = document.getElementById("f-url");
+  const tool = initGeneratorTool({ getText: () => url.value.trim(), filenamePrefix: "facebook-qr-code" });
+  url.addEventListener("input", tool.update);
+  tool.update();
+</script>

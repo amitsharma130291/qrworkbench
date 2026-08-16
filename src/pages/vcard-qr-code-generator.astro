@@ -1,0 +1,81 @@
+---
+import GeneratorPageLayout from "../layouts/GeneratorPageLayout.astro";
+import GeneratorShell from "../components/GeneratorShell.astro";
+
+const faq = [
+  { q: "What happens when someone scans it?", a: "Their phone offers to save your details as a new contact — name, company, phone, email and website all filled in, nothing retyped." },
+  { q: "Which contact format does this use?", a: "vCard 3.0 — the format with the broadest support across iPhone, Android and desktop scanning apps." },
+  { q: "Can I put this on a printed business card?", a: "Yes — download the SVG for a clean vector print at any size. That's the main reason people use this over just texting someone their number." },
+  { q: "I need this for a whole team, not just me.", a: "The bulk workspace takes a CSV of names, titles, phone numbers and emails and generates one vCard QR per row." },
+];
+---
+<GeneratorPageLayout
+  title="vCard QR Code Generator — Digital Business Card, Free | QRGRID"
+  description="Turn your contact details into a scannable vCard QR code — name, company, phone, email and website, saved straight to a phone's contacts. Free, generated in your browser."
+  eyebrow="vCard QR Code Generator"
+  h1="A business card that scans straight into contacts"
+  intro="Fill in your details once, and anyone who scans the code can save you as a contact instantly — no photographing a card, no manual entry. Nothing here is sent anywhere; it's encoded right in your browser."
+  bulkNote="Creating vCards for your whole team? Generate hundreds from CSV →"
+  faq={faq}
+>
+  <GeneratorShell filenamePrefix="vcard-qr-code">
+    <Fragment slot="fields">
+      <div class="field-row">
+        <label for="f-first">First name
+          <input id="f-first" type="text" placeholder="Jordan" autocomplete="off" />
+        </label>
+        <label for="f-last">Last name
+          <input id="f-last" type="text" placeholder="Rivera" autocomplete="off" />
+        </label>
+      </div>
+      <div class="field-row">
+        <label for="f-org">Company <em>(optional)</em>
+          <input id="f-org" type="text" placeholder="Acme Studio" autocomplete="off" />
+        </label>
+        <label for="f-title">Job title <em>(optional)</em>
+          <input id="f-title" type="text" placeholder="Head of Sales" autocomplete="off" />
+        </label>
+      </div>
+      <div class="field-row">
+        <label for="f-phone">Phone <em>(optional)</em>
+          <input id="f-phone" type="tel" placeholder="+1 555 123 4567" autocomplete="off" />
+        </label>
+        <label for="f-email">Email <em>(optional)</em>
+          <input id="f-email" type="email" placeholder="jordan@acme.com" autocomplete="off" />
+        </label>
+      </div>
+      <label for="f-url">Website <em>(optional)</em>
+        <input id="f-url" type="url" placeholder="https://acme.com" autocomplete="off" />
+      </label>
+      <label for="f-address">Address <em>(optional)</em>
+        <input id="f-address" type="text" placeholder="123 Main St, Austin, TX" autocomplete="off" />
+      </label>
+    </Fragment>
+  </GeneratorShell>
+</GeneratorPageLayout>
+
+<script>
+  import { initGeneratorTool } from "../lib/generatorUI.js";
+  import { buildVCardPayload } from "../lib/formats.js";
+
+  const ids = ["f-first", "f-last", "f-org", "f-title", "f-phone", "f-email", "f-url", "f-address"];
+  const fields = Object.fromEntries(ids.map((id) => [id, document.getElementById(id)]));
+
+  const tool = initGeneratorTool({
+    getText: () =>
+      buildVCardPayload({
+        firstName: fields["f-first"].value.trim(),
+        lastName: fields["f-last"].value.trim(),
+        org: fields["f-org"].value.trim(),
+        title: fields["f-title"].value.trim(),
+        phone: fields["f-phone"].value.trim(),
+        email: fields["f-email"].value.trim(),
+        url: fields["f-url"].value.trim(),
+        address: fields["f-address"].value.trim(),
+      }),
+    filenamePrefix: "vcard-qr-code",
+  });
+
+  Object.values(fields).forEach((el) => el.addEventListener("input", tool.update));
+  tool.update();
+</script>

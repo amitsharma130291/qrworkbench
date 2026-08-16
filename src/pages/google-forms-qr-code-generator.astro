@@ -1,0 +1,35 @@
+---
+import GeneratorPageLayout from "../layouts/GeneratorPageLayout.astro";
+import GeneratorShell from "../components/GeneratorShell.astro";
+
+const faq = [
+  { q: "Where do I get my form's link?", a: "In Google Forms, click Send, choose the link icon, and copy the URL — paste that in below." },
+  { q: "Does this pre-fill any answers?", a: "No, it just opens your form. If you need pre-filled fields, use Google Forms' own \"pre-fill link\" option first, then paste that longer URL here instead." },
+  { q: "Will this work for feedback forms at events or in print?", a: "Yes — that's the most common use. Print it on a table tent, poster, or receipt and people can open the form without typing a URL." },
+];
+---
+<GeneratorPageLayout
+  title="Google Forms QR Code Generator — Free, No Sign-Up | QRGRID"
+  description="Turn a Google Forms link into a scannable QR code — for surveys, RSVPs, feedback forms and event sign-ups. Free, generated in your browser."
+  eyebrow="Google Forms QR Code Generator"
+  h1="Put your Google Form on a poster, table, or receipt"
+  intro="Paste your form's share link and get a QR code people can scan straight into it — no typing a long Google Forms URL on a phone keyboard."
+  bulkNote="Running the same form across many locations or events? Generate a batch from CSV →"
+  faq={faq}
+>
+  <GeneratorShell filenamePrefix="google-forms-qr-code">
+    <Fragment slot="fields">
+      <label for="f-url">Google Forms link
+        <input id="f-url" type="url" placeholder="https://forms.gle/..." autocomplete="off" />
+      </label>
+    </Fragment>
+  </GeneratorShell>
+</GeneratorPageLayout>
+
+<script>
+  import { initGeneratorTool } from "../lib/generatorUI.js";
+  const url = document.getElementById("f-url");
+  const tool = initGeneratorTool({ getText: () => url.value.trim(), filenamePrefix: "google-forms-qr-code" });
+  url.addEventListener("input", tool.update);
+  tool.update();
+</script>

@@ -3,23 +3,28 @@ import Layout from "../layouts/Layout.astro";
 import ToolIcon from "../components/ToolIcon.astro";
 
 const tools = [
-  { icon: "url", name: "URL", desc: "Any link, encoded directly." },
-  { icon: "wifi", name: "WiFi", desc: "SSID, password, security type." },
-  { icon: "vcard", name: "vCard", desc: "Name, phone, company, email." },
-  { icon: "email", name: "Email", desc: "Compose email, ready to send." },
-  { icon: "pdf", name: "PDF", desc: "Encode a link to a hosted PDF." },
-  { icon: "form", name: "Google Forms", desc: "Forms, surveys and more." },
+  { icon: "url", name: "URL", desc: "Any link, encoded directly.", href: "/url-qr-code-generator" },
+  { icon: "wifi", name: "WiFi", desc: "SSID, password, security type.", href: "/wifi-qr-code-generator" },
+  { icon: "vcard", name: "vCard", desc: "Name, phone, company, email.", href: "/vcard-qr-code-generator" },
+  { icon: "email", name: "Email", desc: "Compose email, ready to send.", href: "/email-qr-code-generator" },
+  { icon: "sms", name: "SMS", desc: "Number and message, pre-filled.", href: "/sms-qr-code-generator" },
+  { icon: "phone", name: "Phone", desc: "One tap to dial.", href: "/phone-qr-code-generator" },
+  { icon: "pdf", name: "PDF", desc: "Encode a link to a hosted PDF.", href: "/pdf-qr-code-generator" },
+  { icon: "form", name: "Google Forms", desc: "Forms, surveys and more.", href: "/google-forms-qr-code-generator" },
+  { icon: "social", name: "Facebook", desc: "Link to your page or post.", href: "/facebook-qr-code-generator" },
+  { icon: "social", name: "Instagram", desc: "Link to your profile.", href: "/instagram-qr-code-generator" },
+  { icon: "social", name: "LinkedIn", desc: "Link to your profile.", href: "/linkedin-qr-code-generator" },
 ];
-const moreTools = ["Instagram", "Facebook", "LinkedIn", "WhatsApp", "SMS", "Phone"];
+const moreTools = ["WhatsApp"];
 
 const plans = [
   {
     name: "Free",
     price: "$0",
     note: "",
-    features: ["Unlimited single codes (soon)", "All six formats (soon)", "PNG export (soon)"],
-    cta: "Coming soon",
-    href: "",
+    features: ["Unlimited single codes", "11 QR formats", "PNG + SVG export"],
+    cta: "Start free",
+    href: "/url-qr-code-generator",
     style: "",
   },
   {
@@ -43,8 +48,8 @@ const plans = [
 ];
 ---
 <Layout
-  title="QRGRID — Bulk QR code generator, CSV to ZIP, in your browser"
-  description="Upload a CSV, map the columns, generate a ZIP of correctly named QR codes — entirely in your browser. No account, no redirects, no expiry."
+  title="QRGRID — Free QR Code Generator, Plus Bulk CSV to ZIP"
+  description="Free QR codes for URLs, WiFi, vCards, email and more — generated in your browser. Need a few thousand at once? Upload a CSV and export a ZIP."
 >
   <div class="hero">
     <div class="frame hero-grid">
@@ -52,13 +57,13 @@ const plans = [
         <div class="index-no">A1 — STATIC QR</div>
         <h1>A grid that turns <span class="rd">anything</span> into a scan.</h1>
         <p class="lede">
-          Every QR code is a grid of black and white modules. The bulk workspace below generates
-          them entirely in your browser — no tracking, no redirect server keeping watch after you
-          scan. Single-code generators (WiFi, vCard, URL and more) are next up.
+          Every QR code is a grid of black and white modules. Generate one free — WiFi, vCard, URL
+          and eight more formats — entirely in your browser, no tracking, no redirect server. Need
+          a few thousand at once? That's one click away.
         </p>
         <div class="cta-row">
-          <a class="btn btn-accent" href="/bulk">Open the bulk workspace</a>
-          <a class="btn" href="#tools">See what's coming</a>
+          <a class="btn btn-accent" href="#tools">Generate a code</a>
+          <a class="btn" href="/bulk">Open the bulk workspace</a>
         </div>
       </div>
 
@@ -84,26 +89,25 @@ const plans = [
     <section id="tools" class="grid-row">
       <div class="row-label">
         <div class="idx">B — 01</div>
-        <h2>Free, single-code generation <span class="soon-badge">Coming soon</span></h2>
+        <h2>Free, single-code generation</h2>
       </div>
       <div class="row-content">
-        <p class="section-note">Not live yet — the bulk workspace is the one working generator today. This is the free tier we're building next.</p>
         <div class="tool-strip">
           {tools.map((t) => (
-            <div class="tool-item">
+            <a class="tool-item" href={t.href}>
               <ToolIcon name={t.icon} />
               <div>
-                <h3>{t.name} <span class="soon-tag">Soon</span></h3>
+                <h3>{t.name}</h3>
                 <p>{t.desc}</p>
               </div>
-            </div>
+            </a>
           ))}
           <details class="tool-item tool-more">
             <summary>
               <ToolIcon name="more" />
               <div>
                 <h3>More <span class="soon-tag">Soon</span></h3>
-                <p>{moreTools.length} additional formats</p>
+                <p>{moreTools.join(", ")}</p>
               </div>
             </summary>
             <div class="more-panel">
@@ -215,11 +219,6 @@ const plans = [
   .row-label h2 { font-size: 1.15rem; font-weight: 700; margin: 0; letter-spacing: -0.01em; line-height: 1.25; }
   .row-content { grid-column: 4 / 13; padding: 3rem 0 3rem 2.5rem; }
 
-  .soon-badge {
-    display: inline-block; margin-top: 0.5rem; font-family: var(--mono); font-size: 0.6rem; font-weight: 700;
-    text-transform: uppercase; letter-spacing: 0.05em; background: var(--line); color: var(--ink-dim);
-    padding: 0.18rem 0.4rem; border-radius: 3px; vertical-align: middle;
-  }
   .soon-tag {
     font-family: var(--mono); font-size: 0.58rem; font-weight: 700; text-transform: uppercase;
     color: var(--ink-faint); border: 1px solid var(--line); border-radius: 3px; padding: 0.08rem 0.3rem; vertical-align: middle;
@@ -231,10 +230,13 @@ const plans = [
   .tool-item {
     flex: 1 1 190px; display: flex; gap: 0.8rem; padding: 0 1.4rem 1.4rem 0;
     border-left: 1px solid var(--line); padding-left: 1.4rem;
+    text-decoration: none; color: inherit;
   }
   .tool-item:first-child, .tool-strip > .tool-item:nth-child(1) { border-left: none; padding-left: 0; }
-  .tool-item svg { flex: none; margin-top: 0.1rem; }
+  .tool-item svg { flex: none; margin-top: 0.1rem; transition: color var(--dur-fast) var(--ease-standard); }
+  a.tool-item:hover svg { color: var(--red); }
   .tool-item h3 { margin: 0 0 0.3rem; font-size: 0.92rem; font-weight: 700; }
+  a.tool-item:hover h3 { color: var(--red); }
   .tool-item p { margin: 0; font-size: 0.8rem; color: var(--ink-dim); line-height: 1.45; }
   .tool-more summary { display: flex; gap: 0.8rem; cursor: pointer; list-style: none; }
   .tool-more summary::-webkit-details-marker { display: none; }

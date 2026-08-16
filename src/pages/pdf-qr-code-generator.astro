@@ -1,0 +1,35 @@
+---
+import GeneratorPageLayout from "../layouts/GeneratorPageLayout.astro";
+import GeneratorShell from "../components/GeneratorShell.astro";
+
+const faq = [
+  { q: "Does this upload or host my PDF?", a: "No. This tool encodes a link to a PDF that's already hosted somewhere — Google Drive, Dropbox, your website. We don't store or serve the file itself." },
+  { q: "Where do I get a link to my PDF?", a: "Upload it to Google Drive, Dropbox, or your own site, then use its \"share\" or public link — paste that link below." },
+  { q: "Will this work for menus, manuals, or spec sheets?", a: "Yes — that's the most common use. Print the code next to the product or on a table, and scanning opens the PDF directly." },
+];
+---
+<GeneratorPageLayout
+  title="PDF QR Code Generator — Link to a Hosted PDF, Free | QRGRID"
+  description="Turn a link to your hosted PDF (Google Drive, Dropbox, or your own site) into a scannable QR code. Free, static, generated in your browser."
+  eyebrow="PDF QR Code Generator"
+  h1="A QR code that opens your PDF"
+  intro="Paste a link to a PDF that's already hosted somewhere — Google Drive, Dropbox, or your own website — and get a QR code that opens it. This tool encodes the link only; it doesn't host or store the file."
+  bulkNote="Need a code per product manual or spec sheet? Generate from CSV →"
+  faq={faq}
+>
+  <GeneratorShell filenamePrefix="pdf-qr-code">
+    <Fragment slot="fields">
+      <label for="f-url">Link to your PDF
+        <input id="f-url" type="url" placeholder="https://drive.google.com/file/d/..." autocomplete="off" />
+      </label>
+    </Fragment>
+  </GeneratorShell>
+</GeneratorPageLayout>
+
+<script>
+  import { initGeneratorTool } from "../lib/generatorUI.js";
+  const url = document.getElementById("f-url");
+  const tool = initGeneratorTool({ getText: () => url.value.trim(), filenamePrefix: "pdf-qr-code" });
+  url.addEventListener("input", tool.update);
+  tool.update();
+</script>

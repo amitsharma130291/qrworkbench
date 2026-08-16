@@ -1,0 +1,126 @@
+---
+import SimplePageLayout from "../layouts/SimplePageLayout.astro";
+---
+<SimplePageLayout
+  title="Contact | QR Workbench"
+  description="Get in touch with QR Workbench -- questions, bug reports, or feedback."
+  eyebrow="Contact"
+  h1="Get in touch"
+  intro="Questions, bug reports, or feedback — send a message and we'll get back to you."
+>
+  <form class="contact-form" id="contact-form" novalidate>
+    <div class="field-row">
+      <label for="cf-name">Name
+        <input id="cf-name" name="name" type="text" autocomplete="name" required maxlength="100" data-role="cf-name" />
+      </label>
+      <label for="cf-email">Email
+        <input id="cf-email" name="email" type="email" autocomplete="email" required maxlength="254" data-role="cf-email" />
+      </label>
+    </div>
+    <label for="cf-subject">Subject
+      <input id="cf-subject" name="subject" type="text" required maxlength="150" data-role="cf-subject" />
+    </label>
+    <label for="cf-message">Message
+      <textarea id="cf-message" name="message" rows="6" required maxlength="5000" data-role="cf-message"></textarea>
+    </label>
+
+    <div class="honeypot" aria-hidden="true">
+      <label for="cf-website">Website</label>
+      <input id="cf-website" name="website" type="text" tabindex="-1" autocomplete="off" data-role="cf-website" />
+    </div>
+
+    <p class="form-error" data-role="cf-error" role="alert"></p>
+
+    <button class="btn btn-accent" type="submit" data-role="cf-submit">
+      <span data-role="cf-submit-label">Send message</span>
+    </button>
+    <p class="sr-only" data-role="cf-status" role="status" aria-live="polite"></p>
+  </form>
+
+  <h2>What to include</h2>
+  <p>For bug reports, the format you were using and roughly what you typed helps the most — that's usually enough to reproduce the issue directly. For a format request, tell us the use case, not just the format name.</p>
+
+  <h2>Response time</h2>
+  <p>QR Workbench doesn't have a support team on staff — messages are read and answered directly. Most messages get a reply within a few business days. Email through this form is the one channel.</p>
+</SimplePageLayout>
+
+<style>
+  .contact-form { max-width: 560px; margin: 0 0 3rem; display: flex; flex-direction: column; gap: 1.1rem; }
+  .contact-form label { display: flex; flex-direction: column; gap: 0.4rem; font-size: 0.8rem; font-weight: 600; color: var(--ink-dim); }
+  .contact-form input, .contact-form textarea {
+    font: inherit; font-size: 0.9rem; padding: 0.7rem 0.75rem; border: 1px solid var(--line); background: var(--surface); color: var(--ink);
+  }
+  .contact-form input:focus-visible, .contact-form textarea:focus-visible { outline: 2px solid var(--red); outline-offset: 1px; }
+  .contact-form textarea { resize: vertical; min-height: 130px; }
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .honeypot { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .form-error { min-height: 1.2em; margin: 0; font-size: 0.82rem; color: var(--red); font-weight: 600; }
+  .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+
+  @media (max-width: 560px) {
+    .field-row { grid-template-columns: 1fr; }
+  }
+</style>
+
+<script>
+  const form = document.getElementById("contact-form");
+  const els = {
+    name: form.querySelector('[data-role="cf-name"]'),
+    email: form.querySelector('[data-role="cf-email"]'),
+    subject: form.querySelector('[data-role="cf-subject"]'),
+    message: form.querySelector('[data-role="cf-message"]'),
+    website: form.querySelector('[data-role="cf-website"]'),
+    error: form.querySelector('[data-role="cf-error"]'),
+    status: form.querySelector('[data-role="cf-status"]'),
+    submitBtn: form.querySelector('[data-role="cf-submit"]'),
+    submitLabel: form.querySelector('[data-role="cf-submit-label"]'),
+  };
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    els.error.textContent = "";
+
+    const payload = {
+      name: els.name.value.trim(),
+      email: els.email.value.trim(),
+      subject: els.subject.value.trim(),
+      message: els.message.value.trim(),
+      website: els.website.value,
+    };
+
+    if (!payload.name || !payload.email || !payload.subject || !payload.message) {
+      els.error.textContent = "Fill in every field before sending.";
+      return;
+    }
+
+    els.submitBtn.disabled = true;
+    els.submitLabel.textContent = "Sending…";
+    els.status.textContent = "Sending your message.";
+
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      const data = await res.json().catch(() => ({}));
+
+      if (!res.ok) {
+        throw new Error(data.error || "Couldn't send your message. Please try again.");
+      }
+
+      form.reset();
+      els.submitLabel.textContent = "Sent ✓";
+      els.status.textContent = "Message sent — we'll get back to you soon.";
+      setTimeout(() => {
+        els.submitLabel.textContent = "Send message";
+        els.submitBtn.disabled = false;
+      }, 2500);
+    } catch (err) {
+      els.error.textContent = err.message;
+      els.status.textContent = `Error: ${err.message}`;
+      els.submitLabel.textContent = "Send message";
+      els.submitBtn.disabled = false;
+    }
+  });
+</script>

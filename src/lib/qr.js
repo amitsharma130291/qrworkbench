@@ -17,6 +17,12 @@ export async function renderQR(canvas, text, opts = {}) {
       light: opts.light || "#00000000",
     },
   });
+  // QRCode.toCanvas sets an inline width/height style on the canvas to match
+  // the pixel size it just rendered at -- that inline style beats every CSS
+  // rule sizing the canvas (a fixed 44px preview thumbnail, a 100%-wide hero
+  // panel), so strip it and let the page's own CSS control display size.
+  canvas.style.removeProperty("width");
+  canvas.style.removeProperty("height");
 }
 
 export async function qrToSVGString(text, opts = {}) {

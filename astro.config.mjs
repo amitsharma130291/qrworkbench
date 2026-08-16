@@ -3,7 +3,7 @@ import sitemap from "@astrojs/sitemap";
 import vercel from "@astrojs/vercel";
 
 export default defineConfig({
-  site: "https://qrworkbench.com",
+  site: "https://www.qrworkbench.com",
   trailingSlash: "never",
   devToolbar: { enabled: false },
   redirects: {

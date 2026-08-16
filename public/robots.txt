@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://qrworkbench.com/sitemap-index.xml
+Sitemap: https://www.qrworkbench.com/sitemap-index.xml

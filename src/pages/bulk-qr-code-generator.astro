@@ -17,7 +17,6 @@ const appSchema = {
   description: "Generate hundreds or thousands of QR codes from a CSV, entirely in your browser, and export a ZIP of correctly named files.",
   applicationCategory: "UtilitiesApplication",
   operatingSystem: "Any (runs in the browser)",
-  offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
 };
 const faqSchema = {
   "@context": "https://schema.org",
@@ -30,8 +29,8 @@ const faqSchema = {
 };
 ---
 <Layout
-  title="Bulk QR Code Generator — CSV to ZIP, Free to Try | QR Workbench"
-  description="Turn a spreadsheet of URLs, SKUs, or contacts into hundreds of correctly named QR codes. Upload a CSV, map your columns, download a ZIP — entirely in your browser."
+  title="Bulk QR Code Generator — CSV to ZIP | QR Workbench"
+  description="Turn a spreadsheet of URLs, SKUs, or contacts into hundreds of correctly named QR codes, entirely in your browser. See how it works — launching soon."
 >
   <Fragment slot="head">
     <script type="application/ld+json" set:html={JSON.stringify(appSchema)} />
@@ -46,8 +45,9 @@ const faqSchema = {
         Making one QR code by hand is easy. Making 500 product labels, 300 staff vCards, or 2,000 inventory tags one at a time isn't — that's what this tool is for. Some people call it a <em>bulk</em> QR generator, others call it <em>batch</em> generation. Same workflow either way: upload a list, map your columns, and download a ZIP of correctly named codes.
       </p>
       <div class="cta-row">
-        <a class="btn btn-accent" href="/bulk">Open the bulk workspace →</a>
+        <button class="btn btn-accent" disabled>Locked — coming soon</button>
       </div>
+      <p class="lock-note">Payment and licensing aren't live yet, so the bulk workspace is locked for now. <a href="/#tools">The free single-code generators</a> are open in the meantime.</p>
     </div>
 
     <section class="how-section">
@@ -89,6 +89,8 @@ const faqSchema = {
   .intro { color: var(--ink-dim); line-height: 1.6; font-size: 1rem; margin: 0 0 1.7rem; }
   .intro em { font-style: normal; color: var(--ink); font-weight: 600; }
   .cta-row { display: flex; }
+  .lock-note { font-size: 0.8rem; color: var(--ink-faint); margin: 0.9rem 0 0; }
+  .lock-note a { color: var(--red); }
 
   .gen-page h2 { font-size: 1.2rem; margin: 0 0 1.4rem; letter-spacing: -0.01em; }
   .how-section, .usecase-section { margin-bottom: 3rem; }

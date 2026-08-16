@@ -2,7 +2,7 @@
 import Layout from "./Layout.astro";
 import { relatedTools, toolBySlug } from "../data/tools.js";
 
-const { title, description, eyebrow, h1, intro, slug, howTo = [], tips = [], bulkNote, bulkHref = "/bulk", faq = [] } = Astro.props;
+const { title, description, eyebrow, h1, intro, slug, howTo = [], tips = [], bulkNote, bulkHref = "/bulk-qr-code-generator", faq = [] } = Astro.props;
 
 const related = slug ? relatedTools(slug) : [];
 const self = slug ? toolBySlug(slug) : null;

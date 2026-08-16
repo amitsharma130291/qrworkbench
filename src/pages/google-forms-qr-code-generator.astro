@@ -2,10 +2,25 @@
 import GeneratorPageLayout from "../layouts/GeneratorPageLayout.astro";
 import GeneratorShell from "../components/GeneratorShell.astro";
 
+const howTo = [
+  "In Google Forms, click Send, choose the link icon (🔗), and copy the URL.",
+  "Paste it into the field below and check the live preview.",
+  "Scan it yourself to confirm it opens the right form before printing or posting it.",
+  "Download the SVG for print materials, or PNG for a slide or digital sign.",
+];
+
+const tips = [
+  "If you need pre-filled answers, build a \"pre-fill link\" inside Google Forms first (Send → Get pre-filled link), then paste that longer URL here instead of the plain share link.",
+  "Google's shortened forms.gle links work fine and keep the QR code less dense than the full forms.google.com URL.",
+  "For an in-person event, test the scan on the venue's actual WiFi/cell signal beforehand — a form that loads instantly on your desk can lag on crowded event WiFi.",
+];
+
 const faq = [
   { q: "Where do I get my form's link?", a: "In Google Forms, click Send, choose the link icon, and copy the URL — paste that in below." },
   { q: "Does this pre-fill any answers?", a: "No, it just opens your form. If you need pre-filled fields, use Google Forms' own \"pre-fill link\" option first, then paste that longer URL here instead." },
   { q: "Will this work for feedback forms at events or in print?", a: "Yes — that's the most common use. Print it on a table tent, poster, or receipt and people can open the form without typing a URL." },
+  { q: "Can I track how many people scanned versus how many actually submitted?", a: "This tool doesn't track scans — it just encodes your link. For submission counts, use Google Forms' own built-in response summary." },
+  { q: "Does the QR code stop working if I edit my form later?", a: "No — editing questions inside an existing form doesn't change its URL, so the same QR code keeps pointing to the current version." },
 ];
 ---
 <GeneratorPageLayout
@@ -14,6 +29,8 @@ const faq = [
   eyebrow="Google Forms QR Code Generator"
   h1="Put your Google Form on a poster, table, or receipt"
   intro="Paste your form's share link and get a QR code people can scan straight into it — no typing a long Google Forms URL on a phone keyboard."
+  howTo={howTo}
+  tips={tips}
   bulkNote="Running the same form across many locations or events? Generate a batch from CSV →"
   faq={faq}
 >

@@ -2,10 +2,27 @@
 import GeneratorPageLayout from "../layouts/GeneratorPageLayout.astro";
 import GeneratorShell from "../components/GeneratorShell.astro";
 
+const howTo = [
+  "Copy the exact web address you want people to land on, including the https:// at the start.",
+  "Paste it into the field below — the preview updates as you type, so you can check it before downloading.",
+  "Pick a size and error correction level. Higher correction survives more print damage or dirt, at the cost of a slightly denser pattern.",
+  "Download the SVG for printing at any size without blurring, or the PNG for screens and digital use.",
+];
+
+const tips = [
+  "Scan-test the code with two or three different phones before printing a large batch — don't rely on just your own phone's camera.",
+  "Skip layering a link shortener on top of this URL — that just reintroduces the redirect dependency a static QR is meant to avoid.",
+  "Shorter, cleaner URLs make a less dense QR code, which scans faster and can be printed smaller.",
+  "As a rough sizing rule: print the code about 1 inch (2.5cm) across for every foot of expected scanning distance.",
+];
+
 const faq = [
   { q: "Does this QR code expire?", a: "No. The URL is encoded directly into the QR pattern — there's no redirect server in between, so it keeps working for as long as the destination page exists, independent of this site." },
   { q: "Is there a link-shortening step?", a: "No. Whatever URL you paste is what gets encoded, character for character. Nothing is shortened, tracked, or routed through us." },
   { q: "What's the difference between this and a 'dynamic' QR code?", a: "A dynamic QR encodes a link to a redirect service, which then forwards the scanner to your real URL — useful if you need to change the destination later, but it means the code stops working if that service ever shuts down. A static QR, like this one, encodes your destination directly." },
+  { q: "Does the URL need to start with https://?", a: "Yes — include the full https:// (or http://) prefix. Without it, some scanning apps treat the text as plain text instead of a tappable link." },
+  { q: "Can I change the destination after I've printed the code?", a: "No — the destination is baked directly into the pattern, so changing it means generating and printing a new code. If you expect to change the destination later, that's the one case where a dynamic/redirect QR service makes more sense than a static one." },
+  { q: "Will this work for really long URLs?", a: "Yes, but longer text makes a denser QR code with more modules, which is slightly harder to scan from a distance or at a small print size. Shorten the URL at the source if you can." },
 ];
 ---
 <GeneratorPageLayout
@@ -14,6 +31,8 @@ const faq = [
   eyebrow="URL QR Code Generator"
   h1="Turn a link into a QR code"
   intro="Paste any URL and get a scannable QR code back — instantly, for free, with no account. The link is encoded directly into the code, so it keeps working even if this site ever goes away."
+  howTo={howTo}
+  tips={tips}
   bulkNote="Got a list of product pages or profile links instead of one? Generate hundreds from CSV →"
   faq={faq}
 >

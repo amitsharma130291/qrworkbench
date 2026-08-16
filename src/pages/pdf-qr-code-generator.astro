@@ -2,10 +2,25 @@
 import GeneratorPageLayout from "../layouts/GeneratorPageLayout.astro";
 import GeneratorShell from "../components/GeneratorShell.astro";
 
+const howTo = [
+  "Upload your PDF somewhere it can be reached by a public link — Google Drive, Dropbox, or your own website.",
+  "Open the file's share settings and set it to \"anyone with the link can view.\"",
+  "Copy that link and paste it below.",
+  "Test the code yourself on your phone before printing — confirm it opens the PDF without asking for a login.",
+];
+
+const tips = [
+  "Open the link in an incognito/private browser window first — that's the fastest way to confirm it's actually publicly viewable and not stuck behind a login.",
+  "Google Drive links sometimes force a \"preview\" page instead of opening the PDF directly — if that's not what you want, check the specific share-link format Drive gives you.",
+  "If the PDF changes often (a menu, a price list), update the file at the same link rather than generating a new QR each time — the code keeps working as long as the link itself doesn't change.",
+];
+
 const faq = [
   { q: "Does this upload or host my PDF?", a: "No. This tool encodes a link to a PDF that's already hosted somewhere — Google Drive, Dropbox, your website. We don't store or serve the file itself." },
   { q: "Where do I get a link to my PDF?", a: "Upload it to Google Drive, Dropbox, or your own site, then use its \"share\" or public link — paste that link below." },
   { q: "Will this work for menus, manuals, or spec sheets?", a: "Yes — that's the most common use. Print the code next to the product or on a table, and scanning opens the PDF directly." },
+  { q: "What if I update the PDF later?", a: "As long as you replace the file at the same link (rather than uploading a new file with a new link), the existing QR code keeps working — no need to reprint." },
+  { q: "Why does scanning ask people to log in?", a: "Your file's sharing permissions are probably set to \"restricted\" rather than \"anyone with the link.\" Check the sharing settings where the PDF is hosted." },
 ];
 ---
 <GeneratorPageLayout
@@ -14,6 +29,8 @@ const faq = [
   eyebrow="PDF QR Code Generator"
   h1="A QR code that opens your PDF"
   intro="Paste a link to a PDF that's already hosted somewhere — Google Drive, Dropbox, or your own website — and get a QR code that opens it. This tool encodes the link only; it doesn't host or store the file."
+  howTo={howTo}
+  tips={tips}
   bulkNote="Need a code per product manual or spec sheet? Generate from CSV →"
   faq={faq}
 >

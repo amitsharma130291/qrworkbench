@@ -2,9 +2,24 @@
 import GeneratorPageLayout from "../layouts/GeneratorPageLayout.astro";
 import GeneratorShell from "../components/GeneratorShell.astro";
 
+const howTo = [
+  "Open your Instagram profile (or the specific post/reel) in a browser and copy the URL — instagram.com/yourusername for a profile.",
+  "Paste it into the field below and check the preview.",
+  "Scan it yourself first to confirm it opens the right profile or post.",
+  "Download the SVG for packaging or print, or PNG for a digital screen or story.",
+];
+
+const tips = [
+  "A profile link (instagram.com/yourusername) is more durable for long-term print materials — a specific post or reel link stops being useful once that content is old or deleted.",
+  "If you're printing on packaging that will be around for a while, prefer the profile link over a time-limited campaign post.",
+  "No Instagram API access or business account is required — this just encodes the public URL you paste.",
+];
+
 const faq = [
   { q: "What URL do I use for my Instagram profile?", a: "https://instagram.com/yourusername — visit your profile in a browser and copy the address bar if you're not sure of the exact format." },
   { q: "Can I link to a specific post or reel instead of my profile?", a: "Yes — paste that post or reel's share link instead of your profile URL." },
+  { q: "What happens if I change my Instagram username later?", a: "The old link stops working, since Instagram profile URLs are tied to your username. Reprint with the new URL if you rename your account." },
+  { q: "Can this link straight to my Instagram DMs?", a: "No — Instagram doesn't support a public link that opens a pre-filled direct message the way email or SMS does. This tool links to profiles and posts only." },
 ];
 ---
 <GeneratorPageLayout
@@ -13,6 +28,8 @@ const faq = [
   eyebrow="Instagram QR Code Generator"
   h1="Get scanned straight to your Instagram"
   intro="Paste your Instagram profile or post link and get a QR code for packaging, business cards, or in-store signage — follows in one scan, no typing a handle."
+  howTo={howTo}
+  tips={tips}
   bulkNote="Need codes for multiple accounts or campaigns? Generate a batch from CSV →"
   faq={faq}
 >

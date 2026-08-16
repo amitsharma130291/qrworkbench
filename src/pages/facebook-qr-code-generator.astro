@@ -2,9 +2,24 @@
 import GeneratorPageLayout from "../layouts/GeneratorPageLayout.astro";
 import GeneratorShell from "../components/GeneratorShell.astro";
 
+const howTo = [
+  "Open your Facebook page (or the specific post or event) in a browser and copy the URL from the address bar.",
+  "Paste it into the field below and check the preview.",
+  "Scan it with your own phone once before printing to confirm it lands on the right page.",
+  "Download the SVG for print, or PNG for digital and social use.",
+];
+
+const tips = [
+  "A plain facebook.com/yourpage URL is more durable than a link to one specific post — posts can get buried or deleted, but your page URL doesn't change.",
+  "Facebook sometimes appends tracking parameters (like ?ref=...) when you copy a link from the mobile app — a cleaner URL from a desktop browser tends to produce a slightly less dense code.",
+  "No login, API key, or Facebook developer account is needed here — this just encodes whatever URL you paste.",
+];
+
 const faq = [
   { q: "What link should I use — my page or a specific post?", a: "Either works. Paste your Page URL to send people to your profile, or a specific post/event URL to send them there directly." },
   { q: "Does this need a Facebook developer account or app?", a: "No. It just encodes whatever Facebook URL you paste — no API, no login." },
+  { q: "Will it still work if I rename my page?", a: "If your Page URL is tied to a custom username and you change that username, the old link stops resolving — reprint with the new URL if that happens. Using your numeric page ID link avoids this, but it's less readable." },
+  { q: "Can I use this for a Facebook group instead of a page?", a: "Yes — paste the group's URL the same way; the tool doesn't distinguish between page, group, post, or event links." },
 ];
 ---
 <GeneratorPageLayout
@@ -13,6 +28,8 @@ const faq = [
   eyebrow="Facebook QR Code Generator"
   h1="Get scanned straight to your Facebook page"
   intro="Paste your Facebook page, post, or event link and get a QR code for flyers, storefronts, or packaging — no app or login required to generate it."
+  howTo={howTo}
+  tips={tips}
   bulkNote="Managing QR codes for multiple locations or pages? Generate a batch from CSV →"
   faq={faq}
 >

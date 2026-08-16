@@ -2,10 +2,25 @@
 import GeneratorPageLayout from "../layouts/GeneratorPageLayout.astro";
 import GeneratorShell from "../components/GeneratorShell.astro";
 
+const howTo = [
+  "Enter the email address the message should go to.",
+  "Add a subject line if you want the message pre-categorized — handy for routing support or feedback emails.",
+  "Add a short pre-filled message body, or leave it blank for an empty draft.",
+  "Download and place the code wherever people need to reach that inbox — a poster, a receipt, a contact page.",
+];
+
+const tips = [
+  "Keep the subject and body short — long pre-filled text makes a denser code that's harder to scan from a distance.",
+  "This opens whatever email app is set as default on the scanning device, not necessarily Gmail or Outlook specifically — test on your own phone to see what that looks like.",
+  "Useful for routing: give different QR codes different pre-filled subjects (e.g. \"Support request\" vs \"Sales inquiry\") so replies are already organized.",
+];
+
 const faq = [
   { q: "Does this send the email for me?", a: "No — scanning opens the person's own email app with the to, subject and body already filled in. They still have to hit send." },
   { q: "Can I leave the subject or body blank?", a: "Yes, both are optional. At minimum you need a destination email address." },
   { q: "Will this work with Gmail and Outlook apps?", a: "Yes — it uses the standard mailto: format that every mail app on iOS, Android and desktop recognizes." },
+  { q: "Will special characters in my message break the code?", a: "No, they're encoded automatically. Very long messages just make a denser, slightly harder-to-scan code — keep it concise." },
+  { q: "Can I use this to email multiple people at once?", a: "Not directly — this tool encodes one destination address. Some mail apps do accept comma-separated addresses in a mailto: link, but support varies, so test it first." },
 ];
 ---
 <GeneratorPageLayout
@@ -14,6 +29,8 @@ const faq = [
   eyebrow="Email QR Code Generator"
   h1="A QR code that opens a ready-to-send email"
   intro="Scanning this opens the visitor's email app with your address, subject and message already filled in. Nothing is sent on your behalf — they still choose to hit send."
+  howTo={howTo}
+  tips={tips}
   bulkNote="Need this for every team member's contact page? Generate from CSV →"
   faq={faq}
 >

@@ -2,9 +2,22 @@
 import GeneratorPageLayout from "../layouts/GeneratorPageLayout.astro";
 import GeneratorShell from "../components/GeneratorShell.astro";
 
+const howTo = [
+  "Enter the phone number, including the country code with a leading + (e.g. +1 555 123 4567).",
+  "Check the preview, then download the SVG for print or PNG for screens.",
+  "Place it wherever someone would want a one-tap way to call — a van, a menu, a service tag.",
+];
+
+const tips = [
+  "Always include the country code, even for a local business — it guarantees the number dials correctly regardless of where the scanning phone is set up.",
+  "This is the simplest QR format there is, which also makes it the most forgiving to scan from a distance or at a small size — a good choice for vehicle decals or signage.",
+];
+
 const faq = [
   { q: "Does this place the call automatically?", a: "No — scanning opens the phone's dialer with the number entered. The person still has to tap call." },
   { q: "What format should I use for the number?", a: "Include the country code with a leading + (e.g. +1 555 123 4567) so it dials correctly regardless of where the scanner is." },
+  { q: "Can I add an extension?", a: "Some dialers support a comma (,) to represent a pause before dialing an extension, e.g. +15551234567,101 — but support varies by phone, so test it first." },
+  { q: "What's the difference between this and just writing the number as text?", a: "Scanning still requires reading digits either way, but a QR code removes typos entirely — no risk of someone mis-keying a digit from a photo or a glance." },
 ];
 ---
 <GeneratorPageLayout
@@ -13,6 +26,8 @@ const faq = [
   eyebrow="Phone QR Code Generator"
   h1="A QR code that's ready to dial"
   intro="Scanning this opens the phone app with your number already entered — one tap to call. No app, no account, generated entirely in your browser."
+  howTo={howTo}
+  tips={tips}
   bulkNote="Need a code per location or extension? Generate from CSV →"
   faq={faq}
 >

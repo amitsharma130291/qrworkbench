@@ -2,11 +2,28 @@
 import GeneratorPageLayout from "../layouts/GeneratorPageLayout.astro";
 import GeneratorShell from "../components/GeneratorShell.astro";
 
+const howTo = [
+  "Open WiFi settings on any device already connected to the network, and copy the network name (SSID) exactly — it's case-sensitive.",
+  "Enter the password below. Nothing you type leaves this browser tab.",
+  "Choose the security type. WPA/WPA2 covers almost every router made in the last decade; pick WEP only for very old hardware, or \"Open\" for a network with no password.",
+  "Scan the preview yourself before printing or posting it anywhere, to confirm it actually connects.",
+];
+
+const tips = [
+  "Test with both an iPhone (built-in Camera app) and an Android phone before relying on it for guests — behavior can differ slightly between scanners.",
+  "The SSID and password are matched exactly — a stray extra space or wrong capitalization is the most common reason a generated code fails to connect.",
+  "For a network that will be visible to the public (a lobby, a cafe), consider using a dedicated guest network rather than your main one — the code makes the password trivial to capture from a photo.",
+  "If you ever change the WiFi password, the old printed code stops working — generate and swap in a new one.",
+];
+
 const faq = [
   { q: "Is my WiFi password sent anywhere?", a: "No. The QR code is generated entirely in your browser — your SSID and password never leave your device or touch a server." },
   { q: "Will this work with WPA3 networks?", a: "Yes. Choose WPA/WPA2 — it's the security type most scanners expect, and it works for WPA3 networks in practice on virtually every phone." },
   { q: "What if my network is hidden?", a: "Tick \"Hidden network\" — it tells scanning apps to actively search for the SSID instead of assuming it's broadcasting." },
   { q: "Can I print this and put it on the wall?", a: "Yes — that's exactly what it's for. Download the SVG for a crisp print at any size, and consider changing your WiFi password if the sign will be visible to the public." },
+  { q: "Do I need to change anything on my router?", a: "No — this doesn't touch your router at all. It just packages your existing network name and password into a format scanning apps know how to read." },
+  { q: "Why isn't my phone connecting after I scan it?", a: "Almost always a mismatch: double-check the SSID is spelled and capitalized exactly right, and that you picked the correct security type — marking an open network as WPA (or the reverse) will make it fail." },
+  { q: "Does this work for eduroam or enterprise WiFi (WPA2-Enterprise)?", a: "No — the WiFi QR format only supports a shared network password, not username/certificate-based enterprise logins. Enterprise networks need to be joined manually." },
 ];
 ---
 <GeneratorPageLayout
@@ -15,6 +32,8 @@ const faq = [
   eyebrow="WiFi QR Code Generator"
   h1="Scan to join your WiFi, no typing"
   intro="Enter your network name and password once, and anyone can join by scanning — no reading a password off a sticky note, letter by letter. Nothing you type here leaves your browser."
+  howTo={howTo}
+  tips={tips}
   bulkNote="Setting up WiFi cards for every room or desk? Generate a batch from CSV →"
   faq={faq}
 >

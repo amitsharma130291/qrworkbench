@@ -2,9 +2,24 @@
 import GeneratorPageLayout from "../layouts/GeneratorPageLayout.astro";
 import GeneratorShell from "../components/GeneratorShell.astro";
 
+const howTo = [
+  "Open your LinkedIn profile (or your company page) and copy the URL from the address bar, or use \"Copy link to profile\" from the ⋯ menu.",
+  "Paste it into the field below and check the preview.",
+  "Scan it yourself to confirm it opens the right profile before printing.",
+  "Download the SVG for a badge or resume, or PNG for a digital signature.",
+];
+
+const tips = [
+  "LinkedIn profile URLs can be long and full of random characters by default — set a custom public profile URL in LinkedIn's settings first for a cleaner, less dense QR code.",
+  "For conference badges, a small code in a corner works well since it only needs to be scanned up close, not from across a room.",
+  "A company page link is more durable for long-lived print material than a personal profile link, since it's tied to the business rather than one employee's account.",
+];
+
 const faq = [
   { q: "Should I use my personal profile or company page?", a: "Either — paste whichever LinkedIn URL you want people scanning to reach." },
   { q: "Is this good for conference badges or resumes?", a: "Yes, that's a common use — print it small in a corner so people can connect without typing your name into search." },
+  { q: "Can I shorten my LinkedIn URL before generating the code?", a: "Yes — LinkedIn lets you set a custom public profile URL (e.g. linkedin.com/in/yourname) in your account settings, which produces a noticeably cleaner QR code than the default auto-generated one." },
+  { q: "Will this send a connection request automatically?", a: "No — it just opens your profile page. The person still has to choose to connect or follow." },
 ];
 ---
 <GeneratorPageLayout
@@ -13,6 +28,8 @@ const faq = [
   eyebrow="LinkedIn QR Code Generator"
   h1="Get scanned straight to your LinkedIn"
   intro="Paste your LinkedIn profile or company page link and get a QR code for badges, resumes, or business cards — connect in one scan."
+  howTo={howTo}
+  tips={tips}
   bulkNote="Need codes for a whole team's profiles? Generate a batch from CSV →"
   faq={faq}
 >

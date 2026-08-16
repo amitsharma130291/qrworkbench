@@ -2,11 +2,28 @@
 import GeneratorPageLayout from "../layouts/GeneratorPageLayout.astro";
 import GeneratorShell from "../components/GeneratorShell.astro";
 
+const howTo = [
+  "Fill in your name at minimum — every other field is optional and only shows up in the saved contact if you fill it in.",
+  "Watch the live preview build as you type, so you can catch a typo before it's printed.",
+  "Decide what's safe to include publicly — your address and personal cell number are optional for a reason.",
+  "Download the SVG for a crisp print on a physical card, or the PNG for a digital signature or slide.",
+];
+
+const tips = [
+  "Only include fields you're comfortable being scanned by anyone who has the printed card — home address is genuinely optional.",
+  "Test the code with both iPhone and Android before a print run. Most scanners handle vCard 3.0 well, but a quick check catches surprises early.",
+  "If your title or company name changes, you'll need to generate and reprint — a vCard QR, like any static code, can't be edited after printing.",
+  "Keep the phone number in a consistent format (e.g. +1 555 123 4567) so it saves correctly as a dialable number, not plain text.",
+];
+
 const faq = [
   { q: "What happens when someone scans it?", a: "Their phone offers to save your details as a new contact — name, company, phone, email and website all filled in, nothing retyped." },
   { q: "Which contact format does this use?", a: "vCard 3.0 — the format with the broadest support across iPhone, Android and desktop scanning apps." },
   { q: "Can I put this on a printed business card?", a: "Yes — download the SVG for a clean vector print at any size. That's the main reason people use this over just texting someone their number." },
   { q: "I need this for a whole team, not just me.", a: "The bulk workspace takes a CSV of names, titles, phone numbers and emails and generates one vCard QR per row." },
+  { q: "Can I leave out my company or address?", a: "Yes — first and last name are the only fields that shape the contact card meaningfully; everything else is optional and simply omitted if left blank." },
+  { q: "Can I update my details after the card is printed?", a: "No — like any static QR, your details are encoded directly into the pattern. Changing anything means generating a new code and reprinting." },
+  { q: "Is this the same as Apple Wallet or Google Wallet contact cards?", a: "No — this creates a standard vCard that any phone's default camera or contacts app can read and save. It doesn't require Apple Wallet, Google Wallet, or any specific app." },
 ];
 ---
 <GeneratorPageLayout
@@ -15,6 +32,8 @@ const faq = [
   eyebrow="vCard QR Code Generator"
   h1="A business card that scans straight into contacts"
   intro="Fill in your details once, and anyone who scans the code can save you as a contact instantly — no photographing a card, no manual entry. Nothing here is sent anywhere; it's encoded right in your browser."
+  howTo={howTo}
+  tips={tips}
   bulkNote="Creating vCards for your whole team? Generate hundreds from CSV →"
   faq={faq}
 >

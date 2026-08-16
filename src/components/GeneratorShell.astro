@@ -74,8 +74,7 @@ const { filenamePrefix = "qr-code" } = Astro.props;
   .qr-panel {
     position: relative; aspect-ratio: 1; max-width: 280px; margin: 0 auto;
     display: flex; align-items: center; justify-content: center; padding: 1.2rem;
-    background-image: radial-gradient(var(--line) 1px, transparent 1px);
-    background-size: 14px 14px;
+    background: var(--surface);
     border: 1px solid var(--line);
   }
   .qr-panel canvas { width: 100%; height: auto; background: var(--surface); }

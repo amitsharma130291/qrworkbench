@@ -1,0 +1,120 @@
+---
+import Layout from "../layouts/Layout.astro";
+
+const faq = [
+  { q: "What's the difference between bulk and batch QR generation?", a: "Nothing — they're the same workflow under two different names. Both mean generating many QR codes from a list at once instead of making each one by hand." },
+  { q: "How many QR codes can I generate at once?", a: "There's no hard cap in the tool itself — people have run a few thousand rows through it. How far you can push it depends on your browser and device, since everything happens locally rather than on a server." },
+  { q: "Does it work with Excel files, or only CSV?", a: "CSV only, today. Excel export from Google Sheets or Excel itself works fine — just save your file as CSV first. Direct .xlsx support is on the roadmap." },
+  { q: "Is my spreadsheet uploaded anywhere?", a: "No. The file is read and processed entirely in your browser tab — it's never sent to a server, ours or anyone else's." },
+  { q: "What file formats do I get back?", a: "Each row becomes its own SVG or PNG file, named however you tell it to (like {SKU}.svg), all packed into a single ZIP." },
+  { q: "Can I generate WiFi or vCard codes in bulk, or only links?", a: "Right now, bulk generation encodes whatever text or URL is in your mapped column directly — it doesn't build WiFi or vCard-formatted codes yet. For those, use the individual WiFi or vCard generators for now." },
+];
+
+const appSchema = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  name: "Bulk QR Code Generator",
+  description: "Generate hundreds or thousands of QR codes from a CSV, entirely in your browser, and export a ZIP of correctly named files.",
+  applicationCategory: "UtilitiesApplication",
+  operatingSystem: "Any (runs in the browser)",
+  offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+};
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faq.map((item) => ({
+    "@type": "Question",
+    name: item.q,
+    acceptedAnswer: { "@type": "Answer", text: item.a },
+  })),
+};
+---
+<Layout
+  title="Bulk QR Code Generator — CSV to ZIP, Free to Try | QRGRID"
+  description="Turn a spreadsheet of URLs, SKUs, or contacts into hundreds of correctly named QR codes. Upload a CSV, map your columns, download a ZIP — entirely in your browser."
+>
+  <Fragment slot="head">
+    <script type="application/ld+json" set:html={JSON.stringify(appSchema)} />
+    <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+  </Fragment>
+
+  <div class="frame gen-page">
+    <div class="gen-head">
+      <div class="index-no">BULK / BATCH QR CODE GENERATOR</div>
+      <h1>Turn a spreadsheet into a folder of QR codes</h1>
+      <p class="intro">
+        Making one QR code by hand is easy. Making 500 product labels, 300 staff vCards, or 2,000 inventory tags one at a time isn't — that's what this tool is for. Some people call it a <em>bulk</em> QR generator, others call it <em>batch</em> generation. Same workflow either way: upload a list, map your columns, and download a ZIP of correctly named codes.
+      </p>
+      <div class="cta-row">
+        <a class="btn btn-accent" href="/bulk">Open the bulk workspace →</a>
+      </div>
+    </div>
+
+    <section class="how-section">
+      <h2>How it works</h2>
+      <div class="flow">
+        <div class="flow-step"><span class="n">01</span><h3>Upload a CSV</h3><p>Product names, SKUs, guest lists, URLs — one row per QR code, any number of rows.</p></div>
+        <div class="flow-step"><span class="n">02</span><h3>Map your columns</h3><p>Tell it which column is the QR content, which is the filename, and which is the caption. It guesses for you first.</p></div>
+        <div class="flow-step"><span class="n">03</span><h3>Set the format</h3><p>SVG or PNG, size, error correction, and a filename pattern like <code>{`{SKU}.svg`}</code>.</p></div>
+        <div class="flow-step"><span class="n">04</span><h3>Download the ZIP</h3><p>Every row becomes its own correctly named file, packed into one download.</p></div>
+      </div>
+    </section>
+
+    <section class="usecase-section">
+      <h2>What people build with it</h2>
+      <ul class="usecase-list">
+        <li><strong>Product &amp; inventory labels</strong> — a QR per SKU linking to a product page, spec sheet, or manual.</li>
+        <li><strong>Event &amp; staff contact cards</strong> — one QR per guest or employee, ready to print on a badge.</li>
+        <li><strong>Printing &amp; production companies</strong> — client spreadsheets in, correctly named files out, no manual work per code.</li>
+      </ul>
+    </section>
+
+    <div class="gen-faq">
+      <h2>Questions</h2>
+      {faq.map((item) => (
+        <details class="faq-item">
+          <summary>{item.q}</summary>
+          <p>{item.a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</Layout>
+
+<style>
+  .gen-page { padding: 3rem 1.75rem 5rem; max-width: 900px; }
+  .gen-head { max-width: 68ch; margin-bottom: 3rem; }
+  .index-no { font-family: var(--mono); font-size: 0.72rem; color: var(--red); margin-bottom: 1rem; letter-spacing: 0.04em; text-transform: uppercase; }
+  .gen-page h1 { font-size: clamp(1.8rem, 3.6vw, 2.5rem); margin: 0 0 1.1rem; letter-spacing: -0.015em; line-height: 1.1; text-wrap: balance; }
+  .intro { color: var(--ink-dim); line-height: 1.6; font-size: 1rem; margin: 0 0 1.7rem; }
+  .intro em { font-style: normal; color: var(--ink); font-weight: 600; }
+  .cta-row { display: flex; }
+
+  .gen-page h2 { font-size: 1.2rem; margin: 0 0 1.4rem; letter-spacing: -0.01em; }
+  .how-section, .usecase-section { margin-bottom: 3rem; }
+
+  .flow { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.6rem; }
+  .flow-step .n { font-family: var(--mono); font-size: 1.2rem; font-weight: 700; color: var(--red); display: block; margin-bottom: 0.6rem; }
+  .flow-step h3 { margin: 0 0 0.4rem; font-size: 0.92rem; font-weight: 700; }
+  .flow-step p { margin: 0; font-size: 0.8rem; color: var(--ink-dim); line-height: 1.5; }
+  .flow-step code { font-family: var(--mono); font-size: 0.78rem; background: var(--bg); border: 1px solid var(--line); padding: 0.05rem 0.3rem; }
+
+  .usecase-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.8rem; }
+  .usecase-list li { font-size: 0.9rem; color: var(--ink-dim); line-height: 1.55; padding-left: 1.2rem; position: relative; }
+  .usecase-list li::before { content: "—"; position: absolute; left: 0; color: var(--red); }
+  .usecase-list strong { color: var(--ink); }
+
+  .faq-item { border-top: 1px solid var(--line); padding: 0.9rem 0; }
+  .faq-item summary { cursor: pointer; font-size: 0.9rem; font-weight: 600; list-style: none; }
+  .faq-item summary::-webkit-details-marker { display: none; }
+  .faq-item summary::before { content: "+"; display: inline-block; width: 1em; color: var(--red); font-weight: 700; }
+  .faq-item[open] summary::before { content: "–"; }
+  .faq-item p { margin: 0.7rem 0 0 1em; font-size: 0.85rem; color: var(--ink-dim); line-height: 1.6; }
+
+  @media (max-width: 700px) {
+    .flow { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 460px) {
+    .flow { grid-template-columns: 1fr; }
+  }
+</style>

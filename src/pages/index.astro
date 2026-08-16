@@ -75,12 +75,6 @@ const plans = [
           <span class="corner c-br" aria-hidden="true"></span>
           <canvas id="hero-qr" width="480" height="480" aria-label="Live example QR code, generated in your browser"></canvas>
         </div>
-        <dl class="qr-meta">
-          <div><dt>Module</dt><dd id="meta-module">—</dd></div>
-          <div><dt>Version</dt><dd id="meta-version">—</dd></div>
-          <div><dt>Error correction</dt><dd>M</dd></div>
-          <div><dt>Density</dt><dd id="meta-density">—</dd></div>
-        </dl>
       </div>
     </div>
   </div>
@@ -161,21 +155,12 @@ const plans = [
 </Layout>
 
 <script>
-  import { renderQR, inspectQR } from "../lib/qr.js";
+  import { renderQR } from "../lib/qr.js";
 
   const canvas = document.getElementById("hero-qr");
   const text = typeof location !== "undefined" ? location.origin + "/" : "https://qrworkbench.com";
 
-  const info = inspectQR(text);
   renderQR(canvas, text, { width: 480 });
-
-  const setText = (id, value) => {
-    const el = document.getElementById(id);
-    if (el) el.textContent = value;
-  };
-  setText("meta-module", `${info.size}×${info.size}`);
-  setText("meta-version", String(info.version));
-  setText("meta-density", info.density);
 </script>
 
 <style>
@@ -190,10 +175,10 @@ const plans = [
   .lede { font-size: 1.05rem; color: var(--ink-dim); max-width: 46ch; line-height: 1.6; margin: 0 0 2rem; }
   .cta-row { display: flex; gap: 0.9rem; flex-wrap: wrap; }
 
-  .hero-visual { display: flex; flex-direction: column; align-items: center; gap: 1.1rem; }
+  .hero-visual { display: flex; flex-direction: column; align-items: center; }
   .qr-panel {
-    position: relative; width: 100%; max-width: 300px; aspect-ratio: 1;
-    display: flex; align-items: center; justify-content: center; padding: 1.4rem;
+    position: relative; width: 100%; max-width: 420px; aspect-ratio: 1;
+    display: flex; align-items: center; justify-content: center; padding: 1.8rem;
     background: var(--surface);
     border: 1px solid var(--line);
   }
@@ -206,11 +191,6 @@ const plans = [
   .c-tr { top: 8px; right: 8px; } .c-tr::before, .c-tr::after { top: 0; right: 0; }
   .c-bl { bottom: 8px; left: 8px; } .c-bl::before, .c-bl::after { bottom: 0; left: 0; }
   .c-br { bottom: 8px; right: 8px; } .c-br::before, .c-br::after { bottom: 0; right: 0; }
-
-  .qr-meta { display: flex; gap: 1.6rem; margin: 0; width: 100%; max-width: 300px; justify-content: space-between; flex-wrap: wrap; }
-  .qr-meta div { display: flex; flex-direction: column; gap: 0.25rem; }
-  .qr-meta dt { font-family: var(--mono); font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-faint); margin: 0; }
-  .qr-meta dd { font-family: var(--mono); font-size: 0.82rem; font-weight: 600; margin: 0; color: var(--ink); }
 
   .grid-row { display: grid; grid-template-columns: repeat(12, 1fr); border-bottom: 1px solid var(--line); }
   .row-label { grid-column: 1 / 4; padding: 3rem 1.5rem 3rem 0; border-right: 1px solid var(--line); }

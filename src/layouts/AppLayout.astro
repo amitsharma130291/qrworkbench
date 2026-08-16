@@ -18,6 +18,9 @@ const steps = [
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
     <meta name="robots" content="noindex" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+    <link rel="icon" type="image/png" sizes="128x128" href="/favicon-128.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
   </head>
   <body class="app-body">
     <GlobalStyles />
@@ -25,12 +28,7 @@ const steps = [
     <div class="app-shell">
       <aside class="sidebar">
         <a class="logo" href="/">
-          <svg width="20" height="20" viewBox="0 0 22 22" aria-hidden="true">
-            <rect x="0" y="0" width="9" height="9" fill="#fff" />
-            <rect x="13" y="0" width="9" height="9" fill="var(--red)" />
-            <rect x="0" y="13" width="9" height="9" fill="var(--red)" />
-            <rect x="13" y="13" width="9" height="9" fill="#fff" />
-          </svg>
+          <img src="/favicon-128.png" width="28" height="28" alt="" />
           <span>QR <b>Workbench</b></span>
         </a>
 

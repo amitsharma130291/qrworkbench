@@ -1,5 +1,6 @@
 ---
 import GlobalStyles from "../components/GlobalStyles.astro";
+import Analytics from "../components/Analytics.astro";
 const { title } = Astro.props;
 
 const steps = [
@@ -21,6 +22,7 @@ const steps = [
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
     <link rel="icon" type="image/png" sizes="128x128" href="/favicon-128.png" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <Analytics />
   </head>
   <body class="app-body">
     <GlobalStyles />

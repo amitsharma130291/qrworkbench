@@ -17,18 +17,19 @@ import SimplePageLayout from "../layouts/SimplePageLayout.astro";
   <h2>The bulk workspace specifically</h2>
   <p>Uploading a CSV to the <a href="/bulk">bulk workspace</a> reads the file directly in your browser using standard web file APIs. The file is never uploaded to a server, and the ZIP you download is assembled locally on your device.</p>
 
+  <h2>The contact form</h2>
+  <p>If you use the <a href="/contact">contact form</a>, the name, email address, subject, and message you submit are sent by email to QR Workbench's inbox so we can read and reply to it. This is transmitted through Gmail and isn't stored in a separate database beyond that email — there's no CRM, no mailing list signup happening in the background, and nothing is shared with third parties for marketing. It's used only to respond to your message.</p>
+
   <h2>Information we do not collect</h2>
   <ul>
     <li>No account credentials — there are no accounts.</li>
     <li>No payment information — nothing is stored beyond what a future third-party payment processor will handle directly, once payment launches.</li>
     <li>No device fingerprinting.</li>
-    <li>No QR content, CSV files, or generated output — see above.</li>
-    <li>No analytics or tracking of any kind, currently. Unlike many sites, QR Workbench doesn't run Google Analytics, an ad pixel, or any other tracking script today.</li>
+    <li>No QR content, CSV files, or generated output — see above. That stays true regardless of the analytics described below; there's no code path connecting the generators to anything that leaves your browser.</li>
   </ul>
-  <p>If that last point changes — for example, if basic analytics get added later to understand which pages get traffic — this page will be updated first, with the change clearly described, not folded into a rewrite.</p>
 
-  <h2>Cookies</h2>
-  <p>QR Workbench does not currently set any cookies.</p>
+  <h2>Cookies and tracking</h2>
+  <p>QR Workbench uses Google Analytics (GA4) to understand which pages get traffic — page views, approximate location derived from IP address, device and browser type, and the site that referred you. Google Analytics sets cookies and similar identifiers to do this, and the data it collects is pseudonymous and aggregate. It never includes anything you type into a QR generator or the contact form — both stay entirely outside Google Analytics, for the reason described above: there's no code path connecting them. See <a href="https://policies.google.com/privacy" rel="nofollow">Google's Privacy Policy</a> for how Google itself handles this data. QR Workbench does not use advertising trackers or sell any data to third parties.</p>
 
   <h2>Hosting</h2>
   <p>The site is hosted on Vercel. Like most hosting providers, Vercel's infrastructure may log basic technical request data (IP address, request timing, browser user-agent) as a normal part of serving web traffic — the same baseline logging virtually every website generates by default. QR Workbench does not access or use this data beyond what's needed to keep the site running and diagnose outages.</p>

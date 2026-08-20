@@ -17,7 +17,7 @@
     <span id="tb-desc">Up to 50 QR codes per batch, then upgrade for unlimited.</span>
   </div>
   <div class="tb-actions" id="tb-actions">
-    <button class="btn btn-fill" id="tb-buy-batch" type="button" disabled title="Upload a CSV first">Batch Pass — $7</button>
+    <button class="btn btn-fill" id="tb-buy-batch" type="button">Batch Pass — $7</button>
     <button class="btn btn-accent" id="tb-buy-pro" type="button">Pro — $39</button>
     <button class="link-btn" id="tb-toggle-key" type="button">Have a license key?</button>
   </div>
@@ -245,7 +245,6 @@
     } else {
       tierBanner.title.textContent = "Free plan";
       tierBanner.desc.textContent = `Up to ${FREE_ROW_CAP} QR codes per batch, then upgrade for unlimited.`;
-      tierBanner.buyBatch.disabled = !jobId;
       tierBanner.actions.innerHTML = "";
       tierBanner.actions.appendChild(tierBanner.buyBatch);
       tierBanner.actions.appendChild(tierBanner.buyPro);
@@ -264,7 +263,9 @@
   });
 
   tierBanner.buyBatch.addEventListener("click", async () => {
-    if (!jobId) return;
+    // jobId may be null here if no file is loaded yet -- that's fine, the
+    // purchase just stays unscoped at Dodo until it's claimed by whichever
+    // file it's first used on (see verifyAccessForJob in lib/bulk/license.js).
     tierBanner.buyBatch.disabled = true;
     try {
       saveResumeState();

@@ -14,11 +14,14 @@ const plans = [
     price: "$7",
     note: "once",
     features: ["One batch, up to 5,000 codes", "SVG + ZIP export", "Custom filenames"],
-    // A Batch Pass is scoped to a specific uploaded file, so buying it only
-    // makes sense from inside the bulk workspace once a file is loaded --
-    // this just routes there, same split as the Pro button below.
+    // Direct checkout button (wired below), same as Pro. Ideally a Batch
+    // Pass is scoped to one file, but that scoping can only be set at Dodo
+    // checkout time -- bought from here with no file loaded yet, it stays
+    // unscoped until claimed by whichever file it's first used on in the
+    // bulk workspace.
     cta: "Buy a batch pass",
-    href: "/bulk#upload",
+    href: null,
+    action: "pricing-buy-batch",
     style: "",
   },
   {
@@ -26,10 +29,10 @@ const plans = [
     price: "$39",
     note: "once",
     features: ["Unlimited batches, forever", "Print-ready sheets (soon)", "Logo + presets (soon)"],
-    // Pro isn't scoped to any file, so it's a direct checkout button (wired
-    // in the script block below) instead of a link.
+    // Pro isn't scoped to any file, so it's always a direct checkout button.
     cta: "Get Pro",
     href: null,
+    action: "pricing-buy-pro",
     style: "hi",
   },
 ];
@@ -43,7 +46,7 @@ const plans = [
       {p.href ? (
         <a class:list={["btn", p.style === "hi" ? "btn-accent" : ""]} href={p.href}>{p.cta}</a>
       ) : (
-        <button class:list={["btn", p.style === "hi" ? "btn-accent" : ""]} type="button" data-action="pricing-buy-pro">{p.cta}</button>
+        <button class:list={["btn", p.style === "hi" ? "btn-accent" : ""]} type="button" data-action={p.action} data-tier={p.action === "pricing-buy-batch" ? "batch" : "pro"}>{p.cta}</button>
       )}
     </div>
   ))}
@@ -51,17 +54,16 @@ const plans = [
 <p class="pricing-clarity">One-time payment, never a subscription. Your license key works on any device — no account needed, just paste it in.</p>
 
 <script>
-  import { startCheckout, newJobId } from "../lib/bulk/license.js";
+  import { startCheckout } from "../lib/bulk/license.js";
 
-  // Pro isn't scoped to any particular upload, so it can be bought straight
-  // from a pricing card with no file in play -- jobId is only meaningful for
-  // a Batch Pass, which routes to the bulk workspace instead (see the plans
-  // array above).
-  document.querySelectorAll('[data-action="pricing-buy-pro"]').forEach((btn) => {
+  // Neither button here has a file in play -- Pro doesn't need one, and a
+  // Batch Pass bought from here just stays unscoped at Dodo until it's
+  // claimed by whichever file it's first used on in the bulk workspace.
+  document.querySelectorAll("[data-action^='pricing-buy-']").forEach((btn) => {
     btn.addEventListener("click", async () => {
       btn.disabled = true;
       try {
-        await startCheckout("pro", newJobId());
+        await startCheckout(btn.dataset.tier, null);
       } catch (err) {
         alert(err.message || "Couldn't start checkout.");
         btn.disabled = false;

@@ -18,11 +18,13 @@ export async function POST({ request }) {
   if (tier !== "batch" && tier !== "pro") {
     return jsonResponse({ error: "Unknown pricing tier." }, 400);
   }
-  // A Batch Pass is scoped to the specific upload it was bought for -- Pro
-  // isn't, so it doesn't need a jobId.
-  if (tier === "batch" && (typeof jobId !== "string" || !jobId.trim())) {
-    return jsonResponse({ error: "Missing job reference for a Batch Pass purchase." }, 400);
-  }
+  // A Batch Pass is ideally scoped to the specific upload it's bought for,
+  // via jobId in the metadata below -- but jobId is optional here, not
+  // required, so it can also be bought with no file loaded yet (e.g. from
+  // the pricing page). Dodo's payment metadata can't be updated after
+  // checkout, so an unscoped purchase stays unscoped forever at the Dodo
+  // level; verifyAccessForJob()/redeemLicenseKey() claim it locally for
+  // whichever file it's first used on in a given browser (see lib/bulk/license.js).
 
   const client = getDodoClient();
   const product = PRODUCTS[tier];

@@ -152,7 +152,10 @@ export async function redeemLicenseKey(licenseKey, jobId) {
     };
     throw new Error(messages[data.status] || "That license key isn't valid yet.");
   }
-  const payment = { sessionId: null, paymentId: data.paymentId, tier: data.tier, jobId: data.jobId, licenseKey: data.licenseKey };
+  // If the key was bought with no file in play, Dodo's metadata.jobId (and
+  // so data.jobId) is empty -- claim it locally for whatever job is current
+  // right now, same first-use binding as verifyAccessForJob below.
+  const payment = { sessionId: null, paymentId: data.paymentId, tier: data.tier, jobId: data.jobId || jobId || null, licenseKey: data.licenseKey };
   storePayment(payment);
   return payment;
 }
@@ -174,19 +177,35 @@ export async function requestLicenseRecovery(email) {
  * Call right before allowing an export. Re-checks the stored payment live
  * against Dodo rather than trusting localStorage indefinitely -- there's no
  * database, so this call *is* the license check, every time.
+ *
+ * A Batch Pass bought while a file was already loaded is scoped to that
+ * file's jobId from the start (set in Dodo's metadata at checkout, which
+ * can't be changed afterward). One bought with no file loaded (jobId empty)
+ * stays unscoped at Dodo -- the first file it's successfully used on here
+ * claims it locally, and from then on this browser enforces that same file,
+ * same as if it had been scoped from the start. Honest tradeoff: since
+ * there's no database and Dodo's metadata is immutable, that claim only
+ * lives in this browser's localStorage -- redeeming the same key on a
+ * different device isn't blocked from claiming a different file there too.
  */
 export async function verifyAccessForJob(jobId) {
   const stored = getStoredPayment();
   if (!stored) return null;
-  if (stored.tier === "batch" && stored.jobId !== jobId) {
-    // A Batch Pass purchase only ever covers the job it was bought for.
+  if (stored.tier === "batch" && stored.jobId && stored.jobId !== jobId) {
     return null;
   }
   try {
     const result = await verify({ sessionId: stored.sessionId, paymentId: stored.paymentId, jobId });
-    if (result.ok) return { ...stored, tier: result.tier };
-    clearStoredPayment();
-    return null;
+    if (!result.ok) {
+      clearStoredPayment();
+      return null;
+    }
+    const access = { ...stored, tier: result.tier };
+    if (stored.tier === "batch" && !stored.jobId) {
+      access.jobId = jobId;
+      storePayment(access);
+    }
+    return access;
   } catch {
     // A network hiccup shouldn't lock out someone who already paid -- fail
     // open on the last-known-good record. Real fraud (never actually paid)

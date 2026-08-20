@@ -68,7 +68,7 @@ function customerHtml({ label, licenseKey, recoveryUrl, scopeNote, isResend }) {
       </tr>
     </table>
 
-    <p style="font-size:13px;line-height:1.6;color:#4A4C4F;margin:0 0 18px">Switching devices, cleared your browser, or just lost track of the key? Use it to restore access any time — no account or password needed.</p>
+    <p style="font-size:13px;line-height:1.6;color:#4A4C4F;margin:0 0 18px"><strong>Your ${escapeHtml(label)} is already active</strong> in the browser you checked out in — there's nothing else to do there. If you don't see it unlocked, switched devices, or cleared your browser, click below to reactivate it instantly.</p>
 
     <a href="${recoveryUrl}" style="display:inline-block;background:#111111;color:#fff;font-size:14px;font-weight:700;text-decoration:none;padding:12px 22px;border-radius:6px;margin:0 0 26px">Reactivate license</a>
 
@@ -95,6 +95,8 @@ function customerText({ label, licenseKey, recoveryUrl, scopeNote, isResend }) {
     "",
     `Product: ${label}`,
     `License key: ${licenseKey}`,
+    "",
+    `Your ${label} is already active in the browser you checked out in -- there's nothing else to do there. If you don't see it unlocked, switched devices, or cleared your browser, use the link below to reactivate it instantly.`,
     "",
     `Reactivate license: ${recoveryUrl}`,
     "",

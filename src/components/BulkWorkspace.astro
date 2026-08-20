@@ -11,6 +11,10 @@
   </div>
 </div>
 
+<div id="settings-note" class="settings-note" hidden>
+  <strong>Your QR design is ready.</strong> The size, error correction and margin from your free QR code are already set below — upload a spreadsheet to apply them to every row.
+</div>
+
 <div id="tier-banner" class="tier-banner">
   <div class="tb-status">
     <strong id="tb-title">Free plan</strong>
@@ -967,6 +971,30 @@
     await runGenerateAll();
   }
 
+  // Carries size/error-correction/margin over from the homepage's free
+  // generator ("Apply this design to a batch") -- only these three, since
+  // they're the only settings that exist on both sides. Foreground/
+  // background color and logo have no equivalent here yet, so there's
+  // nothing honest to carry forward for those.
+  (function applyIncomingSettings() {
+    const params = new URLSearchParams(window.location.search);
+    const size = params.get("size");
+    const ec = params.get("ec");
+    const margin = params.get("margin");
+    if (!size && !ec && !margin) return;
+
+    if (size && [...cfgSize.options].some((o) => o.value === size)) cfgSize.value = size;
+    if (ec && [...cfgEc.options].some((o) => o.value === ec)) cfgEc.value = ec;
+    if (margin !== null) cfgQuietZone.checked = margin !== "0";
+
+    el("settings-note").hidden = false;
+    updateBottomBar();
+
+    const url = new URL(window.location.href);
+    ["size", "ec", "margin"].forEach((k) => url.searchParams.delete(k));
+    window.history.replaceState({}, "", url);
+  })();
+
   updateBottomBar();
   initTierBanner();
 </script>
@@ -980,6 +1008,8 @@
   .privacy-box span { display: block; font-size: 0.68rem; color: var(--ink-faint); }
 
   .error-banner { border: 1px solid var(--red); background: #FDECE8; color: #9A2A14; padding: 0.75rem 1rem; font-size: 0.85rem; margin-bottom: 1.4rem; }
+  .settings-note { border: 1px solid var(--ink); background: var(--surface); padding: 0.85rem 1.1rem; font-size: 0.85rem; margin-bottom: 1.4rem; }
+  .settings-note strong { display: block; margin-bottom: 0.2rem; }
 
   .tier-banner {
     display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap;

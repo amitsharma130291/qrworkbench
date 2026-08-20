@@ -125,11 +125,27 @@ const sampleRows = [
         <h2>Create one QR code free</h2>
       </div>
       <div class="row-content">
-        <p class="section-note lead-note">No account, nothing uploaded — paste a link and download a PNG in seconds.</p>
+        <p class="section-note lead-note">No account, nothing uploaded — paste a link and download a real QR code in seconds.</p>
         <div class="mini-gen">
           <div class="mini-gen-input">
             <label for="mini-url">Website URL</label>
-            <input id="mini-url" type="url" placeholder="https://example.com" autocomplete="off" />
+            <input id="mini-url" type="url" placeholder="https://example.com/product" autocomplete="off" />
+            <button class="mini-custom-toggle" id="mini-custom-toggle" type="button" aria-expanded="false">Customize size, error correction &amp; margin ▾</button>
+            <div class="mini-custom-panel" id="mini-custom-panel" hidden>
+              <label>Size<select id="mini-size">
+                <option value="500">500 px</option>
+                <option value="800" selected>800 px</option>
+                <option value="1000">1000 px</option>
+              </select></label>
+              <label>Error correction<select id="mini-ec">
+                <option value="L">L — ~7%</option>
+                <option value="M" selected>M — ~15%</option>
+                <option value="Q">Q — ~25%</option>
+                <option value="H">H — ~30%</option>
+              </select></label>
+              <label class="mini-check"><input id="mini-margin" type="checkbox" checked /> Include quiet zone</label>
+            </div>
+            <p class="mini-gen-badge">Free · No account · Processed in your browser</p>
           </div>
           <div class="mini-gen-preview">
             <div class="mini-qr-panel">
@@ -141,10 +157,20 @@ const sampleRows = [
         </div>
         <a class="mini-more-link" href="#tools">More free QR types — WiFi, vCard, email &amp; more →</a>
 
-        <div class="mini-upsell" id="mini-upsell" hidden>
-          <strong>Need one for every row in a spreadsheet?</strong>
-          <p>Apply the same idea to hundreds or thousands of codes at once — named files, ZIP, or a printable sheet.</p>
-          <a class="btn btn-accent" href="/bulk">Try 20 rows free →</a>
+        <div class="mini-success" id="mini-success" hidden>
+          <strong class="mini-success-head">Your QR code is ready.</strong>
+          <p class="mini-success-dest" id="mini-success-dest"></p>
+          <div class="mini-success-actions">
+            <button class="btn btn-fill" id="mini-download-svg" type="button">Download SVG</button>
+            <button class="btn" id="mini-edit" type="button">Edit QR</button>
+          </div>
+          <p class="mini-scan-tip">Scan it with your own phone before printing or sharing, to confirm it works.</p>
+
+          <div class="mini-upsell" id="mini-upsell">
+            <strong id="mini-upsell-head">Have a product catalogue or URL list?</strong>
+            <p id="mini-upsell-body">Generate a named QR code for every row — the same size, error correction and margin settings, applied to the whole spreadsheet.</p>
+            <a class="btn btn-accent" href="/bulk" id="mini-upsell-cta">Apply this design to a batch →</a>
+          </div>
         </div>
       </div>
     </section>
@@ -567,7 +593,16 @@ const sampleRows = [
     const canvas = document.getElementById("mini-qr-canvas");
     const empty = document.getElementById("mini-qr-empty");
     const downloadBtn = document.getElementById("mini-download");
-    const upsell = document.getElementById("mini-upsell");
+    const downloadSvgBtn = document.getElementById("mini-download-svg");
+    const editBtn = document.getElementById("mini-edit");
+    const success = document.getElementById("mini-success");
+    const successDest = document.getElementById("mini-success-dest");
+    const customToggle = document.getElementById("mini-custom-toggle");
+    const customPanel = document.getElementById("mini-custom-panel");
+    const sizeSel = document.getElementById("mini-size");
+    const ecSel = document.getElementById("mini-ec");
+    const marginChk = document.getElementById("mini-margin");
+    const upsellCta = document.getElementById("mini-upsell-cta");
     const finalH2 = document.getElementById("final-h2");
     const finalSub = document.getElementById("final-sub");
     const finalCtaBtn = document.getElementById("final-cta-btn");
@@ -579,9 +614,40 @@ const sampleRows = [
     function markGeneratedOnce() {
       if (hasGeneratedOnce) return;
       hasGeneratedOnce = true;
-      if (finalH2) finalH2.textContent = "Your first QR is ready.";
-      if (finalSub) finalSub.textContent = "Apply the same idea to your whole spreadsheet.";
-      if (finalCtaBtn) finalCtaBtn.textContent = "Generate the complete batch";
+      if (finalH2) finalH2.textContent = "Your QR design is ready.";
+      if (finalSub) finalSub.textContent = "Apply it to your whole spreadsheet.";
+      if (finalCtaBtn) finalCtaBtn.textContent = "Apply this design to a batch";
+    }
+
+    // Only carries settings that genuinely exist on both sides -- the bulk
+    // workspace has no foreground/background color or logo controls today,
+    // so promising to "preserve" those would be false. Size, error
+    // correction and quiet-zone all map directly to BulkWorkspace's own
+    // config panel (cfg-size/cfg-ec/cfg-quietzone).
+    function bulkUrlWithSettings() {
+      const params = new URLSearchParams({
+        size: sizeSel.value,
+        ec: ecSel.value,
+        margin: marginChk.checked ? "1" : "0",
+      });
+      return `/bulk?${params.toString()}`;
+    }
+
+    customToggle.addEventListener("click", () => {
+      const open = customPanel.hidden;
+      customPanel.hidden = !open;
+      customToggle.setAttribute("aria-expanded", String(open));
+      customToggle.textContent = open ? "Customize size, error correction & margin ▴" : "Customize size, error correction & margin ▾";
+      if (lastValue) update();
+    });
+
+    function currentOpts(width) {
+      return {
+        width,
+        margin: marginChk.checked ? 4 : 0,
+        errorCorrectionLevel: ecSel.value,
+        light: "#ffffff",
+      };
     }
 
     async function update() {
@@ -591,30 +657,49 @@ const sampleRows = [
         canvas.hidden = true;
         empty.hidden = false;
         downloadBtn.disabled = true;
-        upsell.hidden = true;
+        success.hidden = true;
         return;
       }
       canvas.hidden = false;
       empty.hidden = true;
       downloadBtn.disabled = false;
-      await renderQR(canvas, value, { width: 200, margin: 2, light: "#ffffff" });
-      upsell.hidden = false;
+      await renderQR(canvas, value, currentOpts(200));
+      successDest.textContent = value;
+      upsellCta.href = bulkUrlWithSettings();
+      success.hidden = false;
       markGeneratedOnce();
     }
 
     input.addEventListener("input", update);
+    [sizeSel, ecSel].forEach((el) => el.addEventListener("change", () => lastValue && update()));
+    marginChk.addEventListener("change", () => lastValue && update());
 
     downloadBtn.addEventListener("click", async () => {
       if (!lastValue) return;
-      const blob = await qrToPNGBlob(lastValue, { width: 1000, margin: 4 });
+      const blob = await qrToPNGBlob(lastValue, currentOpts(Number(sizeSel.value)));
+      downloadMiniFile(blob, "qr-code.png");
+    });
+
+    downloadSvgBtn.addEventListener("click", async () => {
+      if (!lastValue) return;
+      const svg = await qrToSVGString(lastValue, currentOpts(Number(sizeSel.value)));
+      downloadMiniFile(new Blob([svg], { type: "image/svg+xml" }), "qr-code.svg");
+    });
+
+    function downloadMiniFile(blob, filename) {
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = "qr-code.png";
+      a.download = filename;
       document.body.appendChild(a);
       a.click();
       a.remove();
       URL.revokeObjectURL(url);
+    }
+
+    editBtn.addEventListener("click", () => {
+      input.focus();
+      input.select();
     });
   })();
 </script>
@@ -685,26 +770,43 @@ const sampleRows = [
   .bulk-link { font-size: 0.8rem; }
 
   .mini-gen {
-    display: flex; gap: 2rem; align-items: flex-start; flex-wrap: wrap;
-    border: 1px solid var(--line); background: var(--surface); padding: 1.8rem; max-width: 62ch; margin-bottom: 1rem;
+    display: flex; gap: 2.2rem; align-items: flex-start; flex-wrap: wrap;
+    border: 1px solid var(--line); background: var(--surface); padding: 2.2rem; max-width: 68ch; margin-bottom: 1rem;
   }
-  .mini-gen-input { display: flex; flex-direction: column; gap: 0.5rem; flex: 1 1 240px; min-width: 0; }
-  .mini-gen-input label { font-size: 0.8rem; font-weight: 600; color: var(--ink-dim); }
+  .mini-gen-input { display: flex; flex-direction: column; gap: 0.6rem; flex: 1 1 260px; min-width: 0; }
+  .mini-gen-input label { font-size: 0.85rem; font-weight: 600; color: var(--ink-dim); }
   .mini-gen-input input {
-    font: inherit; font-size: 0.95rem; padding: 0.75rem 0.85rem; border: 1px solid var(--line); background: var(--bg); color: var(--ink); width: 100%;
+    font: inherit; font-size: 1.05rem; padding: 0.95rem 1rem; border: 1px solid var(--line); background: var(--bg); color: var(--ink); width: 100%;
   }
-  .mini-gen-preview { display: flex; flex-direction: column; align-items: center; gap: 0.8rem; flex: none; }
+  .mini-custom-toggle {
+    align-self: flex-start; font: inherit; font-size: 0.8rem; font-weight: 600; color: var(--red);
+    background: none; border: none; padding: 0.2rem 0; cursor: pointer; text-decoration: underline;
+  }
+  .mini-custom-panel { display: flex; gap: 1rem; flex-wrap: wrap; border-top: 1px solid var(--line); padding-top: 0.9rem; }
+  .mini-custom-panel label { display: flex; flex-direction: column; gap: 0.3rem; font-size: 0.76rem; font-weight: 600; color: var(--ink-dim); flex: 1; min-width: 140px; }
+  .mini-custom-panel select { font: inherit; font-size: 0.85rem; padding: 0.55rem 0.6rem; border: 1px solid var(--line); background: var(--bg); color: var(--ink); }
+  .mini-check { flex-direction: row !important; align-items: center; gap: 0.5rem !important; }
+  .mini-check input { width: 16px; height: 16px; accent-color: var(--red); }
+  .mini-gen-badge { font-family: var(--mono); font-size: 0.72rem; color: var(--ink-faint); margin: 0.3rem 0 0; }
+
+  .mini-gen-preview { display: flex; flex-direction: column; align-items: center; gap: 0.9rem; flex: none; }
   .mini-qr-panel {
-    width: 160px; height: 160px; display: flex; align-items: center; justify-content: center;
-    border: 1px solid var(--line); background: #fff; padding: 0.6rem;
+    width: 200px; height: 200px; display: flex; align-items: center; justify-content: center;
+    border: 1px solid var(--line); background: #fff; padding: 0.7rem;
   }
   .mini-qr-panel canvas { width: 100%; height: 100%; display: block; }
-  .mini-qr-empty { font-size: 0.76rem; color: var(--ink-faint); text-align: center; margin: 0; padding: 0 0.5rem; }
-  .mini-gen-preview .btn { font-size: 0.8rem; padding: 0.6rem 1rem; white-space: nowrap; }
-  .mini-more-link { display: inline-block; font-size: 0.85rem; color: var(--red); text-decoration: underline; margin-bottom: 1.6rem; }
+  .mini-qr-empty { font-size: 0.8rem; color: var(--ink-faint); text-align: center; margin: 0; padding: 0 0.5rem; }
+  .mini-gen-preview .btn { font-size: 0.85rem; padding: 0.7rem 1.1rem; white-space: nowrap; }
+  .mini-more-link { display: inline-block; font-size: 0.88rem; color: var(--red); text-decoration: underline; margin-bottom: 1.8rem; }
+
+  .mini-success { border: 1px solid var(--ink); background: var(--surface); padding: 1.8rem; max-width: 68ch; }
+  .mini-success-head { display: block; font-size: 1.05rem; margin-bottom: 0.6rem; }
+  .mini-success-dest { font-family: var(--mono); font-size: 0.8rem; color: var(--ink-faint); word-break: break-all; margin: 0 0 1.1rem; }
+  .mini-success-actions { display: flex; gap: 0.7rem; flex-wrap: wrap; margin-bottom: 1rem; }
+  .mini-scan-tip { font-size: 0.85rem; color: var(--ink-faint); margin: 0 0 1.6rem; }
 
   .mini-upsell {
-    border: 1.5px solid var(--red); background: #FFF6F4; padding: 1.2rem 1.4rem; max-width: 62ch;
+    border: 1.5px solid var(--red); background: #FFF6F4; padding: 1.2rem 1.4rem;
   }
   .mini-upsell strong { display: block; font-size: 1rem; color: var(--red); margin-bottom: 0.4rem; }
   .mini-upsell p { margin: 0 0 1rem; font-size: 0.88rem; color: var(--ink-dim); line-height: 1.5; }

@@ -272,24 +272,30 @@ const sampleRows = [
         <p class="section-note lead-note">A dedicated PDF layout tool, not just a bigger QR export — one of the reasons this is a production toolkit, not just a generator.</p>
         <div class="label-demo">
           <div class="label-sheet" aria-hidden="true">
-            {Array.from({ length: 12 }).map(() => (
-              <div class="label-cell"><span class="label-qr"></span><span class="label-cap"></span></div>
+            {Array.from({ length: 12 }).map((_, i) => (
+              <div class="label-cell">
+                <span class="label-qr" data-label-qr data-label-qr-size="32"></span>
+                <span class="label-cap">{`SKU${String(i + 1).padStart(3, "0")}`}</span>
+              </div>
             ))}
           </div>
           <div class="label-closeup" aria-hidden="true">
-            <span class="label-qr label-qr-big"></span>
+            <span class="label-qr-big" data-label-qr data-label-qr-size="90"></span>
             <span class="label-cap-big">SKU001-blue-shirt</span>
           </div>
           <ul class="label-controls">
             <li>A4 or US Letter</li>
-            <li>Columns &amp; rows per page</li>
-            <li>Margin &amp; spacing</li>
-            <li>Caption / SKU text</li>
+            <li>Columns &amp; rows per page (3×8 by default — 24 per page)</li>
+            <li>Margin &amp; spacing, both adjustable</li>
+            <li>Caption / SKU text under each code</li>
             <li>Error correction level</li>
-            <li>Paginated automatically</li>
+            <li>Paginated automatically across as many pages as needed</li>
           </ul>
         </div>
-        <a class="btn btn-fill" href="/labels">Create a sample label sheet →</a>
+        <div class="label-demo-actions">
+          <a class="btn btn-fill" href="/labels">Create a sample label sheet →</a>
+          <button class="btn" id="label-download-pdf" type="button">Download this sample as a PDF</button>
+        </div>
       </div>
     </section>
 
@@ -471,6 +477,13 @@ const sampleRows = [
       item.appendChild(label);
       output.appendChild(item);
       await renderQR(canvas, row[contentSel.value], { width: 150, margin: 1, light: "#ffffff" });
+      // Inline size, not the scoped .demo-item canvas CSS rule -- Astro's
+      // scoped styles never match elements created via document.createElement
+      // (they lack the data-astro-cid-* attribute added at build time), so
+      // without this a longer URL that forces QRCode.toCanvas to enlarge the
+      // canvas beyond 150px would silently render at that larger size instead.
+      canvas.style.width = "150px";
+      canvas.style.height = "150px";
 
       const openFull = () => {
         const win = window.open();
@@ -581,6 +594,77 @@ const sampleRows = [
   });
 
   renderDemo();
+
+  // Printable-labels showcase: real rendered QR codes (fixed pixel sizes,
+  // not width:100% of the grid cell -- deliberately avoiding the sizing
+  // bug from the earlier carousel attempt, where a relatively-sized canvas
+  // interacted with a grid item's default min-width:auto and blew out the
+  // layout) plus a real downloadable PDF built with the same jsPDF/
+  // renderQR pipeline the actual /labels workspace uses.
+  (function initLabelShowcase() {
+    const targets = document.querySelectorAll("[data-label-qr]");
+    if (targets.length === 0) return;
+
+    (async () => {
+      let i = 0;
+      for (const el of targets) {
+        const size = Number(el.dataset.labelQrSize) || 32;
+        const canvas = document.createElement("canvas");
+        canvas.width = size;
+        canvas.height = size;
+        el.appendChild(canvas);
+        const row = SAMPLE_ROWS[i % SAMPLE_ROWS.length];
+        await renderQR(canvas, row.url, { width: size, margin: 1, light: "#ffffff" });
+        // Astro's scoped <style> rules only match elements present in the
+        // server-rendered markup (via a data-astro-cid-* attribute added at
+        // build time) -- a canvas created here with document.createElement()
+        // never gets that attribute, so the .label-qr canvas CSS rule
+        // silently never applies to it. Setting the display size inline
+        // sidesteps that entirely, and must happen *after* renderQR(),
+        // which strips any inline width/height QRCode.toCanvas set.
+        canvas.style.width = `${size}px`;
+        canvas.style.height = `${size}px`;
+        i++;
+      }
+    })();
+
+    const pdfBtn = document.getElementById("label-download-pdf");
+    if (!pdfBtn) return;
+    pdfBtn.addEventListener("click", async () => {
+      pdfBtn.disabled = true;
+      pdfBtn.textContent = "Building PDF…";
+      try {
+        const pageW = 215.9;
+        const pageH = 279.4;
+        const margin = 15;
+        const cols = 4;
+        const rows = 3;
+        const gap = 5;
+        const cellW = (pageW - margin * 2 - (cols - 1) * gap) / cols;
+        const cellH = (pageH - margin * 2 - (rows - 1) * gap) / rows;
+        const qrSize = Math.min(cellW, cellH) * 0.7;
+        const doc = new jsPDF({ unit: "mm", format: [pageW, pageH] });
+        const canvas = document.createElement("canvas");
+        for (let i = 0; i < cols * rows; i++) {
+          const row = SAMPLE_ROWS[i % SAMPLE_ROWS.length];
+          const col = i % cols;
+          const r = Math.floor(i / cols);
+          const x = margin + col * (cellW + gap);
+          const y = margin + r * (cellH + gap);
+          const qrX = x + (cellW - qrSize) / 2;
+          const qrY = y + (cellH - qrSize - 6) / 2;
+          await renderQR(canvas, row.url, { width: 300, margin: 1 });
+          doc.addImage(canvas.toDataURL("image/png"), "PNG", qrX, qrY, qrSize, qrSize);
+          doc.setFontSize(8 * 2.83);
+          doc.text(`SKU${String(i + 1).padStart(3, "0")}`, x + cellW / 2, qrY + qrSize + 4, { align: "center", maxWidth: cellW });
+        }
+        doc.save("qrworkbench-sample-sheet.pdf");
+      } finally {
+        pdfBtn.disabled = false;
+        pdfBtn.textContent = "Download this sample as a PDF";
+      }
+    });
+  })();
 
   // Compact free generator: a real, minimal version of the individual URL
   // generator, embedded directly on the homepage so SEO/broad-search
@@ -850,16 +934,19 @@ const sampleRows = [
     display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem;
     background: var(--surface); border: 1px solid var(--ink); padding: 1rem; width: 280px; flex: none;
   }
-  .label-cell { border: 1px dashed var(--line); padding: 0.4rem; display: flex; flex-direction: column; align-items: center; gap: 0.3rem; }
-  .label-qr { width: 100%; aspect-ratio: 1; background: repeating-conic-gradient(var(--ink) 0% 25%, var(--surface) 0% 50%) 50% / 6px 6px; }
-  .label-cap { width: 70%; height: 4px; background: var(--line); }
+  .label-cell { border: 1px dashed var(--line); padding: 0.4rem; display: flex; flex-direction: column; align-items: center; gap: 0.3rem; min-width: 0; overflow: hidden; }
+  .label-qr { display: block; width: 32px; height: 32px; flex: none; }
+  .label-qr canvas { display: block; width: 32px; height: 32px; border: 1px solid var(--line); background: #fff; }
+  .label-cap { font-family: var(--mono); font-size: 0.58rem; color: var(--ink-faint); max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .label-closeup {
     display: flex; flex-direction: column; align-items: center; gap: 0.7rem; flex: none;
     border: 1px solid var(--ink); background: var(--surface); padding: 1.2rem; width: 140px;
   }
-  .label-qr-big { width: 90px; height: 90px; }
+  .label-qr-big { display: block; width: 90px; height: 90px; flex: none; }
+  .label-qr-big canvas { display: block; width: 90px; height: 90px; border: 1px solid var(--line); background: #fff; }
   .label-cap-big { font-family: var(--mono); font-size: 0.68rem; color: var(--ink-dim); }
   .label-controls { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.6rem; flex: 1; min-width: 200px; }
+  .label-demo-actions { display: flex; gap: 0.8rem; flex-wrap: wrap; }
   .label-controls li { font-size: 0.85rem; color: var(--ink-dim); padding-left: 1.2rem; position: relative; }
   .label-controls li::before { content: "—"; position: absolute; left: 0; color: var(--red); }
 

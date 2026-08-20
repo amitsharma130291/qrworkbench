@@ -3,7 +3,15 @@ import { TOOLS } from "../data/tools.js";
 ---
 <footer class="site-footer">
   <div class="frame footer-brand-row">
-    <span>QR Workbench — codes render in your browser and never touch our servers</span>
+    <div class="footer-brand-left">
+      <a class="footer-logo" href="/">
+        <picture>
+          <source srcset="/logo.webp" type="image/webp" />
+          <img src="/logo.png" width="680" height="281" alt="QR Workbench" loading="lazy" />
+        </picture>
+      </a>
+      <span>Codes render in your browser and never touch our servers</span>
+    </div>
     <span>No account · No expiry · No dynamic redirects</span>
   </div>
 
@@ -44,11 +52,14 @@ import { TOOLS } from "../data/tools.js";
 <style>
   .site-footer { border-top: 1px solid var(--ink); margin-top: 5rem; }
   .footer-brand-row {
-    display: flex; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem;
-    padding: 1.6rem 1.75rem 1.5rem;
+    display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.8rem 1.2rem;
+    padding: 1.2rem 1.75rem;
     font-family: var(--mono); font-size: 0.72rem; color: var(--ink-faint);
     border-bottom: 1px solid var(--line);
   }
+  .footer-brand-left { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+  .footer-logo { display: flex; align-items: center; flex: none; }
+  .footer-logo img { height: 26px; width: auto; display: block; }
   .footer-grid {
     display: grid; grid-template-columns: repeat(4, 1fr); gap: 2rem;
     padding: 2rem 1.75rem 2.5rem;

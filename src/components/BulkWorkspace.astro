@@ -44,6 +44,7 @@
       <p><strong>Drop a CSV file here</strong><br />or click to browse</p>
       <span class="hint">Supports CSV · header row required</span>
     </div>
+    <button id="sample-csv" class="sample-link" type="button">↓ Download a sample CSV to try it</button>
     <input id="file-input" type="file" accept=".csv,text/csv" hidden />
     <div id="file-info" class="file-info" hidden>
       <div class="file-info-icon">✓</div>
@@ -523,6 +524,26 @@
     const file = fileInput.files?.[0];
     if (file) handleFile(file);
   });
+
+  el("sample-csv").addEventListener("click", () => {
+    const sample = [
+      "SKU,Product,URL",
+      "SKU001,Blue Cotton T-Shirt,https://example.com/products/blue-tshirt",
+      "SKU002,Red Cotton T-Shirt,https://example.com/products/red-tshirt",
+      "SKU003,Green Cotton T-Shirt,https://example.com/products/green-tshirt",
+      "SKU004,Black Cotton T-Shirt,https://example.com/products/black-tshirt",
+      "SKU005,White Cotton T-Shirt,https://example.com/products/white-tshirt",
+    ].join("\n");
+    const blob = new Blob([sample], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "sample-products.csv";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  });
   el("replace-file").addEventListener("click", () => fileInput.click());
 
   Object.values(mapSelects).forEach((sel) => sel.addEventListener("change", () => { renderPreview(); }));
@@ -687,9 +708,22 @@
   #tb-buy-batch:disabled { opacity: 0.5; cursor: not-allowed; }
 
   .panels { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; border: 1px solid var(--line); margin-bottom: 1.4rem; }
-  .panel { padding: 1.4rem; border-right: 1px solid var(--line); min-width: 0; }
+  .panel { position: relative; padding: 1.4rem; border-right: 1px solid var(--line); min-width: 0; }
   .panel:last-child { border-right: none; }
   .panel h2 { display: flex; align-items: center; gap: 0.55rem; font-size: 0.9rem; margin: 0 0 1.1rem; }
+
+  /* Step connector: a small circle straddling the border between panels,
+     with a chevron drawn from two rotated border edges -- reinforces that
+     these four boxes are a sequence, not just a row of unrelated cards. */
+  .panel:not(:last-child)::after {
+    content: ""; position: absolute; top: 1.9rem; right: -13px; z-index: 2;
+    width: 26px; height: 26px; border-radius: 50%; background: var(--bg); border: 1.5px solid var(--red);
+  }
+  .panel:not(:last-child)::before {
+    content: ""; position: absolute; top: 2.55rem; right: -6px; z-index: 3;
+    width: 7px; height: 7px; border-top: 1.5px solid var(--red); border-right: 1.5px solid var(--red);
+    transform: rotate(45deg);
+  }
   .pn { font-family: var(--mono); font-size: 0.68rem; color: var(--red); border: 1px solid var(--red); border-radius: 3px; padding: 0.1rem 0.35rem; }
   .preview-count { font-weight: 400; color: var(--ink-faint); font-size: 0.72rem; }
 
@@ -701,6 +735,11 @@
   .dropzone:hover, .dropzone.is-drag, .dropzone:focus-visible { border-color: var(--red); background: #FFF6F4; }
   .dropzone p { margin: 0; font-size: 0.82rem; line-height: 1.4; }
   .dropzone .hint { font-family: var(--mono); font-size: 0.65rem; color: var(--ink-faint); }
+
+  .sample-link {
+    display: block; width: 100%; margin-top: 0.7rem; padding: 0; border: none; background: none;
+    font: inherit; font-size: 0.76rem; color: var(--red); text-decoration: underline; cursor: pointer; text-align: center;
+  }
 
   .file-info { margin-top: 0.9rem; display: flex; align-items: center; gap: 0.7rem; border: 1px solid var(--line); padding: 0.7rem 0.8rem; }
   .file-info-icon { width: 22px; height: 22px; border-radius: 50%; background: var(--success); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 0.72rem; flex: none; }
@@ -778,6 +817,9 @@
     .panels { grid-template-columns: 1fr 1fr; }
     .panel { border-bottom: 1px solid var(--line); }
     .panel:nth-child(2n) { border-right: none; }
+    /* Two-column wrap breaks the left-to-right connector math -- drop it
+       rather than show an arrow pointing at the wrong panel. */
+    .panel::after, .panel::before { display: none; }
   }
   @media (max-width: 620px) {
     .panels { grid-template-columns: 1fr; }

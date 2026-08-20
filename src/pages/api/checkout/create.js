@@ -14,10 +14,14 @@ export async function POST({ request }) {
     return jsonResponse({ error: "Invalid request body." }, 400);
   }
 
-  const { tier, jobId } = body ?? {};
+  const { tier, jobId, returnTo } = body ?? {};
   if (tier !== "batch" && tier !== "pro") {
     return jsonResponse({ error: "Unknown pricing tier." }, 400);
   }
+  // Only ever an internal path from our own startCheckout() calls, but
+  // validated anyway since it's used to build a redirect URL -- an
+  // unvalidated value here could send Dodo's return_url off-site.
+  const safeReturnTo = typeof returnTo === "string" && /^\/[a-z0-9/-]*$/i.test(returnTo) ? returnTo : "/bulk";
   // A Batch Pass is ideally scoped to the specific upload it's bought for,
   // via jobId in the metadata below -- but jobId is optional here, not
   // required, so it can also be bought with no file loaded yet (e.g. from
@@ -38,7 +42,7 @@ export async function POST({ request }) {
     const session = await client.checkoutSessions.create({
       product_cart: [{ product_id: product.id, quantity: 1 }],
       metadata: { tier, jobId: jobId ?? "" },
-      return_url: `${origin}/bulk?checkout=return`,
+      return_url: `${origin}${safeReturnTo}?checkout=return`,
     });
     // Confirmed against the SDK's CheckoutSessionResponse type: the id field
     // is session_id (not id -- that's only on the *retrieve* response shape).

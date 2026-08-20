@@ -1,0 +1,581 @@
+---
+---
+<div class="ws-head">
+  <div>
+    <h1>Label Generator</h1>
+    <p>Turn a spreadsheet into a print-ready PDF sheet of QR labels — rows, columns, captions, sized to your page stock.</p>
+  </div>
+  <div class="privacy-box">
+    <svg width="18" height="18" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 1.5 13.5 3.6v3.9c0 3.4-2.3 6.3-5.5 7-3.2-.7-5.5-3.6-5.5-7V3.6L8 1.5Z" stroke="var(--ink)" stroke-width="1.3" stroke-linejoin="round"/></svg>
+    <div><strong>100% Private</strong><span>Everything stays in your browser</span></div>
+  </div>
+</div>
+
+<div id="tier-banner" class="tier-banner">
+  <div class="tb-status">
+    <strong id="tb-title">Pro feature</strong>
+    <span id="tb-desc">Printable label sheets are included with Pro — free and Batch Pass plans can configure a sheet but need Pro to export the PDF.</span>
+  </div>
+  <div class="tb-actions" id="tb-actions">
+    <button class="btn btn-accent" id="tb-buy-pro" type="button">Pro — $39</button>
+    <button class="link-btn" id="tb-toggle-key" type="button">Have a license key?</button>
+  </div>
+  <form id="tb-key-form" class="tb-key-form" hidden>
+    <input id="tb-key-input" type="text" placeholder="License key" autocomplete="off" />
+    <button class="btn" type="submit">Unlock</button>
+    <button class="link-btn" id="tb-toggle-recover" type="button">Forgot your key?</button>
+    <p id="tb-key-error" class="tb-key-error" hidden></p>
+  </form>
+  <form id="tb-recover-form" class="tb-key-form" hidden>
+    <input id="tb-recover-email" type="email" placeholder="Email used at checkout" autocomplete="email" />
+    <button class="btn" type="submit">Send my key</button>
+    <p id="tb-recover-status" class="tb-key-status" hidden></p>
+  </form>
+</div>
+
+<div id="error-banner" class="error-banner" hidden></div>
+
+<div class="panels">
+  <section id="upload" class="panel">
+    <h2><span class="pn">01</span>Upload file</h2>
+    <div id="dropzone" class="dropzone" tabindex="0" role="button" aria-label="Upload a CSV file">
+      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="var(--ink-faint)" stroke-width="1.4"><path d="M12 3v12M7 10l5-5 5 5" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 16v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <p><strong>Drop a CSV file here</strong><br />or click to browse</p>
+      <span class="hint">Supports CSV · header row required</span>
+    </div>
+    <input id="file-input" type="file" accept=".csv,text/csv" hidden />
+    <div id="file-info" class="file-info" hidden>
+      <div class="file-info-icon">✓</div>
+      <div class="file-info-text">
+        <strong id="file-name"></strong>
+        <span id="file-rows"></span>
+      </div>
+      <button id="replace-file" class="btn" type="button">Replace file</button>
+    </div>
+  </section>
+
+  <section id="map" class="panel">
+    <h2><span class="pn">02</span>Map columns</h2>
+    <div class="field-list">
+      <label>QR data <em>(required)</em><select id="map-qrdata" disabled></select></label>
+      <label>Label text <em>(optional)</em><select id="map-caption" disabled></select></label>
+    </div>
+  </section>
+
+  <section id="configure" class="panel">
+    <h2><span class="pn">03</span>Configure</h2>
+    <div class="field-list">
+      <label>Page size<select id="cfg-page">
+        <option value="letter" selected>US Letter (8.5 × 11 in)</option>
+        <option value="a4">A4 (210 × 297 mm)</option>
+      </select></label>
+      <div class="field-row">
+        <label>Columns<input id="cfg-cols" type="number" min="1" max="10" value="3" /></label>
+        <label>Rows<input id="cfg-rows" type="number" min="1" max="15" value="8" /></label>
+      </div>
+      <div class="field-row">
+        <label>Margin (mm)<input id="cfg-margin" type="number" min="4" max="30" value="12" /></label>
+        <label>Spacing (mm)<input id="cfg-gap" type="number" min="0" max="20" value="4" /></label>
+      </div>
+      <label>Error correction<select id="cfg-ec">
+        <option value="L">L — ~7%</option>
+        <option value="M" selected>M — ~15%</option>
+        <option value="Q">Q — ~25%</option>
+        <option value="H">H — ~30%</option>
+      </select></label>
+    </div>
+  </section>
+
+  <section id="preview" class="panel">
+    <h2><span class="pn">04</span>Preview <span id="preview-count" class="preview-count"></span></h2>
+    <div id="sheet-preview" class="sheet-preview">
+      <p class="empty-note">Upload a CSV to see a live layout preview here.</p>
+    </div>
+  </section>
+</div>
+
+<div class="generate-bar" id="generate">
+  <div class="gb-left">
+    <strong id="ready-count">Upload a CSV to get started</strong>
+    <div class="chips">
+      <span id="chip-page">Letter</span>
+      <span id="chip-grid">3 × 8 per page</span>
+      <span id="chip-pages">—</span>
+    </div>
+  </div>
+  <div class="gb-right">
+    <span id="gen-progress" class="gen-progress" aria-live="polite"></span>
+    <button id="generate-btn" class="btn btn-accent" type="button" disabled>Generate PDF</button>
+  </div>
+</div>
+
+<p class="gb-note">Generation happens entirely in this browser tab — nothing is uploaded anywhere.</p>
+
+<div class="support-faq">
+  <h2>Questions</h2>
+  <details class="faq-item">
+    <summary>What columns does my CSV need?</summary>
+    <p>At minimum, one column with the QR content (a URL or any text). A second column for label text under each code is optional.</p>
+  </details>
+  <details class="faq-item">
+    <summary>What page sizes are supported?</summary>
+    <p>US Letter and A4 today. Columns, rows, margin, and spacing between labels are all adjustable to fit common label stock.</p>
+  </details>
+  <details class="faq-item">
+    <summary>Is this the same as the bulk ZIP generator?</summary>
+    <p>No — the <a href="/bulk-qr-code-generator">bulk workspace</a> exports individual SVG/PNG files in a ZIP. This exports one print-ready PDF with your codes laid out in a grid, ready to print and cut.</p>
+  </details>
+  <details class="faq-item">
+    <summary>Is this a Pro-only feature?</summary>
+    <p>Yes — configuring and previewing a sheet is free, but exporting the PDF requires an unlocked Pro license. A Batch Pass doesn't cover this; see the <a href="/pricing">pricing page</a>.</p>
+  </details>
+</div>
+
+<script>
+  import { renderQR } from "../lib/qr.js";
+  import { parseCSV, guessColumn } from "../lib/csv.js";
+  import {
+    newJobId,
+    startCheckout,
+    resolvePendingCheckout,
+    redeemLicenseKey,
+    requestLicenseRecovery,
+    getStoredPayment,
+    verifyAccessForJob,
+  } from "../lib/bulk/license.js";
+  import { jsPDF } from "jspdf";
+
+  const el = (id) => document.getElementById(id);
+  const dropzone = el("dropzone");
+  const fileInput = el("file-input");
+  const fileInfo = el("file-info");
+  const errorBanner = el("error-banner");
+
+  // Labels are Pro-only -- there's no per-file Batch Pass equivalent for a
+  // printed sheet, so the jobId passed around here is only ever used to
+  // satisfy verifyAccessForJob()'s signature, never to scope anything.
+  const dummyJobId = newJobId();
+
+  const tierBanner = {
+    title: el("tb-title"),
+    desc: el("tb-desc"),
+    buyPro: el("tb-buy-pro"),
+    toggleKey: el("tb-toggle-key"),
+    keyForm: el("tb-key-form"),
+    keyInput: el("tb-key-input"),
+    keyError: el("tb-key-error"),
+    toggleRecover: el("tb-toggle-recover"),
+    recoverForm: el("tb-recover-form"),
+    recoverEmail: el("tb-recover-email"),
+    recoverStatus: el("tb-recover-status"),
+  };
+
+  let isPro = false;
+
+  function renderTierBanner() {
+    if (isPro) {
+      tierBanner.title.textContent = "Pro unlocked";
+      tierBanner.desc.textContent = "Printable label sheets are unlocked in this browser.";
+      tierBanner.buyPro.hidden = true;
+      tierBanner.toggleKey.hidden = true;
+      tierBanner.keyForm.hidden = true;
+      tierBanner.recoverForm.hidden = true;
+    } else {
+      tierBanner.title.textContent = "Pro feature";
+      tierBanner.desc.textContent = "Printable label sheets are included with Pro — free and Batch Pass plans can configure a sheet but need Pro to export the PDF.";
+      tierBanner.buyPro.hidden = false;
+      tierBanner.toggleKey.hidden = false;
+    }
+    updateBottomBar();
+  }
+
+  tierBanner.toggleKey.addEventListener("click", () => {
+    tierBanner.keyForm.hidden = !tierBanner.keyForm.hidden;
+    tierBanner.recoverForm.hidden = true;
+  });
+  tierBanner.toggleRecover.addEventListener("click", () => {
+    tierBanner.recoverForm.hidden = !tierBanner.recoverForm.hidden;
+  });
+  tierBanner.buyPro.addEventListener("click", async () => {
+    tierBanner.buyPro.disabled = true;
+    try {
+      await startCheckout("pro", dummyJobId, "/labels");
+    } catch (err) {
+      tierBanner.keyError.textContent = err.message;
+      tierBanner.keyError.hidden = false;
+      tierBanner.keyForm.hidden = false;
+      tierBanner.buyPro.disabled = false;
+    }
+  });
+  tierBanner.keyForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const key = tierBanner.keyInput.value.trim();
+    if (!key) return;
+    tierBanner.keyError.hidden = true;
+    try {
+      const record = await redeemLicenseKey(key, "");
+      isPro = record.tier === "pro";
+      if (!isPro) {
+        tierBanner.keyError.textContent = "That's a Batch Pass key — printable sheets need a Pro license.";
+        tierBanner.keyError.hidden = false;
+      }
+      renderTierBanner();
+    } catch (err) {
+      tierBanner.keyError.textContent = err.message;
+      tierBanner.keyError.hidden = false;
+    }
+  });
+  tierBanner.recoverForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const email = tierBanner.recoverEmail.value.trim();
+    if (!email) return;
+    tierBanner.recoverStatus.hidden = true;
+    try {
+      const message = await requestLicenseRecovery(email);
+      tierBanner.recoverStatus.textContent = message;
+      tierBanner.recoverStatus.hidden = false;
+    } catch (err) {
+      tierBanner.recoverStatus.textContent = err.message;
+      tierBanner.recoverStatus.hidden = false;
+    }
+  });
+
+  async function initTierBanner() {
+    let resumed = null;
+    try {
+      resumed = await resolvePendingCheckout();
+    } catch {
+      resumed = { failed: true };
+    }
+    if (resumed?.failed) {
+      showError("Payment wasn't completed — nothing was charged.");
+    }
+    const stored = getStoredPayment();
+    if (stored?.tier === "pro") {
+      // Re-verify live rather than trusting localStorage indefinitely --
+      // same rule the bulk workspace's export path follows.
+      const access = await verifyAccessForJob(dummyJobId).catch(() => stored);
+      isPro = access?.tier === "pro";
+    }
+    renderTierBanner();
+  }
+
+  const mapSelects = { qrData: el("map-qrdata"), caption: el("map-caption") };
+  const cfgPage = el("cfg-page");
+  const cfgCols = el("cfg-cols");
+  const cfgRows = el("cfg-rows");
+  const cfgMargin = el("cfg-margin");
+  const cfgGap = el("cfg-gap");
+  const cfgEc = el("cfg-ec");
+
+  const sheetPreview = el("sheet-preview");
+  const previewCount = el("preview-count");
+  const readyCount = el("ready-count");
+  const generateBtn = el("generate-btn");
+  const genProgress = el("gen-progress");
+
+  const PAGE_SIZES = { letter: { w: 215.9, h: 279.4 }, a4: { w: 210, h: 297 } };
+
+  let state = { headers: [], rows: [] };
+
+  function showError(msg) {
+    errorBanner.textContent = msg;
+    errorBanner.hidden = false;
+  }
+  function clearError() {
+    errorBanner.hidden = true;
+  }
+
+  function markStepDone(id) {
+    const link = document.querySelector(`.side-link[data-step="${id}"]`);
+    if (link) link.classList.add("is-done");
+  }
+
+  async function handleFile(file) {
+    clearError();
+    if (!/\.csv$/i.test(file.name)) {
+      showError(`"${file.name}" isn't a CSV file. Export your spreadsheet as CSV and try again.`);
+      return;
+    }
+    const text = await file.text();
+    const { headers, rows } = parseCSV(text);
+    if (headers.length === 0 || rows.length === 0) {
+      showError("That CSV looks empty, or has no header row.");
+      return;
+    }
+    state = { headers, rows };
+
+    fileInfo.hidden = false;
+    el("file-name").textContent = file.name;
+    el("file-rows").textContent = `${rows.length.toLocaleString()} rows`;
+
+    populateMapping();
+    markStepDone("upload");
+    markStepDone("map");
+    markStepDone("configure");
+    markStepDone("preview");
+    renderSheetPreview();
+    updateBottomBar();
+  }
+
+  function populateMapping() {
+    const { headers } = state;
+    const qrGuess = guessColumn(headers, ["url", "link", "website"], headers[0]);
+    const capGuess = guessColumn(headers, ["name", "product", "sku", "title", "caption", "label"]);
+    mapSelects.qrData.innerHTML = headers.map((h) => `<option ${h === qrGuess ? "selected" : ""}>${h}</option>`).join("");
+    mapSelects.caption.innerHTML = `<option value="">None</option>` + headers.map((h) => `<option ${h === capGuess ? "selected" : ""}>${h}</option>`).join("");
+    Object.values(mapSelects).forEach((s) => (s.disabled = false));
+  }
+
+  function currentMapping() {
+    return { qrData: mapSelects.qrData.value, caption: mapSelects.caption.value };
+  }
+
+  function gridConfig() {
+    const cols = Math.max(1, Math.min(10, Number(cfgCols.value) || 1));
+    const rows = Math.max(1, Math.min(15, Number(cfgRows.value) || 1));
+    const margin = Math.max(0, Number(cfgMargin.value) || 0);
+    const gap = Math.max(0, Number(cfgGap.value) || 0);
+    const page = PAGE_SIZES[cfgPage.value] || PAGE_SIZES.letter;
+    const usableW = page.w - margin * 2;
+    const usableH = page.h - margin * 2;
+    const cellW = (usableW - (cols - 1) * gap) / cols;
+    const cellH = (usableH - (rows - 1) * gap) / rows;
+    return { cols, rows, margin, gap, page, cellW, cellH, perPage: cols * rows };
+  }
+
+  function renderSheetPreview() {
+    const { cols, rows, perPage } = gridConfig();
+    const n = state.rows.length;
+    sheetPreview.innerHTML = "";
+    if (!n) {
+      sheetPreview.innerHTML = `<p class="empty-note">Upload a CSV to see a live layout preview here.</p>`;
+      previewCount.textContent = "";
+      return;
+    }
+    const grid = document.createElement("div");
+    grid.className = "sheet-grid";
+    grid.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+    const mapping = currentMapping();
+    const shown = Math.min(perPage, n);
+    state.rows.slice(0, shown).forEach((row) => {
+      const cell = document.createElement("div");
+      cell.className = "sheet-cell";
+      const canvas = document.createElement("canvas");
+      canvas.width = 120;
+      canvas.height = 120;
+      cell.appendChild(canvas);
+      if (mapping.caption) {
+        const cap = document.createElement("span");
+        cap.textContent = row[mapping.caption] || "";
+        cell.appendChild(cap);
+      }
+      grid.appendChild(cell);
+      const value = row[mapping.qrData] || "";
+      if (value) renderQR(canvas, value, { width: 120, margin: 1 });
+    });
+    sheetPreview.appendChild(grid);
+    const pages = Math.ceil(n / perPage);
+    previewCount.textContent = `— first ${shown} of ${n.toLocaleString()} (page 1 of ${pages.toLocaleString()})`;
+  }
+
+  function updateBottomBar() {
+    const n = state.rows.length;
+    const { cols, rows, perPage } = gridConfig();
+    readyCount.textContent = n ? `${n.toLocaleString()} labels ready to lay out` : "Upload a CSV to get started";
+    el("chip-page").textContent = cfgPage.value === "a4" ? "A4" : "Letter";
+    el("chip-grid").textContent = `${cols} × ${rows} per page`;
+    el("chip-pages").textContent = n ? `${Math.ceil(n / perPage).toLocaleString()} page${Math.ceil(n / perPage) === 1 ? "" : "s"}` : "—";
+    generateBtn.disabled = n === 0 || !isPro;
+    generateBtn.textContent = !isPro && n > 0 ? "Unlock Pro to generate PDF" : "Generate PDF";
+  }
+
+  dropzone.addEventListener("click", () => fileInput.click());
+  dropzone.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      fileInput.click();
+    }
+  });
+  dropzone.addEventListener("dragover", (e) => {
+    e.preventDefault();
+    dropzone.classList.add("is-drag");
+  });
+  dropzone.addEventListener("dragleave", () => dropzone.classList.remove("is-drag"));
+  dropzone.addEventListener("drop", (e) => {
+    e.preventDefault();
+    dropzone.classList.remove("is-drag");
+    const file = e.dataTransfer?.files?.[0];
+    if (file) handleFile(file);
+  });
+  fileInput.addEventListener("change", () => {
+    const file = fileInput.files?.[0];
+    if (file) handleFile(file);
+  });
+  el("replace-file").addEventListener("click", () => fileInput.click());
+
+  Object.values(mapSelects).forEach((sel) => sel.addEventListener("change", renderSheetPreview));
+  [cfgPage, cfgCols, cfgRows, cfgMargin, cfgGap].forEach((elm) => {
+    elm.addEventListener("change", () => {
+      renderSheetPreview();
+      updateBottomBar();
+    });
+  });
+
+  async function runGeneratePDF() {
+    if (!state.rows.length || !isPro) return;
+    generateBtn.disabled = true;
+    const mapping = currentMapping();
+    const ec = cfgEc.value;
+    const { cols, rows, margin, gap, page, cellW, cellH, perPage } = gridConfig();
+    const hasCaption = Boolean(mapping.caption);
+    const qrSize = Math.min(cellW, cellH) * (hasCaption ? 0.72 : 0.9);
+    const captionFontMM = 3;
+
+    const doc = new jsPDF({ unit: "mm", format: [page.w, page.h] });
+    const canvas = document.createElement("canvas");
+    let written = 0;
+
+    for (let i = 0; i < state.rows.length; i++) {
+      const row = state.rows[i];
+      const value = row[mapping.qrData];
+      if (!value) continue;
+
+      const posInPage = written % perPage;
+      if (posInPage === 0 && written > 0) doc.addPage([page.w, page.h]);
+      const colIdx = posInPage % cols;
+      const rowIdx = Math.floor(posInPage / cols);
+      const cellX = margin + colIdx * (cellW + gap);
+      const cellY = margin + rowIdx * (cellH + gap);
+      const qrX = cellX + (cellW - qrSize) / 2;
+      const qrY = cellY + (cellH - qrSize - (hasCaption ? captionFontMM + 2 : 0)) / 2;
+
+      await renderQR(canvas, value, { errorCorrectionLevel: ec, width: 300, margin: 1 });
+      const dataUrl = canvas.toDataURL("image/png");
+      doc.addImage(dataUrl, "PNG", qrX, qrY, qrSize, qrSize);
+
+      if (hasCaption) {
+        const label = String(row[mapping.caption] || "").slice(0, 40);
+        if (label) {
+          doc.setFontSize(captionFontMM * 2.83); // mm -> pt
+          doc.text(label, cellX + cellW / 2, qrY + qrSize + captionFontMM + 0.5, { align: "center", maxWidth: cellW });
+        }
+      }
+
+      written++;
+      if (i % 15 === 0) {
+        genProgress.textContent = `Laying out… ${written.toLocaleString()}/${state.rows.length.toLocaleString()}`;
+        await new Promise((r) => setTimeout(r, 0));
+      }
+    }
+
+    genProgress.textContent = `Saving PDF (${written.toLocaleString()} labels)…`;
+    await new Promise((r) => setTimeout(r, 0));
+    doc.save("qrworkbench-labels.pdf");
+    genProgress.textContent = `Done — downloaded qrworkbench-labels.pdf (${written.toLocaleString()} labels, ${doc.getNumberOfPages()} page${doc.getNumberOfPages() === 1 ? "" : "s"})`;
+    generateBtn.disabled = false;
+  }
+
+  generateBtn.addEventListener("click", runGeneratePDF);
+
+  updateBottomBar();
+  initTierBanner();
+</script>
+
+<style>
+  .ws-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 1.5rem; flex-wrap: wrap; margin-bottom: 1.6rem; }
+  .ws-head h1 { font-size: 1.55rem; margin: 0 0 0.4rem; letter-spacing: -0.01em; }
+  .ws-head p { margin: 0; color: var(--ink-dim); font-size: 0.9rem; max-width: 48ch; }
+  .privacy-box { display: flex; align-items: center; gap: 0.6rem; border: 1px solid var(--line); background: var(--surface); padding: 0.7rem 0.9rem; }
+  .privacy-box strong { display: block; font-size: 0.78rem; }
+  .privacy-box span { display: block; font-size: 0.68rem; color: var(--ink-faint); }
+
+  .error-banner { border: 1px solid var(--red); background: #FDECE8; color: #9A2A14; padding: 0.75rem 1rem; font-size: 0.85rem; margin-bottom: 1.4rem; }
+
+  .tier-banner {
+    display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap;
+    border: 1px solid var(--line); background: var(--surface); padding: 0.85rem 1.1rem; margin-bottom: 1.4rem;
+  }
+  .tb-status { display: flex; flex-direction: column; gap: 0.15rem; min-width: 0; max-width: 40ch; }
+  .tb-status strong { font-size: 0.85rem; }
+  .tb-status span { font-size: 0.75rem; color: var(--ink-faint); }
+  .tb-actions { display: flex; align-items: center; gap: 0.7rem; flex-wrap: wrap; }
+  .tb-actions .btn { font-size: 0.76rem; padding: 0.55rem 0.9rem; }
+  .link-btn { font: inherit; font-size: 0.78rem; background: none; border: none; color: var(--red); text-decoration: underline; cursor: pointer; padding: 0; }
+  .tb-key-form { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; width: 100%; margin-top: 0.9rem; padding-top: 0.9rem; border-top: 1px solid var(--line); }
+  .tb-key-form input { flex: 1; min-width: 180px; font: inherit; font-size: 0.82rem; padding: 0.55rem 0.7rem; border: 1px solid var(--line); background: var(--bg); color: var(--ink); }
+  .tb-key-form .btn { font-size: 0.76rem; padding: 0.55rem 0.9rem; }
+  .tb-key-error { color: var(--red); font-size: 0.78rem; margin: 0.6rem 0 0; width: 100%; }
+  .tb-key-status { color: var(--success); font-size: 0.78rem; margin: 0.6rem 0 0; width: 100%; }
+
+  .panels { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; border: 1px solid var(--line); margin-bottom: 1.4rem; }
+  .panel { position: relative; padding: 1.4rem; border-right: 1px solid var(--line); min-width: 0; }
+  .panel:last-child { border-right: none; }
+  .panel h2 { display: flex; align-items: center; gap: 0.55rem; font-size: 0.9rem; margin: 0 0 1.1rem; }
+  .pn { font-family: var(--mono); font-size: 0.68rem; color: var(--red); border: 1px solid var(--red); border-radius: 3px; padding: 0.1rem 0.35rem; }
+  .preview-count { font-weight: 400; color: var(--ink-faint); font-size: 0.72rem; }
+
+  .dropzone {
+    border: 1.5px dashed var(--line); padding: 1.6rem 1rem; text-align: center; cursor: pointer;
+    display: flex; flex-direction: column; align-items: center; gap: 0.6rem;
+    transition: border-color var(--dur-fast) var(--ease-standard), background var(--dur-fast) var(--ease-standard);
+  }
+  .dropzone:hover, .dropzone.is-drag, .dropzone:focus-visible { border-color: var(--red); background: #FFF6F4; }
+  .dropzone p { margin: 0; font-size: 0.82rem; line-height: 1.4; }
+  .dropzone .hint { font-family: var(--mono); font-size: 0.65rem; color: var(--ink-faint); }
+
+  .file-info { margin-top: 0.9rem; display: flex; align-items: center; gap: 0.7rem; border: 1px solid var(--line); padding: 0.7rem 0.8rem; }
+  .file-info-icon { width: 22px; height: 22px; border-radius: 50%; background: var(--success); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 0.72rem; flex: none; }
+  .file-info-text { display: flex; flex-direction: column; gap: 0.1rem; flex: 1; min-width: 0; }
+  .file-info-text strong { font-size: 0.78rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .file-info-text span { font-family: var(--mono); font-size: 0.68rem; color: var(--ink-faint); }
+  .file-info .btn { font-size: 0.68rem; padding: 0.45rem 0.7rem; }
+
+  .field-list { display: flex; flex-direction: column; gap: 0.9rem; }
+  .field-list label { display: flex; flex-direction: column; gap: 0.35rem; font-size: 0.75rem; font-weight: 600; color: var(--ink-dim); }
+  .field-list label em { font-weight: 400; font-style: normal; color: var(--ink-faint); }
+  .field-list select, .field-list input {
+    font: inherit; font-size: 0.82rem; padding: 0.55rem 0.6rem; border: 1px solid var(--line); background: var(--surface); color: var(--ink);
+  }
+  .field-list select:disabled { color: var(--ink-faint); background: var(--bg); }
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; }
+
+  .sheet-preview { max-height: 360px; overflow-y: auto; }
+  .empty-note { font-size: 0.8rem; color: var(--ink-faint); margin: 0; }
+  .sheet-grid { display: grid; gap: 0.5rem; }
+  .sheet-cell { display: flex; flex-direction: column; align-items: center; gap: 0.3rem; border: 1px solid var(--line); padding: 0.4rem; }
+  .sheet-cell canvas { width: 100%; height: auto; max-width: 70px; }
+  .sheet-cell span { font-size: 0.6rem; color: var(--ink-dim); text-align: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%; }
+
+  .generate-bar {
+    display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; flex-wrap: wrap;
+    border: 1px solid var(--ink); padding: 1.1rem 1.4rem; background: var(--surface);
+  }
+  .gb-left strong { display: block; font-size: 0.9rem; margin-bottom: 0.5rem; }
+  .chips { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+  .chips span { font-family: var(--mono); font-size: 0.65rem; border: 1px solid var(--line); padding: 0.25rem 0.5rem; color: var(--ink-dim); }
+  .gb-right { display: flex; align-items: center; gap: 1rem; }
+  .gen-progress { font-family: var(--mono); font-size: 0.7rem; color: var(--ink-faint); }
+  .gb-note { font-family: var(--mono); font-size: 0.68rem; color: var(--ink-faint); margin: 0.8rem 0 0; }
+
+  .support-faq { margin: 3rem 0 2rem; }
+  .support-faq h2 { font-size: 1rem; margin: 0 0 1.1rem; letter-spacing: -0.01em; }
+  .support-faq .faq-item { border-top: 1px solid var(--line); padding: 0.85rem 0; }
+  .support-faq .faq-item summary { cursor: pointer; font-size: 0.86rem; font-weight: 600; list-style: none; }
+  .support-faq .faq-item summary::-webkit-details-marker { display: none; }
+  .support-faq .faq-item summary::before { content: "+"; display: inline-block; width: 1em; color: var(--red); font-weight: 700; }
+  .support-faq .faq-item[open] summary::before { content: "–"; }
+  .support-faq .faq-item p { margin: 0.6rem 0 0 1em; font-size: 0.82rem; color: var(--ink-dim); line-height: 1.55; }
+  .support-faq .faq-item p a { color: var(--red); }
+
+  @media (max-width: 980px) {
+    .panels { grid-template-columns: 1fr 1fr; }
+    .panel { border-bottom: 1px solid var(--line); }
+    .panel:nth-child(2n) { border-right: none; }
+  }
+  @media (max-width: 620px) {
+    .panels { grid-template-columns: 1fr; }
+    .panel { border-right: none; }
+    .field-row { grid-template-columns: 1fr; }
+  }
+</style>

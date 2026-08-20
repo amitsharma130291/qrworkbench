@@ -26,11 +26,11 @@ export async function jobIdFromFile(file) {
     .slice(0, 32);
 }
 
-export async function startCheckout(tier, jobId) {
+export async function startCheckout(tier, jobId, returnTo) {
   const res = await fetch("/api/checkout/create", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ tier, jobId: tier === "batch" ? jobId : undefined }),
+    body: JSON.stringify({ tier, jobId: tier === "batch" ? jobId : undefined, returnTo }),
   });
   const data = await res.json();
   if (!res.ok || !data.checkoutUrl) {

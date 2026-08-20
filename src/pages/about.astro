@@ -13,6 +13,9 @@ const formats = [
   { name: "Facebook", href: "/facebook-qr-code-generator" },
   { name: "Instagram", href: "/instagram-qr-code-generator" },
   { name: "LinkedIn", href: "/linkedin-qr-code-generator" },
+  { name: "WhatsApp", href: "/whatsapp-qr-code-generator" },
+  { name: "YouTube", href: "/youtube-qr-code-generator" },
+  { name: "Spotify", href: "/spotify-qr-code-generator" },
 ];
 ---
 <SimplePageLayout
@@ -20,7 +23,7 @@ const formats = [
   description="What QR Workbench is, how the QR encoding actually works, and why it runs entirely in your browser."
   eyebrow="About"
   h1="What QR Workbench actually does"
-  intro="A free, browser-based QR code generator for eleven formats, plus a bulk workspace that turns a spreadsheet into a ZIP of correctly named codes. No signup, nothing uploaded to a server."
+  intro="A free, browser-based QR code generator for fourteen formats, plus a bulk workspace that turns a spreadsheet into a ZIP of correctly named codes. No signup, nothing uploaded to a server."
 >
   <h2>What it does</h2>
   <p>QR Workbench turns whatever you type — a link, a WiFi password, a contact card — into a real, scannable QR code, instantly, in your browser. Pick a format, fill in the fields, download an SVG or PNG. Need a few hundred or a few thousand at once instead of one? The <a href="/bulk-qr-code-generator">bulk workspace</a> takes a CSV and generates a ZIP.</p>
@@ -33,13 +36,13 @@ const formats = [
   <ul>
     {formats.map((f) => <li><a href={f.href}>{f.name}</a></li>)}
   </ul>
-  <p>Google Forms, Facebook, Instagram, LinkedIn, and PDF generators encode a link you provide — QR Workbench doesn't host, verify, or have any relationship with those platforms beyond generating a code that points to a URL you already control.</p>
+  <p>Google Forms, Facebook, Instagram, LinkedIn, YouTube, Spotify, and PDF generators encode a link you provide; WhatsApp encodes a number (and an optional message) into a wa.me chat link. QR Workbench doesn't host, verify, or have any relationship with those platforms beyond generating a code that points to a URL or chat you already control.</p>
 
   <h2>Why static QR</h2>
   <p>A static QR code has its destination encoded directly into the pattern. There's no redirect server in between — which means no ongoing dependency on QR Workbench (or anyone else) to keep working, and no expiry date. The tradeoff is that a static code can't be edited after it's printed; if the destination needs to change, you generate a new one. For most use cases — a WiFi sign, a business card, a product link — that tradeoff is the right one.</p>
 
   <h2>Free generators, paid bulk</h2>
-  <p>The eleven individual generators above are free, permanently, with no account and no limit. The <a href="/bulk">bulk workspace</a> — CSV upload, column mapping, batch generation, ZIP export — is free to try up to 20 codes per batch; a one-time payment ($7 for a single batch pass, $39 for unlimited lifetime access) unlocks larger batches via a license key, no account or subscription required. See the <a href="/pricing">pricing page</a> for details.</p>
+  <p>The fourteen individual generators above are free, permanently, with no account and no limit. The <a href="/bulk">bulk workspace</a> — CSV upload, column mapping, batch generation, ZIP export — is free to try up to 20 codes per batch; a one-time payment ($7 for a single batch pass, $39 for unlimited lifetime access) unlocks larger batches via a license key, no account or subscription required. See the <a href="/pricing">pricing page</a> for details.</p>
 
   <h2>Privacy by construction</h2>
   <p>Every generator — individual and bulk — runs entirely in your browser's own JavaScript. There's no server-side component receiving what you type, so there's nothing to log even if we wanted to. Read the <a href="/privacy-policy">Privacy Policy</a> for the specifics.</p>

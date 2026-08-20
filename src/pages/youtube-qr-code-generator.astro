@@ -1,0 +1,54 @@
+---
+import GeneratorPageLayout from "../layouts/GeneratorPageLayout.astro";
+import GeneratorShell from "../components/GeneratorShell.astro";
+
+const howTo = [
+  "Open the YouTube video, channel, or playlist and copy its share link.",
+  "Paste it into the field below and check the preview.",
+  "Scan it yourself to confirm it opens the right video or channel before printing.",
+  "Download the SVG for packaging or print, or PNG for a slide or digital sign.",
+];
+
+const tips = [
+  "A channel link (youtube.com/@yourchannel) is more durable for long-lived print material than a single video link, which stops being useful if that video is ever deleted or made private.",
+  "To link to a specific moment instead of the start, use YouTube's \"Copy link at current time\" option when sharing — the timestamp carries through into the QR code.",
+  "youtu.be short links and full youtube.com/watch?v= links both work the same way — pick whichever you already have copied.",
+];
+
+const faq = [
+  { q: "Does this need a YouTube API key or Google account?", a: "No. It just encodes whatever YouTube link you paste — no API, no login, no channel ownership verification." },
+  { q: "Can I link to a specific timestamp instead of the start of the video?", a: "Yes — copy a timestamped link from YouTube's own share menu (\"Copy link at current time\") and paste that instead of the plain video URL." },
+  { q: "Will it still work if I unlist or delete the video later?", a: "No — like any static QR code, the link is fixed at generation time. If the video becomes unavailable, the code will lead to an error page; you'd need to generate a new code pointing elsewhere." },
+  { q: "Should I link to a video or my channel?", a: "Depends on the shelf life of what you're printing. A single video is better for one-time content (a tutorial, an event recap); a channel link is safer for anything meant to stay useful for years." },
+  { q: "Can I use this for a YouTube Short or Live stream link?", a: "Yes — Shorts, regular videos, live streams, and playlists all use ordinary YouTube URLs, so any of their share links work here the same way." },
+];
+
+---
+<GeneratorPageLayout
+  title="YouTube QR Code Generator — Link to a Video or Channel, Free | QR Workbench"
+  description="Turn your YouTube video, channel, or playlist link into a scannable QR code. Free, static, generated in your browser."
+  eyebrow="YouTube QR Code Generator"
+  slug="youtube"
+  h1="Get scanned straight to your YouTube"
+  intro="Paste a YouTube video, channel, or playlist link and get a QR code for packaging, posters, or a business card — no typing a long URL on a phone keyboard."
+  howTo={howTo}
+  tips={tips}
+  bulkNote="Need codes for multiple videos or channels? Generate a batch from CSV →"
+  faq={faq}
+>
+  <GeneratorShell filenamePrefix="youtube-qr-code">
+    <Fragment slot="fields">
+      <label for="f-url">YouTube video, channel, or playlist URL
+        <input id="f-url" type="url" placeholder="https://youtube.com/watch?v=..." autocomplete="off" />
+      </label>
+    </Fragment>
+  </GeneratorShell>
+</GeneratorPageLayout>
+
+<script>
+  import { initGeneratorTool } from "../lib/generatorUI.js";
+  const url = document.getElementById("f-url");
+  const tool = initGeneratorTool({ getText: () => url.value.trim(), filenamePrefix: "youtube-qr-code" });
+  url.addEventListener("input", tool.update);
+  tool.update();
+</script>

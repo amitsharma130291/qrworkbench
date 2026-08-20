@@ -15,11 +15,13 @@ const tools = [
   { icon: "social", name: "Facebook", desc: "Link to your page or post.", href: "/facebook-qr-code-generator" },
   { icon: "social", name: "Instagram", desc: "Link to your profile.", href: "/instagram-qr-code-generator" },
   { icon: "social", name: "LinkedIn", desc: "Link to your profile.", href: "/linkedin-qr-code-generator" },
+  { icon: "social", name: "WhatsApp", desc: "Pre-filled chat, ready to send.", href: "/whatsapp-qr-code-generator" },
+  { icon: "social", name: "YouTube", desc: "Link to a video or channel.", href: "/youtube-qr-code-generator" },
+  { icon: "social", name: "Spotify", desc: "Link to a track or playlist.", href: "/spotify-qr-code-generator" },
 ];
-const moreTools = ["WhatsApp"];
 ---
 <Layout
-  title="QR Workbench — Free QR Code Generator for 11 Formats"
+  title="QR Workbench — Free QR Code Generator for 14 Formats"
   description="Free QR codes for URLs, WiFi, vCards, email and more — generated entirely in your browser. Bulk CSV-to-ZIP generation for hundreds at once, one-time payment."
 >
   <div class="hero">
@@ -29,7 +31,7 @@ const moreTools = ["WhatsApp"];
         <h1>A grid that turns <span class="rd">anything</span> into a scan.</h1>
         <p class="lede">
           Every QR code is a grid of black and white modules. Generate one free — WiFi, vCard, URL
-          and eight more formats — entirely in your browser, no tracking, no redirect server. Need
+          and eleven more formats — entirely in your browser, no tracking, no redirect server. Need
           a few thousand at once? That's the paid bulk workspace, one-time payment to unlock.
         </p>
         <div class="cta-row">
@@ -67,18 +69,6 @@ const moreTools = ["WhatsApp"];
               </div>
             </a>
           ))}
-          <details class="tool-item tool-more">
-            <summary>
-              <ToolIcon name="more" />
-              <div>
-                <h3>More <span class="soon-tag">Soon</span></h3>
-                <p>{moreTools.join(", ")}</p>
-              </div>
-            </summary>
-            <div class="more-panel">
-              {moreTools.map((m) => <span>{m}</span>)}
-            </div>
-          </details>
         </div>
       </div>
     </section>
@@ -156,10 +146,6 @@ const moreTools = ["WhatsApp"];
   .row-label h2 { font-size: 1.15rem; font-weight: 700; margin: 0; letter-spacing: -0.01em; line-height: 1.25; }
   .row-content { grid-column: 4 / 13; padding: 3rem 0 3rem 2.5rem; }
 
-  .soon-tag {
-    font-family: var(--mono); font-size: 0.58rem; font-weight: 700; text-transform: uppercase;
-    color: var(--ink-faint); border: 1px solid var(--line); border-radius: 3px; padding: 0.08rem 0.3rem; vertical-align: middle;
-  }
   .section-note { font-size: 0.8rem; color: var(--ink-faint); margin: 0 0 1.6rem; max-width: 52ch; }
   .pricing-note { margin: 1.6rem 0 0; }
 
@@ -175,11 +161,6 @@ const moreTools = ["WhatsApp"];
   .tool-item h3 { margin: 0 0 0.3rem; font-size: 0.92rem; font-weight: 700; }
   a.tool-item:hover h3 { color: var(--red); }
   .tool-item p { margin: 0; font-size: 0.8rem; color: var(--ink-dim); line-height: 1.45; }
-  .tool-more summary { display: flex; gap: 0.8rem; cursor: pointer; list-style: none; }
-  .tool-more summary::-webkit-details-marker { display: none; }
-  .tool-more[open] summary { margin-bottom: 0.8rem; }
-  .more-panel { display: flex; flex-wrap: wrap; gap: 0.5rem; padding-left: 2.8rem; }
-  .more-panel span { font-family: var(--mono); font-size: 0.72rem; border: 1px solid var(--line); padding: 0.3rem 0.6rem; color: var(--ink-dim); }
 
   .flow { display: flex; margin-bottom: 1.8rem; }
   .flow-step { flex: 1; padding-right: 1.8rem; }
@@ -194,7 +175,6 @@ const moreTools = ["WhatsApp"];
     .grid-row { grid-template-columns: 1fr; }
     .row-label, .row-content { grid-column: 1 / -1; padding: 2.2rem 0; border: none; }
     .tool-item { border-left: none !important; padding-left: 0 !important; flex-basis: 100%; }
-    .more-panel { padding-left: 0; }
     .flow { flex-direction: column; gap: 1.6rem; }
     .flow-step + .flow-step { border-left: none; padding-left: 0; }
   }

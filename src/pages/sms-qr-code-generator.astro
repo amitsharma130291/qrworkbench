@@ -12,14 +12,14 @@ const howTo = [
 const tips = [
   "Pre-filling a specific keyword (like \"YES\" for an RSVP) makes it easy to filter and count replies later.",
   "Include the country code in the number — a code generated without one may not work correctly for scanners outside your country.",
-  "This opens the phone's default messaging app, not a specific app like WhatsApp — for a WhatsApp-specific flow, share your WhatsApp link as a URL QR instead.",
+  "This opens the phone's default messaging app, not WhatsApp — for a WhatsApp-specific flow with a pre-filled message, use the dedicated WhatsApp QR generator instead.",
 ];
 
 const faq = [
   { q: "Does this text message send automatically?", a: "No — scanning opens the messaging app with the number and message pre-filled. The person still has to tap send." },
   { q: "Can I leave the message blank?", a: "Yes — the code will just open a new text thread to that number with nothing pre-filled." },
   { q: "Will this work on both iPhone and Android?", a: "Yes, it uses the standard sms: format supported by the default messaging app on both platforms." },
-  { q: "Does this work for WhatsApp instead of regular SMS?", a: "Not directly — this opens the phone's default SMS app. For WhatsApp, use the URL QR generator with your wa.me link instead." },
+  { q: "Does this work for WhatsApp instead of regular SMS?", a: "Not directly — this opens the phone's default SMS app. For WhatsApp, use the dedicated WhatsApp QR generator instead — it builds the correct wa.me link for you from a number and an optional pre-filled message." },
   { q: "Do I need to include the country code?", a: "Yes, it's recommended — a number without one may default to the scanning device's local dialing assumptions and fail to route correctly." },
 ];
 ---

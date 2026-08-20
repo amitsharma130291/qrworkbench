@@ -50,3 +50,14 @@ export function buildPhonePayload({ number }) {
   if (!number) return "";
   return `tel:${number}`;
 }
+
+// wa.me requires digits only -- no leading +, spaces, or dashes -- so strip
+// everything else rather than making the user format it correctly themselves.
+export function buildWhatsAppPayload({ number, message }) {
+  const digits = String(number || "").replace(/[^0-9]/g, "");
+  if (!digits) return "";
+  const params = new URLSearchParams();
+  if (message) params.set("text", message);
+  const qs = params.toString();
+  return `https://wa.me/${digits}${qs ? "?" + qs : ""}`;
+}

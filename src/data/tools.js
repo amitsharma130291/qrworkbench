@@ -10,22 +10,28 @@ export const TOOLS = [
   { slug: "facebook", name: "Facebook QR", href: "/facebook-qr-code-generator" },
   { slug: "instagram", name: "Instagram QR", href: "/instagram-qr-code-generator" },
   { slug: "linkedin", name: "LinkedIn QR", href: "/linkedin-qr-code-generator" },
+  { slug: "whatsapp", name: "WhatsApp QR", href: "/whatsapp-qr-code-generator" },
+  { slug: "youtube", name: "YouTube QR", href: "/youtube-qr-code-generator" },
+  { slug: "spotify", name: "Spotify QR", href: "/spotify-qr-code-generator" },
 ];
 
 // Hand-picked, not just "next 3 in the list" -- each generator links to the
 // ones a real visitor doing that task is next most likely to need.
 export const RELATED = {
-  url: ["pdf", "google-forms", "wifi"],
+  url: ["pdf", "google-forms", "youtube"],
   wifi: ["vcard", "phone", "url"],
-  vcard: ["email", "phone", "wifi"],
-  email: ["sms", "phone", "vcard"],
-  sms: ["email", "phone", "wifi"],
-  phone: ["sms", "email", "vcard"],
+  vcard: ["email", "phone", "whatsapp"],
+  email: ["sms", "whatsapp", "vcard"],
+  sms: ["whatsapp", "email", "phone"],
+  phone: ["whatsapp", "sms", "email"],
   pdf: ["google-forms", "url", "email"],
   "google-forms": ["pdf", "url", "email"],
-  facebook: ["instagram", "linkedin", "url"],
-  instagram: ["facebook", "linkedin", "url"],
+  facebook: ["instagram", "linkedin", "whatsapp"],
+  instagram: ["facebook", "linkedin", "youtube"],
   linkedin: ["facebook", "instagram", "url"],
+  whatsapp: ["sms", "phone", "email"],
+  youtube: ["instagram", "facebook", "url"],
+  spotify: ["youtube", "instagram", "url"],
 };
 
 export function relatedTools(slug) {

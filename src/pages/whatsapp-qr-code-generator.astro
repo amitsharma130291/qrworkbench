@@ -1,0 +1,66 @@
+---
+import GeneratorPageLayout from "../layouts/GeneratorPageLayout.astro";
+import GeneratorShell from "../components/GeneratorShell.astro";
+
+const howTo = [
+  "Enter the WhatsApp number, including the country code — no leading +, spaces, or dashes needed, the tool strips those automatically.",
+  "Add a pre-filled message if you want to guide what people send — an order, a booking request, anything.",
+  "Preview and scan-test it yourself before printing or posting.",
+  "Download and place the code on a menu, storefront, or business card.",
+];
+
+const tips = [
+  "This only opens a chat if WhatsApp is installed on the scanning phone — for a fallback that always works, pair it with the phone number printed as plain text too.",
+  "A pre-filled message works the same way here as a WhatsApp \"click to chat\" link — the visitor still has to tap send, nothing goes out automatically.",
+  "This is built on WhatsApp's free wa.me click-to-chat links, not the WhatsApp Business API — no business account, approval, or API key is needed for this to work.",
+];
+
+const faq = [
+  { q: "Does this send the WhatsApp message for me?", a: "No — scanning opens a chat with the number and message pre-filled. The person still has to tap send." },
+  { q: "Do I need a WhatsApp Business account?", a: "No — this uses WhatsApp's free wa.me click-to-chat links, which work with a regular personal or business WhatsApp number. No API key, approval, or business account is required." },
+  { q: "What format should the number be in?", a: "Just the country code and number — like 1 555 123 4567 for a US number. Spaces, dashes, and a leading + are all fine to type; they're stripped out automatically before the code is built." },
+  { q: "What happens if the scanning phone doesn't have WhatsApp installed?", a: "The scan typically leads to a WhatsApp download prompt or a broken link, depending on the device. If you expect scanners without WhatsApp, print the number as plain text nearby as a fallback." },
+  { q: "Can I leave the message blank?", a: "Yes — the code will just open a new chat with that number, with nothing pre-typed." },
+  { q: "Is this the same as a WhatsApp Business API integration?", a: "No — this is a simple click-to-chat link, the same kind WhatsApp's own \"share\" button generates. It doesn't connect to automated replies, catalogs, or the paid Business API." },
+];
+
+---
+<GeneratorPageLayout
+  title="WhatsApp QR Code Generator — Click-to-Chat QR, Free | QR Workbench"
+  description="Generate a QR code that opens a pre-filled WhatsApp chat — number and message ready to send. Free, static, generated in your browser."
+  eyebrow="WhatsApp QR Code Generator"
+  slug="whatsapp"
+  h1="A QR code that opens a WhatsApp chat"
+  intro="Scanning this opens WhatsApp with a chat to your number already started, message pre-filled if you add one. No business account or API needed — just wa.me's free click-to-chat links."
+  howTo={howTo}
+  tips={tips}
+  bulkNote="Need this for multiple staff numbers or locations? Generate from CSV →"
+  faq={faq}
+>
+  <GeneratorShell filenamePrefix="whatsapp-qr-code">
+    <Fragment slot="fields">
+      <label for="f-number">WhatsApp number (with country code)
+        <input id="f-number" type="tel" placeholder="1 555 123 4567" autocomplete="off" />
+      </label>
+      <label for="f-message">Message <em>(optional)</em>
+        <textarea id="f-message" placeholder="Hi, I'd like to..."></textarea>
+      </label>
+    </Fragment>
+  </GeneratorShell>
+</GeneratorPageLayout>
+
+<script>
+  import { initGeneratorTool } from "../lib/generatorUI.js";
+  import { buildWhatsAppPayload } from "../lib/formats.js";
+
+  const number = document.getElementById("f-number");
+  const message = document.getElementById("f-message");
+
+  const tool = initGeneratorTool({
+    getText: () => buildWhatsAppPayload({ number: number.value.trim(), message: message.value.trim() }),
+    filenamePrefix: "whatsapp-qr-code",
+  });
+
+  [number, message].forEach((el) => el.addEventListener("input", tool.update));
+  tool.update();
+</script>

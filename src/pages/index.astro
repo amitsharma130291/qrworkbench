@@ -274,13 +274,13 @@ const sampleRows = [
           <div class="label-sheet" aria-hidden="true">
             {Array.from({ length: 12 }).map((_, i) => (
               <div class="label-cell">
-                <span class="label-qr" data-label-qr data-label-qr-size="32"></span>
+                <span class="label-qr" data-label-qr data-label-qr-size="44"></span>
                 <span class="label-cap">{`SKU${String(i + 1).padStart(3, "0")}`}</span>
               </div>
             ))}
           </div>
           <div class="label-closeup" aria-hidden="true">
-            <span class="label-qr-big" data-label-qr data-label-qr-size="90"></span>
+            <span class="label-qr-big" data-label-qr data-label-qr-size="130"></span>
             <span class="label-cap-big">SKU001-blue-shirt</span>
           </div>
           <ul class="label-controls">
@@ -885,7 +885,7 @@ const sampleRows = [
 
   .mini-success { border: 1px solid var(--ink); background: var(--surface); padding: 1.8rem; max-width: 68ch; }
   .mini-success-head { display: block; font-size: 1.05rem; margin-bottom: 0.6rem; }
-  .mini-success-dest { font-family: var(--mono); font-size: 0.8rem; color: var(--ink-faint); word-break: break-all; margin: 0 0 1.1rem; }
+  .mini-success-dest { font-family: var(--mono); font-size: 0.86rem; color: var(--ink-dim); word-break: break-all; margin: 0 0 1.1rem; }
   .mini-success-actions { display: flex; gap: 0.7rem; flex-wrap: wrap; margin-bottom: 1rem; }
   .mini-scan-tip { font-size: 0.85rem; color: var(--ink-faint); margin: 0 0 1.6rem; }
 
@@ -907,8 +907,8 @@ const sampleRows = [
   .demo-item { display: flex; flex-direction: column; align-items: center; gap: 0.5rem; text-align: center; }
   .demo-item canvas { width: 100%; max-width: 150px; height: auto; border: 1px solid var(--line); background: #fff; cursor: zoom-in; transition: border-color var(--dur-fast) var(--ease-standard); }
   .demo-item canvas:hover, .demo-item canvas:focus-visible { border-color: var(--red); }
-  .demo-item strong { font-size: 0.74rem; font-family: var(--mono); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%; }
-  .demo-item span { font-size: 0.74rem; color: var(--ink-faint); }
+  .demo-item strong { font-size: 0.82rem; font-family: var(--mono); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%; }
+  .demo-item span { font-size: 0.8rem; color: var(--ink-dim); }
   .demo-hint { font-size: 0.7rem; color: var(--ink-faint); margin: -0.6rem 0 1.3rem; }
   .demo-actions { display: flex; gap: 0.8rem; flex-wrap: wrap; }
   .demo-safeguards { font-size: 0.82rem; color: var(--ink-faint); line-height: 1.55; margin: 1.1rem 0 0; max-width: 58ch; }
@@ -927,24 +927,24 @@ const sampleRows = [
   .uc-n { font-family: var(--mono); font-size: 0.68rem; color: var(--red); display: block; margin-bottom: 0.6rem; }
   .usecase-card h3 { margin: 0 0 0.5rem; font-size: 0.98rem; font-weight: 700; }
   .usecase-card p { margin: 0 0 0.8rem; font-size: 0.9rem; color: var(--ink-dim); line-height: 1.55; }
-  .uc-io { display: block; font-family: var(--mono); font-size: 0.68rem; color: var(--ink-faint); background: var(--bg); border: 1px solid var(--line); padding: 0.5rem 0.6rem; overflow-x: auto; white-space: nowrap; }
+  .uc-io { display: block; font-family: var(--mono); font-size: 0.76rem; color: var(--ink-dim); background: var(--bg); border: 1px solid var(--line); padding: 0.55rem 0.65rem; overflow-x: auto; white-space: nowrap; }
 
   .label-demo { display: flex; gap: 2rem; align-items: flex-start; margin-bottom: 1.6rem; flex-wrap: wrap; }
   .label-sheet {
-    display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem;
-    background: var(--surface); border: 1px solid var(--ink); padding: 1rem; width: 280px; flex: none;
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.7rem;
+    background: var(--surface); border: 1px solid var(--ink); padding: 1.3rem; width: 380px; max-width: 100%; flex: none;
   }
-  .label-cell { border: 1px dashed var(--line); padding: 0.4rem; display: flex; flex-direction: column; align-items: center; gap: 0.3rem; min-width: 0; overflow: hidden; }
-  .label-qr { display: block; width: 32px; height: 32px; flex: none; }
-  .label-qr canvas { display: block; width: 32px; height: 32px; border: 1px solid var(--line); background: #fff; }
-  .label-cap { font-family: var(--mono); font-size: 0.58rem; color: var(--ink-faint); max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .label-cell { border: 1px dashed var(--line); padding: 0.5rem; display: flex; flex-direction: column; align-items: center; gap: 0.4rem; min-width: 0; overflow: hidden; }
+  .label-qr { display: block; width: 44px; height: 44px; flex: none; }
+  .label-qr canvas { display: block; width: 44px; height: 44px; border: 1px solid var(--line); background: #fff; }
+  .label-cap { font-family: var(--mono); font-size: 0.66rem; color: var(--ink-dim); max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .label-closeup {
-    display: flex; flex-direction: column; align-items: center; gap: 0.7rem; flex: none;
-    border: 1px solid var(--ink); background: var(--surface); padding: 1.2rem; width: 140px;
+    display: flex; flex-direction: column; align-items: center; gap: 0.9rem; flex: none;
+    border: 1px solid var(--ink); background: var(--surface); padding: 1.6rem; width: 220px;
   }
-  .label-qr-big { display: block; width: 90px; height: 90px; flex: none; }
-  .label-qr-big canvas { display: block; width: 90px; height: 90px; border: 1px solid var(--line); background: #fff; }
-  .label-cap-big { font-family: var(--mono); font-size: 0.68rem; color: var(--ink-dim); }
+  .label-qr-big { display: block; width: 130px; height: 130px; flex: none; }
+  .label-qr-big canvas { display: block; width: 130px; height: 130px; border: 1px solid var(--line); background: #fff; }
+  .label-cap-big { font-family: var(--mono); font-size: 0.8rem; font-weight: 700; color: var(--ink); }
   .label-controls { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.6rem; flex: 1; min-width: 200px; }
   .label-demo-actions { display: flex; gap: 0.8rem; flex-wrap: wrap; }
   .label-controls li { font-size: 0.85rem; color: var(--ink-dim); padding-left: 1.2rem; position: relative; }

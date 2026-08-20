@@ -161,8 +161,11 @@ const sampleRows = [
           <p class="demo-hint">Click any code to open it full size.</p>
           <div class="demo-actions">
             <button class="btn btn-fill" id="demo-download" type="button">Download sample ZIP</button>
+            <button class="btn" id="demo-download-svg" type="button">Download 1 sample SVG</button>
+            <button class="btn" id="demo-download-pdf" type="button">Download sample label PDF</button>
             <a class="btn btn-accent" href="/bulk">Upload your CSV →</a>
           </div>
+          <p class="demo-safeguards">In the real bulk workspace, a row missing its QR value is skipped automatically, and a filename that would collide with another gets a number appended — neither produces a broken or overwritten file.</p>
         </div>
       </div>
     </section>
@@ -371,6 +374,7 @@ const sampleRows = [
 <script>
   import { renderQR, qrToSVGString } from "../lib/qr.js";
   import JSZip from "jszip";
+  import { jsPDF } from "jspdf";
 
   const SAMPLE_ROWS = [
     { sku: "SKU001", product: "Blue Cotton T-Shirt", url: "https://example.com/products/blue-cotton-t-shirt" },
@@ -390,6 +394,8 @@ const sampleRows = [
   const filenameSel = document.getElementById("demo-filename");
   const captionSel = document.getElementById("demo-caption");
   const downloadBtn = document.getElementById("demo-download");
+  const downloadSvgBtn = document.getElementById("demo-download-svg");
+  const downloadPdfBtn = document.getElementById("demo-download-pdf");
 
   async function renderDemo() {
     output.innerHTML = "";
@@ -455,6 +461,66 @@ const sampleRows = [
     } finally {
       downloadBtn.disabled = false;
       downloadBtn.textContent = "Download sample ZIP";
+    }
+  });
+
+  function downloadBlob(blob, filename) {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  }
+
+  downloadSvgBtn.addEventListener("click", async () => {
+    downloadSvgBtn.disabled = true;
+    try {
+      const row = SAMPLE_ROWS[0];
+      const svg = await qrToSVGString(row[contentSel.value], { margin: 4, width: 1000 });
+      downloadBlob(new Blob([svg], { type: "image/svg+xml" }), `${sanitize(row[filenameSel.value])}.svg`);
+    } finally {
+      downloadSvgBtn.disabled = false;
+    }
+  });
+
+  // A real print-ready PDF, same renderQR()/jsPDF pipeline the actual
+  // /labels workspace uses -- demonstrates the real Pro-tier printable
+  // sheet feature, not a fabricated example.
+  downloadPdfBtn.addEventListener("click", async () => {
+    downloadPdfBtn.disabled = true;
+    downloadPdfBtn.textContent = "Building PDF…";
+    try {
+      const pageW = 215.9;
+      const pageH = 279.4;
+      const margin = 20;
+      const cols = 3;
+      const rows = 2;
+      const gap = 6;
+      const cellW = (pageW - margin * 2 - (cols - 1) * gap) / cols;
+      const cellH = (pageH - margin * 2 - (rows - 1) * gap) / rows;
+      const qrSize = Math.min(cellW, cellH) * 0.7;
+      const doc = new jsPDF({ unit: "mm", format: [pageW, pageH] });
+      const canvas = document.createElement("canvas");
+      for (let i = 0; i < SAMPLE_ROWS.length; i++) {
+        const row = SAMPLE_ROWS[i];
+        const col = i % cols;
+        const r = Math.floor(i / cols);
+        const x = margin + col * (cellW + gap);
+        const y = margin + r * (cellH + gap);
+        const qrX = x + (cellW - qrSize) / 2;
+        const qrY = y + (cellH - qrSize - 6) / 2;
+        await renderQR(canvas, row[contentSel.value], { width: 300, margin: 1 });
+        doc.addImage(canvas.toDataURL("image/png"), "PNG", qrX, qrY, qrSize, qrSize);
+        doc.setFontSize(9 * 2.83);
+        doc.text(String(row[captionSel.value]), x + cellW / 2, qrY + qrSize + 5, { align: "center", maxWidth: cellW });
+      }
+      doc.save("qrworkbench-sample-labels.pdf");
+    } finally {
+      downloadPdfBtn.disabled = false;
+      downloadPdfBtn.textContent = "Download sample label PDF";
     }
   });
 
@@ -542,6 +608,7 @@ const sampleRows = [
   .demo-item span { font-size: 0.74rem; color: var(--ink-faint); }
   .demo-hint { font-size: 0.7rem; color: var(--ink-faint); margin: -0.6rem 0 1.3rem; }
   .demo-actions { display: flex; gap: 0.8rem; flex-wrap: wrap; }
+  .demo-safeguards { font-size: 0.82rem; color: var(--ink-faint); line-height: 1.55; margin: 1.1rem 0 0; max-width: 58ch; }
 
   .compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 0.5rem; max-width: 62ch; }
   .compare-head { font-family: var(--mono); font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 0.9rem; padding-bottom: 0.6rem; border-bottom: 2px solid var(--line); }

@@ -21,26 +21,19 @@ const tools = [
 ];
 
 const useCases = [
-  { n: "01", title: "Product & inventory labels", body: "Encode product URLs, use SKUs as filenames, and add product names as captions — one row per label." },
-  { n: "02", title: "Employee & event vCards", body: "Turn a staff or attendee spreadsheet into individually named contact QR codes, ready for badges." },
-  { n: "03", title: "Asset tracking", body: "Generate sequentially named codes for equipment, rooms, containers, or inventory." },
-  { n: "04", title: "Print-shop production", body: "Export high-resolution SVGs, transparent PNGs, and print-ready label sheets from one CSV." },
-  { n: "05", title: "Events & hospitality", body: "Produce codes for tickets, menus, tables, or schedules — named and captioned automatically." },
+  { n: "01", title: "Product & inventory labels", body: "Encode product URLs, use SKUs as filenames, and add product names as captions.", io: "product URL  →  SKU001-blue-shirt.svg" },
+  { n: "02", title: "Employee & event vCards", body: "Turn a staff or attendee spreadsheet into individually named contact QR codes.", io: "Jordan Rivera row  →  jordan-rivera.svg (vCard)" },
+  { n: "03", title: "Asset tracking", body: "Generate sequentially named codes for equipment, rooms, containers, or inventory.", io: "Room 204 row  →  room-204.svg" },
+  { n: "04", title: "Print-shop production", body: "Export high-resolution SVGs, transparent PNGs, and print-ready label sheets from one CSV.", io: "client.csv  →  codes.zip + labels.pdf" },
+  { n: "05", title: "Events & hospitality", body: "Produce codes for tickets, menus, or tables — named and captioned automatically.", io: "Table 12 row  →  table-12.svg" },
 ];
 
-const beforeItems = [
-  "Generate every QR code individually",
-  "Rename hundreds of files by hand",
-  "Copy and paste captions one at a time",
-  "Rebuild files from scratch after a mistake",
-  "Manually arrange labels for printing",
-];
-const afterItems = [
-  "Upload one spreadsheet",
-  "Map the columns once",
-  "Rows with missing data are skipped automatically",
-  "Export consistently named files",
-  "Generate printable label sheets",
+const taskRows = [
+  ["Copy each URL by hand", "Upload all rows at once"],
+  ["Generate codes individually", "Generate one complete batch"],
+  ["Rename files manually", "Map filenames from a column"],
+  ["Build label sheets yourself", "Export print-ready PDFs"],
+  ["Upload sensitive data to a server", "Process everything locally"],
 ];
 
 const tierRows = [
@@ -60,11 +53,20 @@ const faq = [
   { q: "Is my spreadsheet uploaded anywhere?", a: "No. CSV parsing, QR generation, ZIP packing, and PDF layout all happen in your browser tab — the file itself is never sent to a server." },
   { q: "Do people who scan my codes pass through a QR Workbench redirect?", a: "No. There's no redirect server in the loop — a scan goes straight to the destination you encoded." },
   { q: "Do I need an account?", a: "No, for anything — the free generators, the bulk workspace, and paid plans all work with no signup, ever." },
-  { q: "What happens if my CSV has errors?", a: "A row missing its required QR-data value is skipped automatically — it won't produce an empty or broken code in your export." },
+  { q: "What happens if my CSV has errors?", a: "A row missing its required QR-data value is skipped automatically, and a filename that would collide with another gets a number appended — neither produces a broken or overwritten file." },
   { q: "Which spreadsheet columns can I map?", a: "QR content (or, for WiFi/vCard batches, the relevant fields like SSID or name/phone/email), filename, caption, price, and category." },
   { q: "Can I add a logo?", a: "Yes — free on every individual generator, and on Pro for bulk batches, where it's applied to every code at once." },
   { q: "Can I create A4 or Letter label sheets?", a: "Yes, on Pro — set page size, columns, rows, margin and spacing, and export a print-ready PDF." },
-  { q: "Is there a sample CSV to try first?", a: "Yes — the bulk workspace has a one-click sample download so you can see the whole workflow before uploading your own file." },
+  { q: "Is there a sample CSV to try first?", a: "Yes — the bulk workspace has a one-click sample download, and there's a live sample batch right on this page you can try with no upload at all." },
+];
+
+const sampleRows = [
+  { sku: "SKU001", product: "Blue Cotton T-Shirt", url: "https://example.com/products/blue-cotton-t-shirt" },
+  { sku: "SKU002", product: "Red Hoodie", url: "https://example.com/products/red-hoodie" },
+  { sku: "SKU003", product: "Green Cap", url: "https://example.com/products/green-cap" },
+  { sku: "SKU004", product: "Black Tote Bag", url: "https://example.com/products/black-tote-bag" },
+  { sku: "SKU005", product: "White Mug", url: "https://example.com/products/white-mug" },
+  { sku: "SKU006", product: "Navy Notebook", url: "https://example.com/products/navy-notebook" },
 ];
 ---
 <Layout
@@ -77,8 +79,8 @@ const faq = [
         <div class="index-no">A1 — CSV TO QR PRODUCTION</div>
         <h1>Turn a spreadsheet into <span class="rd">thousands</span> of production-ready QR codes.</h1>
         <p class="lede">
-          Upload a CSV, map your columns, and export correctly named PNGs, SVGs, or printable label
-          sheets. Everything is processed privately in your browser — nothing you upload ever leaves it.
+          Upload a CSV, map your columns, and download correctly named PNGs, SVGs or printable
+          label sheets — without uploading your data.
         </p>
         <div class="cta-row">
           <a class="btn btn-accent" href="/bulk">Try a batch free</a>
@@ -89,26 +91,22 @@ const faq = [
 
       <div class="hero-visual">
         <div class="flow-card" aria-hidden="true">
-          <div class="flow-card-row flow-card-file">
-            <span class="fc-icon">▤</span><span>products.csv</span>
-          </div>
-          <div class="flow-card-arrow">↓</div>
-          <div class="flow-card-map">
-            <span><b>URL</b> → QR content</span>
-            <span><b>SKU</b> → filename</span>
-            <span><b>Product</b> → caption</span>
-          </div>
-          <div class="flow-card-arrow">↓</div>
+          <div class="fc-label">products.csv · 2,500 rows</div>
+          <table class="fc-table">
+            <tr><th>SKU</th><th>Product</th><th>URL</th></tr>
+            <tr><td>SKU001</td><td>Blue Shirt</td><td>…/blue-shirt</td></tr>
+            <tr><td>SKU002</td><td>Red Hoodie</td><td>…/red-hoodie</td></tr>
+          </table>
+          <div class="flow-card-arrow">↓ mapped &amp; generated ↓</div>
           <div class="flow-card-files">
             <span>SKU001-blue-shirt.svg</span>
-            <span>SKU002-red-shirt.svg</span>
-            <span>SKU003-green-shirt.svg</span>
-            <span class="fc-more">+ 2,497 more</span>
+            <span>SKU002-red-hoodie.svg</span>
+            <span class="fc-more">+ 2,498 more</span>
           </div>
           <div class="flow-card-outputs">
             <span class="fc-badge">ZIP</span>
-            <span class="fc-badge">PNG</span>
             <span class="fc-badge">SVG</span>
+            <span class="fc-badge">PNG</span>
             <span class="fc-badge">PDF</span>
           </div>
         </div>
@@ -126,30 +124,9 @@ const faq = [
   </div>
 
   <div class="frame">
-    <section id="tools" class="grid-row">
-      <div class="row-label">
-        <div class="idx">B — 01</div>
-        <h2>Need one code? Free, forever.</h2>
-      </div>
-      <div class="row-content">
-        <p class="section-note lead-note">Create unlimited individual static QR codes — no account, no limit.</p>
-        <div class="tool-strip">
-          {tools.map((t) => (
-            <a class="tool-item" href={t.href}>
-              <ToolIcon name={t.icon} />
-              <div>
-                <h3>{t.name}</h3>
-                <p>{t.desc}</p>
-              </div>
-            </a>
-          ))}
-        </div>
-      </div>
-    </section>
-
     <section id="bulk" class="grid-row">
       <div class="row-label">
-        <div class="idx">C — 02</div>
+        <div class="idx">B — 01</div>
         <h2>Need hundreds or thousands? Bulk workspace.</h2>
       </div>
       <div class="row-content">
@@ -164,21 +141,49 @@ const faq = [
       </div>
     </section>
 
+    <section class="grid-row" id="demo">
+      <div class="row-label">
+        <div class="idx">C — 02</div>
+        <h2>See it work, before you upload anything</h2>
+      </div>
+      <div class="row-content">
+        <p class="section-note lead-note">Real sample rows, generated live below — change the mapping and watch the output update.</p>
+        <div class="demo-panel">
+          <div class="demo-table-wrap">
+            <table class="demo-table">
+              <thead><tr><th>SKU</th><th>Product</th><th>URL</th></tr></thead>
+              <tbody>
+                {sampleRows.map((r) => <tr><td>{r.sku}</td><td>{r.product}</td><td>{r.url.replace("https://example.com", "…")}</td></tr>)}
+              </tbody>
+            </table>
+          </div>
+          <div class="demo-map">
+            <label>QR content<select id="demo-content"><option value="url" selected>URL</option><option value="sku">SKU</option><option value="product">Product</option></select></label>
+            <label>Filename<select id="demo-filename"><option value="sku" selected>SKU</option><option value="product">Product</option><option value="url">URL</option></select></label>
+            <label>Caption<select id="demo-caption"><option value="product" selected>Product</option><option value="sku">SKU</option><option value="url">URL</option></select></label>
+          </div>
+          <div class="demo-output" id="demo-output"></div>
+          <div class="demo-actions">
+            <button class="btn btn-fill" id="demo-download" type="button">Download sample ZIP</button>
+            <a class="btn btn-accent" href="/bulk">Upload your own CSV →</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <section class="grid-row">
       <div class="row-label">
         <div class="idx">D — 03</div>
-        <h2>Hours of repetitive production, reduced to one workflow.</h2>
+        <h2>Replace hours of repetitive production with one workflow.</h2>
       </div>
       <div class="row-content">
-        <div class="compare-grid">
-          <div class="compare-col">
-            <div class="compare-head compare-head-bad">Without QR Workbench</div>
-            <ul class="compare-list">{beforeItems.map((i) => <li>{i}</li>)}</ul>
-          </div>
-          <div class="compare-col">
-            <div class="compare-head compare-head-good">With QR Workbench</div>
-            <ul class="compare-list">{afterItems.map((i) => <li>{i}</li>)}</ul>
-          </div>
+        <div class="table-wrap">
+          <table class="cmp-table">
+            <thead><tr><th>Manual workflow</th><th>QR Workbench</th></tr></thead>
+            <tbody>
+              {taskRows.map(([before, after]) => <tr><td>{before}</td><td>{after}</td></tr>)}
+            </tbody>
+          </table>
         </div>
       </div>
     </section>
@@ -195,6 +200,7 @@ const faq = [
               <span class="uc-n">{u.n}</span>
               <h3>{u.title}</h3>
               <p>{u.body}</p>
+              <code class="uc-io">{u.io}</code>
             </div>
           ))}
         </div>
@@ -211,9 +217,13 @@ const faq = [
         <p class="section-note lead-note">A dedicated PDF layout tool, not just a bigger QR export — one of the reasons this is a production toolkit, not just a generator.</p>
         <div class="label-demo">
           <div class="label-sheet" aria-hidden="true">
-            {Array.from({ length: 9 }).map(() => (
+            {Array.from({ length: 12 }).map(() => (
               <div class="label-cell"><span class="label-qr"></span><span class="label-cap"></span></div>
             ))}
+          </div>
+          <div class="label-closeup" aria-hidden="true">
+            <span class="label-qr label-qr-big"></span>
+            <span class="label-cap-big">SKU001-blue-shirt</span>
           </div>
           <ul class="label-controls">
             <li>A4 or US Letter</li>
@@ -250,12 +260,34 @@ const faq = [
           <li>No expiration</li>
           <li>No vendor lock-in</li>
         </ul>
+        <p class="section-note privacy-precise">To be precise about what "private" means here: only two things on this site involve an external service at all — the paid checkout (handled entirely by Dodo Payments) and ordinary site analytics. Neither ever sees your CSV, your QR content, or anything you generate.</p>
+      </div>
+    </section>
+
+    <section id="tools" class="grid-row">
+      <div class="row-label">
+        <div class="idx">H — 07</div>
+        <h2>Need one code? Free, forever.</h2>
+      </div>
+      <div class="row-content">
+        <p class="section-note lead-note">Create unlimited individual static QR codes — no account, no limit.</p>
+        <div class="tool-strip">
+          {tools.map((t) => (
+            <a class="tool-item" href={t.href}>
+              <ToolIcon name={t.icon} />
+              <div>
+                <h3>{t.name}</h3>
+                <p>{t.desc}</p>
+              </div>
+            </a>
+          ))}
+        </div>
       </div>
     </section>
 
     <section class="grid-row">
       <div class="row-label">
-        <div class="idx">H — 07</div>
+        <div class="idx">I — 08</div>
         <h2>Create the code, download it, own the result</h2>
       </div>
       <div class="row-content">
@@ -277,7 +309,7 @@ const faq = [
 
     <section id="pricing" class="grid-row">
       <div class="row-label">
-        <div class="idx">I — 08</div>
+        <div class="idx">J — 09</div>
         <h2>Pricing</h2>
       </div>
       <div class="row-content">
@@ -304,7 +336,7 @@ const faq = [
 
     <section class="grid-row">
       <div class="row-label">
-        <div class="idx">J — 09</div>
+        <div class="idx">K — 10</div>
         <h2>Questions</h2>
       </div>
       <div class="row-content">
@@ -316,14 +348,102 @@ const faq = [
             </details>
           ))}
         </div>
+      </div>
+    </section>
+
+    <section class="grid-row final-row">
+      <div class="row-label">
+        <div class="idx">L — 11</div>
+      </div>
+      <div class="row-content">
+        <h2 class="final-h2">Your spreadsheet is already the hard part.</h2>
+        <p class="section-note lead-note">Turn it into a complete set of named, production-ready QR codes.</p>
         <div class="final-cta">
           <a class="btn btn-accent" href="/bulk">Try a batch free</a>
-          <span class="cta-micro">No account required · Your data stays on your device</span>
+          <span class="cta-micro">Up to 20 rows · No account · Nothing uploaded</span>
         </div>
       </div>
     </section>
   </div>
 </Layout>
+
+<script>
+  import { renderQR, qrToSVGString } from "../lib/qr.js";
+  import JSZip from "jszip";
+
+  const SAMPLE_ROWS = [
+    { sku: "SKU001", product: "Blue Cotton T-Shirt", url: "https://example.com/products/blue-cotton-t-shirt" },
+    { sku: "SKU002", product: "Red Hoodie", url: "https://example.com/products/red-hoodie" },
+    { sku: "SKU003", product: "Green Cap", url: "https://example.com/products/green-cap" },
+    { sku: "SKU004", product: "Black Tote Bag", url: "https://example.com/products/black-tote-bag" },
+    { sku: "SKU005", product: "White Mug", url: "https://example.com/products/white-mug" },
+    { sku: "SKU006", product: "Navy Notebook", url: "https://example.com/products/navy-notebook" },
+  ];
+
+  function sanitize(v) {
+    return String(v || "").trim().replace(/[^a-zA-Z0-9-_]+/g, "-").replace(/^-+|-+$/g, "") || "code";
+  }
+
+  const output = document.getElementById("demo-output");
+  const contentSel = document.getElementById("demo-content");
+  const filenameSel = document.getElementById("demo-filename");
+  const captionSel = document.getElementById("demo-caption");
+  const downloadBtn = document.getElementById("demo-download");
+
+  async function renderDemo() {
+    output.innerHTML = "";
+    for (const row of SAMPLE_ROWS) {
+      const item = document.createElement("div");
+      item.className = "demo-item";
+      const canvas = document.createElement("canvas");
+      canvas.width = 110;
+      canvas.height = 110;
+      item.appendChild(canvas);
+      const label = document.createElement("div");
+      const filename = `${sanitize(row[filenameSel.value])}.svg`;
+      label.innerHTML = `<strong>${filename}</strong><span>${row[captionSel.value]}</span>`;
+      item.appendChild(label);
+      output.appendChild(item);
+      await renderQR(canvas, row[contentSel.value], { width: 110, margin: 1 });
+    }
+  }
+
+  [contentSel, filenameSel, captionSel].forEach((sel) => sel.addEventListener("change", renderDemo));
+
+  downloadBtn.addEventListener("click", async () => {
+    downloadBtn.disabled = true;
+    downloadBtn.textContent = "Zipping…";
+    try {
+      const zip = new JSZip();
+      const used = new Set();
+      for (const row of SAMPLE_ROWS) {
+        let name = `${sanitize(row[filenameSel.value])}.svg`;
+        let n = 1;
+        while (used.has(name)) {
+          name = name.replace(/(\.svg)$/, `-${n}$1`);
+          n++;
+        }
+        used.add(name);
+        const svg = await qrToSVGString(row[contentSel.value], { margin: 4, width: 1000 });
+        zip.file(name, svg);
+      }
+      const blob = await zip.generateAsync({ type: "blob" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "qrworkbench-sample.zip";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    } finally {
+      downloadBtn.disabled = false;
+      downloadBtn.textContent = "Download sample ZIP";
+    }
+  });
+
+  renderDemo();
+</script>
 
 <style>
   .hero { border-bottom: 1px solid var(--line); position: relative; overflow: hidden; }
@@ -334,23 +454,23 @@ const faq = [
     letter-spacing: -0.02em; margin: 0 0 1.4rem; text-wrap: balance; max-width: 17ch;
   }
   h1 .rd { color: var(--red); }
-  .lede { font-size: 1.05rem; color: var(--ink-dim); max-width: 46ch; line-height: 1.6; margin: 0 0 1.6rem; }
+  .lede { font-size: 1.05rem; color: var(--ink-dim); max-width: 44ch; line-height: 1.6; margin: 0 0 1.6rem; }
   .cta-row { display: flex; gap: 0.9rem; flex-wrap: wrap; }
   .cta-micro { font-family: var(--mono); font-size: 0.7rem; color: var(--ink-faint); margin: 1rem 0 0; }
 
   .hero-visual { display: flex; flex-direction: column; align-items: center; }
   .flow-card {
     width: 100%; max-width: 420px; background: var(--surface); border: 1px solid var(--line);
-    padding: 1.4rem; display: flex; flex-direction: column; gap: 0.6rem;
+    padding: 1.4rem; display: flex; flex-direction: column; gap: 0.7rem;
   }
-  .flow-card-row { display: flex; align-items: center; gap: 0.6rem; font-family: var(--mono); font-size: 0.85rem; font-weight: 700; }
-  .fc-icon { color: var(--red); }
-  .flow-card-arrow { text-align: center; color: var(--ink-faint); font-size: 0.9rem; }
-  .flow-card-map { display: flex; flex-direction: column; gap: 0.35rem; font-size: 0.78rem; color: var(--ink-dim); background: var(--bg); border: 1px solid var(--line); padding: 0.7rem 0.8rem; }
-  .flow-card-map b { color: var(--ink); }
-  .flow-card-files { display: flex; flex-direction: column; gap: 0.3rem; font-family: var(--mono); font-size: 0.7rem; color: var(--ink-dim); }
+  .fc-label { font-family: var(--mono); font-size: 0.72rem; font-weight: 700; color: var(--ink); }
+  .fc-table { width: 100%; border-collapse: collapse; font-size: 0.7rem; }
+  .fc-table th { text-align: left; font-family: var(--mono); font-size: 0.6rem; text-transform: uppercase; color: var(--ink-faint); padding: 0.25rem 0.4rem; border-bottom: 1px solid var(--line); }
+  .fc-table td { padding: 0.3rem 0.4rem; color: var(--ink-dim); border-bottom: 1px solid var(--line); }
+  .flow-card-arrow { text-align: center; color: var(--red); font-family: var(--mono); font-size: 0.66rem; font-weight: 700; }
+  .flow-card-files { display: flex; flex-direction: column; gap: 0.3rem; font-family: var(--mono); font-size: 0.7rem; color: var(--ink-dim); background: var(--bg); border: 1px solid var(--line); padding: 0.7rem 0.8rem; }
   .fc-more { color: var(--ink-faint); }
-  .flow-card-outputs { display: flex; gap: 0.5rem; margin-top: 0.4rem; }
+  .flow-card-outputs { display: flex; gap: 0.5rem; }
   .fc-badge { font-family: var(--mono); font-size: 0.66rem; font-weight: 700; border: 1px solid var(--ink); padding: 0.25rem 0.5rem; }
 
   .cred-strip {
@@ -358,18 +478,19 @@ const faq = [
     border-bottom: 1px solid var(--line);
   }
   .cred-strip li { display: flex; flex-direction: column; gap: 0.15rem; }
-  .cred-strip strong { font-size: 1rem; letter-spacing: -0.01em; }
-  .cred-strip span { font-family: var(--mono); font-size: 0.68rem; color: var(--ink-faint); text-transform: uppercase; letter-spacing: 0.04em; }
+  .cred-strip strong { font-size: 1.1rem; letter-spacing: -0.01em; }
+  .cred-strip span { font-family: var(--mono); font-size: 0.7rem; color: var(--ink-faint); text-transform: uppercase; letter-spacing: 0.04em; }
 
   .grid-row { display: grid; grid-template-columns: repeat(12, 1fr); border-bottom: 1px solid var(--line); }
   .row-label { grid-column: 1 / 4; padding: 3rem 1.5rem 3rem 0; border-right: 1px solid var(--line); }
   .row-label .idx { font-family: var(--mono); font-size: 0.72rem; color: var(--red); margin-bottom: 0.7rem; }
-  .row-label h2 { font-size: 1.15rem; font-weight: 700; margin: 0; letter-spacing: -0.01em; line-height: 1.25; }
+  .row-label h2 { font-size: 1.2rem; font-weight: 700; margin: 0; letter-spacing: -0.01em; line-height: 1.25; }
   .row-content { grid-column: 4 / 13; padding: 3rem 0 3rem 2.5rem; }
 
-  .section-note { font-size: 0.8rem; color: var(--ink-faint); margin: 0 0 1.6rem; max-width: 52ch; }
-  .lead-note { font-size: 0.92rem; color: var(--ink-dim); }
+  .section-note { font-size: 0.85rem; color: var(--ink-faint); margin: 0 0 1.6rem; max-width: 52ch; }
+  .lead-note { font-size: 0.95rem; color: var(--ink-dim); }
   .pricing-note { margin: 1.6rem 0 0; }
+  .privacy-precise { margin-top: 1.6rem; max-width: 62ch; }
 
   .tool-strip { display: flex; flex-wrap: wrap; gap: 0; }
   .tool-item {
@@ -392,6 +513,21 @@ const faq = [
   .flow-step p { margin: 0; font-size: 0.83rem; color: var(--ink-dim); line-height: 1.5; }
   .bulk-link { font-size: 0.8rem; }
 
+  .demo-panel { border: 1px solid var(--line); background: var(--surface); padding: 1.6rem; max-width: 62ch; }
+  .demo-table-wrap { overflow-x: auto; margin-bottom: 1.2rem; }
+  .demo-table { border-collapse: collapse; width: 100%; font-size: 0.8rem; }
+  .demo-table th { text-align: left; font-family: var(--mono); font-size: 0.64rem; text-transform: uppercase; color: var(--ink-faint); padding: 0.4rem 0.6rem; border-bottom: 1px solid var(--line); white-space: nowrap; }
+  .demo-table td { padding: 0.4rem 0.6rem; color: var(--ink-dim); border-bottom: 1px solid var(--line); white-space: nowrap; }
+  .demo-map { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.2rem; }
+  .demo-map label { display: flex; flex-direction: column; gap: 0.3rem; font-size: 0.75rem; font-weight: 600; color: var(--ink-dim); flex: 1; min-width: 130px; }
+  .demo-map select { font: inherit; font-size: 0.82rem; padding: 0.5rem 0.6rem; border: 1px solid var(--line); background: var(--bg); color: var(--ink); }
+  .demo-output { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 0.9rem; margin-bottom: 1.3rem; }
+  .demo-item { display: flex; flex-direction: column; align-items: center; gap: 0.4rem; text-align: center; }
+  .demo-item canvas { width: 100%; max-width: 110px; height: auto; border: 1px solid var(--line); background: #fff; }
+  .demo-item strong { font-size: 0.68rem; font-family: var(--mono); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%; }
+  .demo-item span { font-size: 0.68rem; color: var(--ink-faint); }
+  .demo-actions { display: flex; gap: 0.8rem; flex-wrap: wrap; }
+
   .compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 0.5rem; max-width: 62ch; }
   .compare-head { font-family: var(--mono); font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 0.9rem; padding-bottom: 0.6rem; border-bottom: 2px solid var(--line); }
   .compare-head-bad { color: var(--ink-faint); }
@@ -402,19 +538,26 @@ const faq = [
   .compare-head-good + .compare-list li::before { color: var(--red); content: "✓"; }
 
   .usecase-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.6rem; margin-bottom: 1.8rem; }
-  .usecase-card { border: 1px solid var(--line); padding: 1.2rem; }
+  .usecase-card { border: 1px solid var(--line); padding: 1.3rem; }
   .uc-n { font-family: var(--mono); font-size: 0.68rem; color: var(--red); display: block; margin-bottom: 0.6rem; }
-  .usecase-card h3 { margin: 0 0 0.5rem; font-size: 0.92rem; font-weight: 700; }
-  .usecase-card p { margin: 0; font-size: 0.8rem; color: var(--ink-dim); line-height: 1.5; }
+  .usecase-card h3 { margin: 0 0 0.5rem; font-size: 0.98rem; font-weight: 700; }
+  .usecase-card p { margin: 0 0 0.8rem; font-size: 0.83rem; color: var(--ink-dim); line-height: 1.5; }
+  .uc-io { display: block; font-family: var(--mono); font-size: 0.68rem; color: var(--ink-faint); background: var(--bg); border: 1px solid var(--line); padding: 0.5rem 0.6rem; overflow-x: auto; white-space: nowrap; }
 
   .label-demo { display: flex; gap: 2rem; align-items: flex-start; margin-bottom: 1.6rem; flex-wrap: wrap; }
   .label-sheet {
-    display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem;
-    background: var(--surface); border: 1px solid var(--ink); padding: 0.8rem; width: 220px; flex: none;
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem;
+    background: var(--surface); border: 1px solid var(--ink); padding: 1rem; width: 280px; flex: none;
   }
   .label-cell { border: 1px dashed var(--line); padding: 0.4rem; display: flex; flex-direction: column; align-items: center; gap: 0.3rem; }
   .label-qr { width: 100%; aspect-ratio: 1; background: repeating-conic-gradient(var(--ink) 0% 25%, var(--surface) 0% 50%) 50% / 6px 6px; }
   .label-cap { width: 70%; height: 4px; background: var(--line); }
+  .label-closeup {
+    display: flex; flex-direction: column; align-items: center; gap: 0.7rem; flex: none;
+    border: 1px solid var(--ink); background: var(--surface); padding: 1.2rem; width: 140px;
+  }
+  .label-qr-big { width: 90px; height: 90px; }
+  .label-cap-big { font-family: var(--mono); font-size: 0.68rem; color: var(--ink-dim); }
   .label-controls { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.6rem; flex: 1; min-width: 200px; }
   .label-controls li { font-size: 0.85rem; color: var(--ink-dim); padding-left: 1.2rem; position: relative; }
   .label-controls li::before { content: "—"; position: absolute; left: 0; color: var(--red); }
@@ -427,9 +570,9 @@ const faq = [
   .privacy-list li::before { content: "—"; position: absolute; left: 0; color: var(--red); }
 
   .table-wrap { overflow-x: auto; margin-bottom: 0.5rem; }
-  .cmp-table { border-collapse: collapse; width: 100%; max-width: 62ch; font-size: 0.85rem; }
+  .cmp-table { border-collapse: collapse; width: 100%; max-width: 62ch; font-size: 0.87rem; }
   .cmp-table th { text-align: left; font-family: var(--mono); font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--ink-faint); padding: 0 0 0.7rem; border-bottom: 2px solid var(--line); }
-  .cmp-table td { padding: 0.7rem 0; border-bottom: 1px solid var(--line); color: var(--ink-dim); }
+  .cmp-table td { padding: 0.75rem 0.6rem 0.75rem 0; border-bottom: 1px solid var(--line); color: var(--ink-dim); }
   .cmp-table tr:last-child td { border-bottom: none; }
 
   .tier-table-wrap { margin-top: 2.6rem; }
@@ -437,14 +580,16 @@ const faq = [
   .tier-table th:not(:first-child), .tier-table td.tier-mark { text-align: center; }
   .tier-table td:first-child { color: var(--ink); }
 
-  .home-faq { max-width: 68ch; margin-bottom: 2rem; }
+  .home-faq { max-width: 68ch; margin-bottom: 0.5rem; }
   .faq-item { border-top: 1px solid var(--line); padding: 0.9rem 0; }
-  .faq-item summary { cursor: pointer; font-size: 0.9rem; font-weight: 600; list-style: none; }
+  .faq-item summary { cursor: pointer; font-size: 0.92rem; font-weight: 600; list-style: none; }
   .faq-item summary::-webkit-details-marker { display: none; }
   .faq-item summary::before { content: "+"; display: inline-block; width: 1em; color: var(--red); font-weight: 700; }
   .faq-item[open] summary::before { content: "–"; }
-  .faq-item p { margin: 0.7rem 0 0 1em; font-size: 0.85rem; color: var(--ink-dim); line-height: 1.6; }
+  .faq-item p { margin: 0.7rem 0 0 1em; font-size: 0.87rem; color: var(--ink-dim); line-height: 1.6; }
 
+  .final-row { border-bottom: none; }
+  .final-h2 { font-size: clamp(1.5rem, 3vw, 2rem) !important; max-width: 20ch; }
   .final-cta { display: flex; align-items: center; gap: 1.2rem; flex-wrap: wrap; }
   .final-cta .cta-micro { margin: 0; }
 
@@ -464,5 +609,6 @@ const faq = [
     .usecase-grid { grid-template-columns: 1fr; }
     .privacy-list { grid-template-columns: 1fr; }
     .cred-strip { gap: 1.2rem 2rem; }
+    .demo-map { flex-direction: column; }
   }
 </style>

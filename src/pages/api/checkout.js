@@ -5,7 +5,7 @@
 export const prerender = false;
 
 function apiBase() {
-  return import.meta.env.DODO_PAYMENTS_ENVIRONMENT === "live_mode"
+  return import.meta.env.PUBLIC_DODO_ENVIRONMENT === "live_mode"
     ? "https://live.dodopayments.com"
     : "https://test.dodopayments.com";
 }
@@ -17,11 +17,14 @@ export async function GET({ url, redirect }) {
   }
 
   const apiKey = import.meta.env.DODO_PAYMENTS_API_KEY;
-  const returnUrl = import.meta.env.DODO_PAYMENTS_RETURN_URL;
-  if (!apiKey || !returnUrl) {
-    console.error("DODO_PAYMENTS_API_KEY / DODO_PAYMENTS_RETURN_URL not configured.");
+  if (!apiKey) {
+    console.error("DODO_PAYMENTS_API_KEY not configured.");
     return new Response("Checkout isn't configured yet. Please try again later.", { status: 500 });
   }
+  // Built from the incoming request itself rather than a configured env var,
+  // so this is automatically correct on localhost and in production without
+  // needing to be kept in sync.
+  const returnUrl = new URL("/checkout/success", url.origin).toString();
 
   let res;
   try {

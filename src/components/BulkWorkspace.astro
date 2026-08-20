@@ -20,6 +20,7 @@
     <button class="btn btn-fill" id="tb-buy-batch" type="button">Batch Pass — $7</button>
     <button class="btn btn-accent" id="tb-buy-pro" type="button">Pro — $39</button>
     <button class="link-btn" id="tb-toggle-key" type="button">Have a license key?</button>
+    <button class="link-btn" id="tb-change-key" type="button" hidden>Use a different license key</button>
   </div>
   <form id="tb-key-form" class="tb-key-form" hidden>
     <input id="tb-key-input" type="text" placeholder="License key" autocomplete="off" />
@@ -205,6 +206,7 @@
     buyBatch: el("tb-buy-batch"),
     buyPro: el("tb-buy-pro"),
     toggleKey: el("tb-toggle-key"),
+    changeKey: el("tb-change-key"),
     keyForm: el("tb-key-form"),
     keyInput: el("tb-key-input"),
     keyError: el("tb-key-error"),
@@ -231,28 +233,31 @@
         activeTier === "batch"
           ? "Unlocked for this file. Buy another Batch Pass for a different one, or upgrade to Pro for unlimited."
           : "Unlimited batches, on any device with your license key.";
-      tierBanner.actions.innerHTML = "";
-      const btn = document.createElement("button");
-      btn.type = "button";
-      btn.className = "link-btn";
-      btn.textContent = "Use a different license key";
-      btn.addEventListener("click", () => {
-        isUnlocked = false;
-        activeTier = null;
-        renderTierBanner();
-        tierBanner.keyForm.hidden = false;
-      });
-      tierBanner.actions.appendChild(btn);
+      tierBanner.buyBatch.hidden = true;
+      tierBanner.buyPro.hidden = true;
+      tierBanner.toggleKey.hidden = true;
+      tierBanner.changeKey.hidden = false;
     } else {
       tierBanner.title.textContent = "Free plan";
       tierBanner.desc.textContent = `Up to ${FREE_ROW_CAP} QR codes per batch, then upgrade for unlimited.`;
-      tierBanner.actions.innerHTML = "";
-      tierBanner.actions.appendChild(tierBanner.buyBatch);
-      tierBanner.actions.appendChild(tierBanner.buyPro);
-      tierBanner.actions.appendChild(tierBanner.toggleKey);
+      // A Batch Pass is a downgrade from Pro -- don't offer it as a buy
+      // option once this browser already holds a valid Pro purchase, even
+      // mid "use a different license key" (that only resets the on-screen
+      // state, not the underlying stored payment).
+      tierBanner.buyBatch.hidden = getStoredPayment()?.tier === "pro";
+      tierBanner.buyPro.hidden = false;
+      tierBanner.toggleKey.hidden = false;
+      tierBanner.changeKey.hidden = true;
     }
     updateBottomBar();
   }
+
+  tierBanner.changeKey.addEventListener("click", () => {
+    isUnlocked = false;
+    activeTier = null;
+    renderTierBanner();
+    tierBanner.keyForm.hidden = false;
+  });
 
   tierBanner.toggleKey.addEventListener("click", () => {
     tierBanner.keyForm.hidden = !tierBanner.keyForm.hidden;

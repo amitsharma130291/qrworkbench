@@ -2,6 +2,11 @@
 ---
 <style is:global>
   *, *::before, *::after { box-sizing: border-box; }
+  /* .btn and a few other classes set display explicitly, which -- at equal
+     selector specificity -- wins over the browser's default [hidden] rule
+     since author styles load after the UA stylesheet. Toggling .hidden on
+     a styled element would silently stay visible without this. */
+  [hidden] { display: none !important; }
   html { scroll-behavior: smooth; font-size: 112.5%; }
   @media (prefers-reduced-motion: reduce) {
     html { scroll-behavior: auto; }

@@ -264,7 +264,13 @@
       tierBanner.buyBatch.hidden = true;
       tierBanner.buyPro.hidden = true;
       tierBanner.toggleKey.hidden = true;
-      tierBanner.changeKey.hidden = false;
+      // Pro is the top tier -- there's nothing to switch "up" to, and
+      // offering to swap keys here just invites someone to click it and
+      // land on a screen with a $39 buy button, which reads as "pay again"
+      // right after they already paid. Batch Pass still shows it, since
+      // switching to a different file's key or upgrading to Pro both make
+      // real sense there.
+      tierBanner.changeKey.hidden = activeTier === "pro";
     } else if (pendingClaim) {
       tierBanner.title.textContent = "Batch Pass confirmed";
       tierBanner.desc.textContent = "Not tied to a file yet — upload yours below and it unlocks automatically. We've also emailed you the license key.";

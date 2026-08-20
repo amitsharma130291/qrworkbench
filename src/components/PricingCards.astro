@@ -1,6 +1,7 @@
 ---
 const plans = [
   {
+    key: "free",
     name: "Free",
     price: "$0",
     note: "",
@@ -10,6 +11,7 @@ const plans = [
     style: "",
   },
   {
+    key: "batch",
     name: "Batch Pass",
     price: "$7",
     note: "once",
@@ -25,6 +27,7 @@ const plans = [
     style: "",
   },
   {
+    key: "pro",
     name: "Pro — lifetime",
     price: "$39",
     note: "once",
@@ -43,20 +46,22 @@ const plans = [
       <div class="name">{p.name}</div>
       <div class="price">{p.price}{p.note && <span> {p.note}</span>}</div>
       <ul>{p.features.map((f) => <li>{f}</li>)}</ul>
-      {p.href ? (
-        <a class:list={["btn", p.style === "hi" ? "btn-accent" : ""]} href={p.href}>{p.cta}</a>
-      ) : (
-        <button class:list={["btn", p.style === "hi" ? "btn-accent" : ""]} type="button" data-action={p.action} data-tier={p.action === "pricing-buy-batch" ? "batch" : "pro"}>{p.cta}</button>
-      )}
+      <div class="plan-cta" data-plan={p.key}>
+        {p.href ? (
+          <a class:list={["btn", p.style === "hi" ? "btn-accent" : ""]} href={p.href}>{p.cta}</a>
+        ) : (
+          <button class:list={["btn", p.style === "hi" ? "btn-accent" : ""]} type="button" data-action={p.action} data-tier={p.action === "pricing-buy-batch" ? "batch" : "pro"}>{p.cta}</button>
+        )}
+      </div>
     </div>
   ))}
 </div>
 <p class="pricing-clarity">One-time payment, never a subscription. Your license key works on any device — no account needed, just paste it in.</p>
 
 <script>
-  import { startCheckout } from "../lib/bulk/license.js";
+  import { startCheckout, getStoredPayment } from "../lib/bulk/license.js";
 
-  // Neither button here has a file in play -- Pro doesn't need one, and a
+  // Neither buy button here has a file in play -- Pro doesn't need one, and a
   // Batch Pass bought from here just stays unscoped at Dodo until it's
   // claimed by whichever file it's first used on in the bulk workspace.
   document.querySelectorAll("[data-action^='pricing-buy-']").forEach((btn) => {
@@ -70,6 +75,28 @@ const plans = [
       }
     });
   });
+
+  // Reflect what's already unlocked in this browser instead of always
+  // showing "buy" -- landing here right after purchasing (or with an old
+  // license still active) shouldn't look identical to never having bought
+  // anything. Re-run on "qrw:license-updated" too, not just on load --
+  // LicenseRecovery resolves a redeem/email-link reactivation asynchronously
+  // after this script has already rendered its initial state, so without
+  // this the cards would show stale "buy" buttons right after unlocking
+  // until the next full page load.
+  function applyOwnedState() {
+    const stored = getStoredPayment();
+    const cta = (plan) => document.querySelector(`.plan-cta[data-plan="${plan}"]`);
+
+    if (stored?.tier === "pro") {
+      cta("pro").innerHTML = '<a class="btn btn-accent is-owned" href="/bulk">✓ Active — go to bulk workspace</a>';
+      cta("batch").innerHTML = '<span class="owned-note">Included in your Pro plan</span>';
+    } else if (stored?.tier === "batch") {
+      cta("batch").innerHTML = '<a class="btn is-owned" href="/bulk">✓ Active — go to bulk workspace</a>';
+    }
+  }
+  applyOwnedState();
+  window.addEventListener("qrw:license-updated", applyOwnedState);
 </script>
 
 <style>
@@ -84,6 +111,8 @@ const plans = [
   .plan li { padding: 0.4rem 0; border-top: 1px solid var(--line); }
   .plan li:first-child { border-top: none; }
   .plan .btn { width: 100%; text-align: center; }
+  .plan .btn.is-owned { background: var(--success); border-color: var(--success); color: #fff; }
+  .owned-note { display: block; font-size: 0.82rem; color: var(--ink-faint); padding: 0.7rem 0; text-align: center; }
 
   .pricing-clarity { font-size: 0.8rem; color: var(--ink-faint); margin: 1.6rem 0 0; }
 

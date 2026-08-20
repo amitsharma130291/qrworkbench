@@ -48,6 +48,10 @@
   function showStatusHtml(html) {
     els.status.innerHTML = html;
     els.status.hidden = false;
+    // PricingCards renders its "already own this" state once, on its own
+    // script load -- it has no way to know a redeem/reactivation happened
+    // afterward in this component without this.
+    window.dispatchEvent(new CustomEvent("qrw:license-updated"));
   }
 
   // Runs an async submit handler with the button showing a loading label

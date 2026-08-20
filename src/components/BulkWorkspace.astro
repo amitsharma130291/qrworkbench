@@ -125,6 +125,18 @@
     <button id="generate-btn" class="btn btn-accent" type="button" disabled>Generate QR codes</button>
   </div>
 </div>
+
+<div id="upsell-cta" class="upsell-cta" hidden>
+  <div class="upsell-text">
+    <strong id="upsell-title">More QR codes waiting</strong>
+    <span>You've got the free 50 — unlock the rest of this exact batch, or go unlimited for every future one.</span>
+  </div>
+  <div class="upsell-actions">
+    <button id="upsell-buy-batch" class="btn btn-fill" type="button">Finish this batch — $7</button>
+    <button id="upsell-buy-pro" class="btn btn-accent" type="button">Go unlimited — $39</button>
+  </div>
+</div>
+
 <p class="gb-note">Generation happens entirely in this browser tab — nothing is uploaded anywhere.</p>
 
 <div class="support-grid">
@@ -200,6 +212,13 @@
   const fileInfo = el("file-info");
   const errorBanner = el("error-banner");
 
+  const upsell = {
+    root: el("upsell-cta"),
+    title: el("upsell-title"),
+    buyBatch: el("upsell-buy-batch"),
+    buyPro: el("upsell-buy-pro"),
+  };
+
   const tierBanner = {
     title: el("tb-title"),
     desc: el("tb-desc"),
@@ -236,6 +255,7 @@
     const pendingClaim = !isUnlocked && stored?.tier === "batch" && !stored.jobId;
 
     if (isUnlocked) {
+      upsell.root.hidden = true;
       tierBanner.title.textContent = `${tierLabel(activeTier)} unlocked`;
       tierBanner.desc.textContent =
         activeTier === "batch"
@@ -602,6 +622,7 @@
   async function runGenerateAll() {
     if (!state.rows.length) return;
     generateBtn.disabled = true;
+    upsell.root.hidden = true;
     const mapping = currentMapping();
     const size = Number(cfgSize.value);
     const ec = cfgEc.value;
@@ -652,12 +673,40 @@
     a.remove();
     URL.revokeObjectURL(url);
     genProgress.textContent = capped
-      ? `Done — downloaded ${written.toLocaleString()} of ${state.rows.length.toLocaleString()} (free limit is ${FREE_ROW_CAP}). Unlock above to generate the rest.`
+      ? `Done — downloaded ${written.toLocaleString()} of ${state.rows.length.toLocaleString()} (free limit is ${FREE_ROW_CAP}).`
       : `Done — downloaded qrgrid-codes.zip (${written.toLocaleString()} files)`;
     generateBtn.disabled = false;
+
+    if (capped) {
+      const remaining = state.rows.length - FREE_ROW_CAP;
+      upsell.title.textContent = `${remaining.toLocaleString()} more QR code${remaining === 1 ? "" : "s"} waiting`;
+      upsell.root.hidden = false;
+    }
   }
 
   generateBtn.addEventListener("click", runGenerateAll);
+
+  upsell.buyBatch.addEventListener("click", async () => {
+    upsell.buyBatch.disabled = true;
+    try {
+      saveResumeState();
+      await startCheckout("batch", jobId);
+    } catch (err) {
+      showError(err.message);
+      upsell.buyBatch.disabled = false;
+    }
+  });
+
+  upsell.buyPro.addEventListener("click", async () => {
+    upsell.buyPro.disabled = true;
+    try {
+      saveResumeState();
+      await startCheckout("pro", jobId || newJobId());
+    } catch (err) {
+      showError(err.message);
+      upsell.buyPro.disabled = false;
+    }
+  });
 
   // Regenerate flow: a Dodo checkout is a real page navigation away and
   // back, which wipes all in-memory state (the parsed file can't survive
@@ -821,6 +870,16 @@
   .gb-right { display: flex; align-items: center; gap: 1rem; }
   .gen-progress { font-family: var(--mono); font-size: 0.7rem; color: var(--ink-faint); }
   .gb-note { font-family: var(--mono); font-size: 0.68rem; color: var(--ink-faint); margin: 0.8rem 0 0; }
+
+  .upsell-cta {
+    display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; flex-wrap: wrap;
+    border: 1.5px solid var(--red); background: #FFF6F4; padding: 1.1rem 1.4rem; margin-top: 0.9rem;
+  }
+  .upsell-text { display: flex; flex-direction: column; gap: 0.3rem; max-width: 46ch; }
+  .upsell-text strong { font-size: 0.95rem; color: var(--red); }
+  .upsell-text span { font-size: 0.82rem; color: var(--ink-dim); line-height: 1.45; }
+  .upsell-actions { display: flex; gap: 0.7rem; flex-wrap: wrap; flex: none; }
+  .upsell-actions .btn { font-size: 0.82rem; white-space: nowrap; }
 
   .support-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem; margin: 3.5rem 0 2.5rem; }
   .support-col h2, .support-faq h2 { font-size: 1rem; margin: 0 0 1.1rem; letter-spacing: -0.01em; }

@@ -267,6 +267,7 @@
     if (!jobId) return;
     tierBanner.buyBatch.disabled = true;
     try {
+      saveResumeState();
       await startCheckout("batch", jobId);
     } catch (err) {
       tierBanner.keyError.textContent = err.message;
@@ -279,6 +280,7 @@
   tierBanner.buyPro.addEventListener("click", async () => {
     tierBanner.buyPro.disabled = true;
     try {
+      saveResumeState();
       await startCheckout("pro", jobId || newJobId());
     } catch (err) {
       tierBanner.keyError.textContent = err.message;
@@ -417,7 +419,8 @@
     markStepDone("preview");
     renderPreview();
     updateBottomBar();
-    refreshAccessForCurrentJob();
+    await refreshAccessForCurrentJob();
+    await tryResumeAfterCheckout();
   }
 
   function populateMapping() {
@@ -538,7 +541,7 @@
     renderPreview();
   });
 
-  generateBtn.addEventListener("click", async () => {
+  async function runGenerateAll() {
     if (!state.rows.length) return;
     generateBtn.disabled = true;
     const mapping = currentMapping();
@@ -594,7 +597,62 @@
       ? `Done — downloaded ${written.toLocaleString()} of ${state.rows.length.toLocaleString()} (free limit is ${FREE_ROW_CAP}). Unlock above to generate the rest.`
       : `Done — downloaded qrgrid-codes.zip (${written.toLocaleString()} files)`;
     generateBtn.disabled = false;
-  });
+  }
+
+  generateBtn.addEventListener("click", runGenerateAll);
+
+  // Regenerate flow: a Dodo checkout is a real page navigation away and
+  // back, which wipes all in-memory state (the parsed file can't survive
+  // that -- File objects aren't serializable). What IS possible: remember
+  // the column mapping/format/size tied to this exact job just before
+  // leaving for checkout, and once the customer re-uploads the same file
+  // (jobId matches, since it's a content hash of the file), restore those
+  // choices and run the full generate straight away instead of making them
+  // redo the mapping step from scratch.
+  const RESUME_KEY = "qrw_resume_after_checkout";
+  function saveResumeState() {
+    try {
+      sessionStorage.setItem(
+        RESUME_KEY,
+        JSON.stringify({ jobId, mapping: currentMapping(), format, size: cfgSize.value, ec: cfgEc.value, quietZone: cfgQuietZone.checked, pattern: cfgPattern.value })
+      );
+    } catch {
+      /* sessionStorage unavailable (private mode, etc.) -- resume just won't fire, no harder failure than that */
+    }
+  }
+  function loadResumeState() {
+    try {
+      return JSON.parse(sessionStorage.getItem(RESUME_KEY) || "null");
+    } catch {
+      return null;
+    }
+  }
+  function clearResumeState() {
+    sessionStorage.removeItem(RESUME_KEY);
+  }
+
+  async function tryResumeAfterCheckout() {
+    const resume = loadResumeState();
+    if (!resume || resume.jobId !== jobId) return;
+    clearResumeState();
+
+    if (mapSelects.qrData.querySelector(`option[value="${CSS.escape(resume.mapping.qrData)}"]`)) mapSelects.qrData.value = resume.mapping.qrData;
+    if (mapSelects.filename.querySelector(`option[value="${CSS.escape(resume.mapping.filename)}"]`)) mapSelects.filename.value = resume.mapping.filename;
+    mapSelects.caption.value = resume.mapping.caption || "";
+    mapSelects.price.value = resume.mapping.price || "";
+    mapSelects.category.value = resume.mapping.category || "";
+    cfgSize.value = resume.size;
+    cfgEc.value = resume.ec;
+    cfgQuietZone.checked = resume.quietZone;
+    cfgPattern.value = resume.pattern;
+    formatSeg.querySelectorAll("button").forEach((b) => b.classList.toggle("is-active", b.dataset.format === resume.format));
+    format = resume.format;
+
+    renderPreview();
+    updateBottomBar();
+    tierBanner.desc.textContent = "Welcome back — picking up where you left off.";
+    await runGenerateAll();
+  }
 
   updateBottomBar();
   initTierBanner();

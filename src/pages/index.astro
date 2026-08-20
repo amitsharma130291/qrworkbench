@@ -1,6 +1,7 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import ToolIcon from "../components/ToolIcon.astro";
+import PricingCards from "../components/PricingCards.astro";
 
 const tools = [
   { icon: "url", name: "URL", desc: "Any link, encoded directly.", href: "/url-qr-code-generator" },
@@ -16,41 +17,6 @@ const tools = [
   { icon: "social", name: "LinkedIn", desc: "Link to your profile.", href: "/linkedin-qr-code-generator" },
 ];
 const moreTools = ["WhatsApp"];
-
-const plans = [
-  {
-    name: "Free",
-    price: "$0",
-    note: "",
-    features: ["Unlimited single codes", "Bulk batches up to 50 codes", "PNG + SVG export"],
-    cta: "Start free",
-    href: "/url-qr-code-generator",
-    style: "",
-  },
-  {
-    name: "Batch Pass",
-    price: "$7",
-    note: "once",
-    features: ["One batch, up to 5,000 codes", "SVG + ZIP export", "Custom filenames"],
-    // A Batch Pass is scoped to a specific uploaded file, so buying it only
-    // makes sense from inside the bulk workspace once a file is loaded --
-    // this just routes there, same split as the Pro button below.
-    cta: "Buy a batch pass",
-    href: "/bulk#upload",
-    style: "",
-  },
-  {
-    name: "Pro — lifetime",
-    price: "$39",
-    note: "once",
-    features: ["Unlimited batches, forever", "Print-ready sheets (soon)", "Logo + presets (soon)"],
-    // Pro isn't scoped to any file, so it's a direct checkout button (wired
-    // in the script block below) instead of a link.
-    cta: "Get Pro",
-    href: null,
-    style: "hi",
-  },
-];
 ---
 <Layout
   title="QR Workbench — Free QR Code Generator for 11 Formats"
@@ -139,21 +105,8 @@ const plans = [
         <h2>Pricing</h2>
       </div>
       <div class="row-content">
-        <div class="plan-row">
-          {plans.map((p) => (
-            <div class:list={["plan", p.style]}>
-              <div class="name">{p.name}</div>
-              <div class="price">{p.price}{p.note && <span> {p.note}</span>}</div>
-              <ul>{p.features.map((f) => <li>{f}</li>)}</ul>
-              {p.href ? (
-                <a class:list={["btn", p.style === "hi" ? "btn-accent" : ""]} href={p.href}>{p.cta}</a>
-              ) : (
-                <button class:list={["btn", p.style === "hi" ? "btn-accent" : ""]} type="button" data-action="pricing-buy-pro">{p.cta}</button>
-              )}
-            </div>
-          ))}
-        </div>
-        <p class="section-note pricing-note">The bulk workspace is free to try — up to 50 codes per batch, no payment required. Batch Pass and Pro unlock instantly after checkout, no account needed, just a license key. <a href="/bulk">Try the bulk workspace →</a></p>
+        <PricingCards />
+        <p class="section-note pricing-note">The bulk workspace is free to try — up to 50 codes per batch, no payment required. <a href="/pricing">See the full pricing page →</a></p>
       </div>
     </section>
   </div>
@@ -161,28 +114,11 @@ const plans = [
 
 <script>
   import { renderQR } from "../lib/qr.js";
-  import { startCheckout, newJobId } from "../lib/bulk/license.js";
 
   const canvas = document.getElementById("hero-qr");
   const text = typeof location !== "undefined" ? location.origin + "/" : "https://www.qrworkbench.com";
 
   renderQR(canvas, text, { width: 480 });
-
-  // Pro isn't scoped to any particular upload, so it can be bought straight
-  // from the pricing card with no file in play -- jobId is only meaningful
-  // for a Batch Pass, which routes to the bulk workspace instead (see the
-  // plans array above).
-  document.querySelectorAll('[data-action="pricing-buy-pro"]').forEach((btn) => {
-    btn.addEventListener("click", async () => {
-      btn.disabled = true;
-      try {
-        await startCheckout("pro", newJobId());
-      } catch (err) {
-        alert(err.message || "Couldn't start checkout.");
-        btn.disabled = false;
-      }
-    });
-  });
 </script>
 
 <style>
@@ -253,17 +189,6 @@ const plans = [
   .flow-step p { margin: 0; font-size: 0.83rem; color: var(--ink-dim); line-height: 1.5; }
   .bulk-link { font-size: 0.8rem; }
 
-  .plan-row { display: grid; grid-template-columns: repeat(3, 1fr); }
-  .plan { padding: 0 1.8rem 0 0; }
-  .plan + .plan { padding-left: 1.8rem; border-left: 1px solid var(--line); }
-  .plan .name { font-family: var(--mono); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-faint); }
-  .plan.hi .name { color: var(--red); }
-  .plan .price { font-size: 2.2rem; font-weight: 700; margin: 0.5rem 0 1.2rem; letter-spacing: -0.02em; }
-  .plan .price span { font-size: 0.8rem; color: var(--ink-faint); font-weight: 400; }
-  .plan ul { list-style: none; padding: 0; margin: 0 0 1.5rem; font-size: 0.85rem; color: var(--ink-dim); }
-  .plan li { padding: 0.4rem 0; border-top: 1px solid var(--line); }
-  .plan li:first-child { border-top: none; }
-
   @media (max-width: 860px) {
     .hero-grid { grid-template-columns: 1fr; padding: 2.5rem 1.75rem; }
     .grid-row { grid-template-columns: 1fr; }
@@ -272,7 +197,5 @@ const plans = [
     .more-panel { padding-left: 0; }
     .flow { flex-direction: column; gap: 1.6rem; }
     .flow-step + .flow-step { border-left: none; padding-left: 0; }
-    .plan-row { grid-template-columns: 1fr; gap: 1.8rem; }
-    .plan + .plan { padding-left: 0; border-left: none; }
   }
 </style>

@@ -1,0 +1,81 @@
+---
+import Layout from "../layouts/Layout.astro";
+import PricingCards from "../components/PricingCards.astro";
+
+const faq = [
+  { q: "Is there really a free tier for bulk generation?", a: "Yes — upload a CSV on the bulk workspace and generate up to 50 QR codes as a real, downloadable ZIP, no payment or account required. It's not a locked preview." },
+  { q: "What's the difference between Batch Pass and Pro?", a: "A Batch Pass ($7) unlocks one specific file — up to 5,000 codes — for a one-time job. Pro ($39) is a lifetime unlock for unlimited batches, on any file, forever." },
+  { q: "Is this a subscription?", a: "No. Both paid tiers are one-time payments. There's no recurring billing, and nothing to cancel." },
+  { q: "Do I need an account?", a: "No. After payment, you get a license key by email. Paste it into the bulk workspace on any device to unlock it there — no login, no password." },
+  { q: "What if I lose my license key?", a: "Use \"Forgot your key?\" on the bulk workspace with the email you paid with, and we'll resend it. Every purchase is also recorded in an email at checkout, so keep that too." },
+  { q: "Does a Batch Pass work on a different spreadsheet?", a: "No — a Batch Pass is scoped to the exact file you bought it for. If you re-upload that same file later, it unlocks automatically. For unlimited files, get Pro instead." },
+  { q: "Is my payment information secure?", a: "Payments are processed entirely by Dodo Payments on their own checkout page — this site never sees or stores your card details." },
+];
+
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faq.map((item) => ({
+    "@type": "Question",
+    name: item.q,
+    acceptedAnswer: { "@type": "Answer", text: item.a },
+  })),
+};
+---
+<Layout
+  title="Pricing — QR Workbench"
+  description="Free QR code generation, forever. Bulk CSV-to-ZIP production starts at $7 for one batch, or $39 lifetime for unlimited — one-time payment, no subscription."
+>
+  <Fragment slot="head">
+    <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+  </Fragment>
+
+  <div class="frame pricing-page">
+    <div class="pricing-head">
+      <div class="index-no">PRICING</div>
+      <h1>Free forever. Pay once for scale.</h1>
+      <p class="intro">
+        Every single-code generator is free, permanently. The bulk workspace — CSV upload, column
+        mapping, batch generation, ZIP export — is free to try up to 50 codes per batch, then a
+        one-time payment unlocks the rest. No subscription, no account, just a license key.
+      </p>
+    </div>
+
+    <PricingCards />
+
+    <div class="pricing-faq">
+      <h2>Questions</h2>
+      {faq.map((item) => (
+        <details class="faq-item">
+          <summary>{item.q}</summary>
+          <p>{item.a}</p>
+        </details>
+      ))}
+    </div>
+
+    <p class="pricing-cta">
+      Not sure which one you need? <a href="/bulk-qr-code-generator">See how the bulk workspace works</a>
+      or <a href="/bulk">try it free first →</a>
+    </p>
+  </div>
+</Layout>
+
+<style>
+  .pricing-page { padding: 3rem 1.75rem 5rem; max-width: 900px; }
+  .pricing-head { max-width: 68ch; margin-bottom: 2.6rem; }
+  .index-no { font-family: var(--mono); font-size: 0.72rem; color: var(--red); margin-bottom: 1rem; letter-spacing: 0.04em; text-transform: uppercase; }
+  .pricing-page h1 { font-size: clamp(1.8rem, 3.6vw, 2.5rem); margin: 0 0 1.1rem; letter-spacing: -0.015em; line-height: 1.1; text-wrap: balance; }
+  .intro { color: var(--ink-dim); line-height: 1.6; font-size: 1rem; margin: 0; }
+
+  .pricing-faq { margin: 3.5rem 0 2rem; }
+  .pricing-faq h2 { font-size: 1.2rem; margin: 0 0 1.4rem; letter-spacing: -0.01em; }
+  .faq-item { border-top: 1px solid var(--line); padding: 0.9rem 0; }
+  .faq-item summary { cursor: pointer; font-size: 0.9rem; font-weight: 600; list-style: none; }
+  .faq-item summary::-webkit-details-marker { display: none; }
+  .faq-item summary::before { content: "+"; display: inline-block; width: 1em; color: var(--red); font-weight: 700; }
+  .faq-item[open] summary::before { content: "–"; }
+  .faq-item p { margin: 0.7rem 0 0 1em; font-size: 0.85rem; color: var(--ink-dim); line-height: 1.6; }
+
+  .pricing-cta { font-size: 0.85rem; color: var(--ink-dim); }
+  .pricing-cta a { color: var(--red); }
+</style>

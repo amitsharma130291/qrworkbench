@@ -1,0 +1,92 @@
+---
+const plans = [
+  {
+    name: "Free",
+    price: "$0",
+    note: "",
+    features: ["Unlimited single codes", "Bulk batches up to 50 codes", "PNG + SVG export"],
+    cta: "Start free",
+    href: "/url-qr-code-generator",
+    style: "",
+  },
+  {
+    name: "Batch Pass",
+    price: "$7",
+    note: "once",
+    features: ["One batch, up to 5,000 codes", "SVG + ZIP export", "Custom filenames"],
+    // A Batch Pass is scoped to a specific uploaded file, so buying it only
+    // makes sense from inside the bulk workspace once a file is loaded --
+    // this just routes there, same split as the Pro button below.
+    cta: "Buy a batch pass",
+    href: "/bulk#upload",
+    style: "",
+  },
+  {
+    name: "Pro — lifetime",
+    price: "$39",
+    note: "once",
+    features: ["Unlimited batches, forever", "Print-ready sheets (soon)", "Logo + presets (soon)"],
+    // Pro isn't scoped to any file, so it's a direct checkout button (wired
+    // in the script block below) instead of a link.
+    cta: "Get Pro",
+    href: null,
+    style: "hi",
+  },
+];
+---
+<div class="plan-row">
+  {plans.map((p) => (
+    <div class:list={["plan", p.style]}>
+      <div class="name">{p.name}</div>
+      <div class="price">{p.price}{p.note && <span> {p.note}</span>}</div>
+      <ul>{p.features.map((f) => <li>{f}</li>)}</ul>
+      {p.href ? (
+        <a class:list={["btn", p.style === "hi" ? "btn-accent" : ""]} href={p.href}>{p.cta}</a>
+      ) : (
+        <button class:list={["btn", p.style === "hi" ? "btn-accent" : ""]} type="button" data-action="pricing-buy-pro">{p.cta}</button>
+      )}
+    </div>
+  ))}
+</div>
+<p class="pricing-clarity">One-time payment, never a subscription. Your license key works on any device — no account needed, just paste it in.</p>
+
+<script>
+  import { startCheckout, newJobId } from "../lib/bulk/license.js";
+
+  // Pro isn't scoped to any particular upload, so it can be bought straight
+  // from a pricing card with no file in play -- jobId is only meaningful for
+  // a Batch Pass, which routes to the bulk workspace instead (see the plans
+  // array above).
+  document.querySelectorAll('[data-action="pricing-buy-pro"]').forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      btn.disabled = true;
+      try {
+        await startCheckout("pro", newJobId());
+      } catch (err) {
+        alert(err.message || "Couldn't start checkout.");
+        btn.disabled = false;
+      }
+    });
+  });
+</script>
+
+<style>
+  .plan-row { display: grid; grid-template-columns: repeat(3, 1fr); }
+  .plan { padding: 0 1.8rem 0 0; }
+  .plan + .plan { padding-left: 1.8rem; border-left: 1px solid var(--line); }
+  .plan .name { font-family: var(--mono); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-faint); }
+  .plan.hi .name { color: var(--red); }
+  .plan .price { font-size: 2.2rem; font-weight: 700; margin: 0.5rem 0 1.2rem; letter-spacing: -0.02em; }
+  .plan .price span { font-size: 0.8rem; color: var(--ink-faint); font-weight: 400; }
+  .plan ul { list-style: none; padding: 0; margin: 0 0 1.5rem; font-size: 0.85rem; color: var(--ink-dim); }
+  .plan li { padding: 0.4rem 0; border-top: 1px solid var(--line); }
+  .plan li:first-child { border-top: none; }
+  .plan .btn { width: 100%; text-align: center; }
+
+  .pricing-clarity { font-size: 0.8rem; color: var(--ink-faint); margin: 1.6rem 0 0; }
+
+  @media (max-width: 700px) {
+    .plan-row { grid-template-columns: 1fr; gap: 1.8rem; }
+    .plan + .plan { padding-left: 0; border-left: none; }
+  }
+</style>

@@ -1,0 +1,114 @@
+---
+// Standalone "already purchased?" box, usable anywhere -- unlike the one
+// built into BulkWorkspace.astro's tier banner, this has no file/job in
+// context. Redeeming a key here just confirms it's real and remembers it in
+// this browser; the actual per-file scoping (for a Batch Pass) still
+// happens later, once there's a real upload to check it against.
+---
+<div class="license-recovery" id="license-recovery">
+  <h2>Already purchased?</h2>
+  <p class="lr-hint">Paste the license key from your purchase email to unlock it in this browser, or look it up again if you've lost it.</p>
+
+  <form id="lr-redeem-form" class="lr-form">
+    <input id="lr-key-input" type="text" placeholder="License key" autocomplete="off" />
+    <button class="btn btn-accent" type="submit">Unlock</button>
+  </form>
+  <button id="lr-toggle-recover" class="link-btn" type="button">Forgot your key?</button>
+
+  <form id="lr-recover-form" class="lr-form" hidden>
+    <input id="lr-recover-email" type="email" placeholder="Email used at checkout" autocomplete="email" />
+    <button class="btn" type="submit">Send my key</button>
+  </form>
+
+  <p id="lr-error" class="lr-error" hidden role="alert"></p>
+  <p id="lr-status" class="lr-status" hidden></p>
+</div>
+
+<script>
+  import { redeemLicenseKey, requestLicenseRecovery } from "../lib/bulk/license.js";
+
+  const root = document.getElementById("license-recovery");
+  const els = {
+    redeemForm: root.querySelector("#lr-redeem-form"),
+    keyInput: root.querySelector("#lr-key-input"),
+    toggleRecover: root.querySelector("#lr-toggle-recover"),
+    recoverForm: root.querySelector("#lr-recover-form"),
+    recoverEmail: root.querySelector("#lr-recover-email"),
+    error: root.querySelector("#lr-error"),
+    status: root.querySelector("#lr-status"),
+  };
+
+  function clearMessages() {
+    els.error.hidden = true;
+    els.status.hidden = true;
+  }
+
+  els.redeemForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    clearMessages();
+    const key = els.keyInput.value.trim();
+    if (!key) return;
+    const btn = els.redeemForm.querySelector("button");
+    btn.disabled = true;
+    try {
+      // No file loaded here -- jobId is intentionally empty, so a Batch
+      // Pass confirms without enforcing which file it's scoped to yet.
+      const payment = await redeemLicenseKey(key, "");
+      els.status.textContent =
+        payment.tier === "pro"
+          ? "✓ Valid Pro license — unlocked. Head to the bulk workspace to generate a batch."
+          : "✓ Valid Batch Pass confirmed. Upload your file on the bulk workspace to export it.";
+      els.status.hidden = false;
+      els.keyInput.value = "";
+    } catch (err) {
+      els.error.textContent = err.message;
+      els.error.hidden = false;
+    } finally {
+      btn.disabled = false;
+    }
+  });
+
+  els.toggleRecover.addEventListener("click", () => {
+    els.recoverForm.hidden = !els.recoverForm.hidden;
+  });
+
+  els.recoverForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    clearMessages();
+    const email = els.recoverEmail.value.trim();
+    if (!email) return;
+    const btn = els.recoverForm.querySelector("button");
+    btn.disabled = true;
+    try {
+      const message = await requestLicenseRecovery(email);
+      els.status.textContent = message;
+      els.status.hidden = false;
+    } catch (err) {
+      els.error.textContent = err.message;
+      els.error.hidden = false;
+    } finally {
+      btn.disabled = false;
+    }
+  });
+</script>
+
+<style>
+  .license-recovery { border: 1px solid var(--line); background: var(--surface); padding: 1.8rem; margin: 2.6rem 0; }
+  .license-recovery h2 { font-size: 1.05rem; margin: 0 0 0.6rem; letter-spacing: -0.01em; }
+  .lr-hint { font-size: 0.85rem; color: var(--ink-dim); line-height: 1.55; margin: 0 0 1.3rem; max-width: 56ch; }
+
+  .lr-form { display: flex; gap: 0.7rem; max-width: 420px; margin-bottom: 0.9rem; }
+  .lr-form input {
+    flex: 1; font: inherit; font-size: 0.88rem; padding: 0.7rem 0.8rem; border: 1px solid var(--line); background: var(--bg); color: var(--ink);
+  }
+  .lr-form .btn { font-size: 0.82rem; white-space: nowrap; }
+
+  .link-btn { font: inherit; font-size: 0.8rem; background: none; border: none; color: var(--red); text-decoration: underline; cursor: pointer; padding: 0; }
+
+  .lr-error { color: var(--red); font-size: 0.82rem; margin: 1rem 0 0; }
+  .lr-status { color: var(--success); font-size: 0.82rem; margin: 1rem 0 0; }
+
+  @media (max-width: 480px) {
+    .lr-form { flex-direction: column; max-width: none; }
+  }
+</style>

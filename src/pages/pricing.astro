@@ -1,13 +1,14 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import PricingCards from "../components/PricingCards.astro";
+import LicenseRecovery from "../components/LicenseRecovery.astro";
 
 const faq = [
   { q: "Is there really a free tier for bulk generation?", a: "Yes — upload a CSV on the bulk workspace and generate up to 20 QR codes as a real, downloadable ZIP, no payment or account required. It's not a locked preview." },
   { q: "What's the difference between Batch Pass and Pro?", a: "A Batch Pass ($7) unlocks one specific file — up to 5,000 codes — for a one-time job. Pro ($39) is a lifetime unlock for unlimited batches, on any file, forever." },
   { q: "Is this a subscription?", a: "No. Both paid tiers are one-time payments. There's no recurring billing, and nothing to cancel." },
   { q: "Do I need an account?", a: "No. After payment, you get a license key by email. Paste it into the bulk workspace on any device to unlock it there — no login, no password." },
-  { q: "What if I lose my license key?", a: "Use \"Forgot your key?\" on the bulk workspace with the email you paid with, and we'll resend it. Every purchase is also recorded in an email at checkout, so keep that too." },
+  { q: "What if I lose my license key?", a: "Use \"Forgot your key?\" above (or on the bulk workspace) with the email you paid with, and we'll resend it. Every purchase is also recorded in an email at checkout, so keep that too." },
   { q: "Does a Batch Pass work on a different spreadsheet?", a: "No — a Batch Pass covers one file: whichever one it's used on first (either the file you already had loaded when you bought it, or the next one you upload afterward). Re-uploading that same file later unlocks it again automatically. For unlimited files, get Pro instead." },
   { q: "Is my payment information secure?", a: "Payments are processed entirely by Dodo Payments on their own checkout page — this site never sees or stores your card details." },
 ];
@@ -42,6 +43,8 @@ const faqSchema = {
     </div>
 
     <PricingCards />
+
+    <LicenseRecovery />
 
     <div class="pricing-faq">
       <h2>Questions</h2>

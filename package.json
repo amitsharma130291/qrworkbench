@@ -12,9 +12,11 @@
     "@astrojs/sitemap": "^3.7.3",
     "@astrojs/vercel": "^11.0.5",
     "astro": "^7.2.2",
+    "dodopayments": "^2.47.0",
     "jszip": "^3.10.1",
     "nodemailer": "^9.0.5",
-    "qrcode": "^1.5.4"
+    "qrcode": "^1.5.4",
+    "standardwebhooks": "^1.0.0"
   },
   "devDependencies": {
     "sharp": "^0.35.3"

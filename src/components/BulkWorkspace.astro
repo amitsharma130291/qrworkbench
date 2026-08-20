@@ -17,14 +17,20 @@
     <span id="tb-desc">Up to 50 QR codes per batch, then upgrade for unlimited.</span>
   </div>
   <div class="tb-actions" id="tb-actions">
-    <a class="btn btn-fill" id="tb-buy-batch" href="#">Batch Pass — $7</a>
-    <a class="btn btn-accent" id="tb-buy-pro" href="#">Pro — $39</a>
+    <button class="btn btn-fill" id="tb-buy-batch" type="button" disabled title="Upload a CSV first">Batch Pass — $7</button>
+    <button class="btn btn-accent" id="tb-buy-pro" type="button">Pro — $39</button>
     <button class="link-btn" id="tb-toggle-key" type="button">Have a license key?</button>
   </div>
   <form id="tb-key-form" class="tb-key-form" hidden>
     <input id="tb-key-input" type="text" placeholder="License key" autocomplete="off" />
     <button class="btn" type="submit">Unlock</button>
+    <button class="link-btn" id="tb-toggle-recover" type="button">Forgot your key?</button>
     <p id="tb-key-error" class="tb-key-error" hidden></p>
+  </form>
+  <form id="tb-recover-form" class="tb-key-form" hidden>
+    <input id="tb-recover-email" type="email" placeholder="Email used at checkout" autocomplete="email" />
+    <button class="btn" type="submit">Send my key</button>
+    <p id="tb-recover-status" class="tb-key-status" hidden></p>
   </form>
 </div>
 
@@ -171,7 +177,16 @@
 <script>
   import { renderQR, qrToSVGString, qrToPNGBlob } from "../lib/qr.js";
   import { parseCSV, guessColumn, buildFilename } from "../lib/csv.js";
-  import { getStoredLicense, clearLicense, activateLicense, isLicenseValid, tierLabel } from "../lib/license.js";
+  import {
+    newJobId,
+    jobIdFromFile,
+    startCheckout,
+    resolvePendingCheckout,
+    redeemLicenseKey,
+    requestLicenseRecovery,
+    getStoredPayment,
+    verifyAccessForJob,
+  } from "../lib/bulk/license.js";
   import JSZip from "jszip";
 
   const FREE_ROW_CAP = 50;
@@ -192,25 +207,35 @@
     keyForm: el("tb-key-form"),
     keyInput: el("tb-key-input"),
     keyError: el("tb-key-error"),
+    toggleRecover: el("tb-toggle-recover"),
+    recoverForm: el("tb-recover-form"),
+    recoverEmail: el("tb-recover-email"),
+    recoverStatus: el("tb-recover-status"),
   };
-  tierBanner.buyBatch.href = `/api/checkout?productId=${import.meta.env.PUBLIC_DODO_PRODUCT_SINGLE_ID ?? ""}`;
-  tierBanner.buyPro.href = `/api/checkout?productId=${import.meta.env.PUBLIC_DODO_PRODUCT_PRO_ID ?? ""}`;
+
+  function tierLabel(tier) {
+    return tier === "pro" ? "Pro (lifetime)" : tier === "batch" ? "Batch Pass" : "Unlocked";
+  }
 
   let isUnlocked = false;
   let activeTier = null;
+  let jobId = null;
 
   function renderTierBanner() {
     tierBanner.keyForm.hidden = true;
+    tierBanner.recoverForm.hidden = true;
     if (isUnlocked) {
       tierBanner.title.textContent = `${tierLabel(activeTier)} unlocked`;
-      tierBanner.desc.textContent = "Unlimited batches in this browser.";
+      tierBanner.desc.textContent =
+        activeTier === "batch"
+          ? "Unlocked for this file. Buy another Batch Pass for a different one, or upgrade to Pro for unlimited."
+          : "Unlimited batches, on any device with your license key.";
       tierBanner.actions.innerHTML = "";
       const btn = document.createElement("button");
       btn.type = "button";
       btn.className = "link-btn";
       btn.textContent = "Use a different license key";
       btn.addEventListener("click", () => {
-        clearLicense();
         isUnlocked = false;
         activeTier = null;
         renderTierBanner();
@@ -220,6 +245,7 @@
     } else {
       tierBanner.title.textContent = "Free plan";
       tierBanner.desc.textContent = `Up to ${FREE_ROW_CAP} QR codes per batch, then upgrade for unlimited.`;
+      tierBanner.buyBatch.disabled = !jobId;
       tierBanner.actions.innerHTML = "";
       tierBanner.actions.appendChild(tierBanner.buyBatch);
       tierBanner.actions.appendChild(tierBanner.buyPro);
@@ -230,6 +256,36 @@
 
   tierBanner.toggleKey.addEventListener("click", () => {
     tierBanner.keyForm.hidden = !tierBanner.keyForm.hidden;
+    tierBanner.recoverForm.hidden = true;
+  });
+
+  tierBanner.toggleRecover.addEventListener("click", () => {
+    tierBanner.recoverForm.hidden = !tierBanner.recoverForm.hidden;
+  });
+
+  tierBanner.buyBatch.addEventListener("click", async () => {
+    if (!jobId) return;
+    tierBanner.buyBatch.disabled = true;
+    try {
+      await startCheckout("batch", jobId);
+    } catch (err) {
+      tierBanner.keyError.textContent = err.message;
+      tierBanner.keyError.hidden = false;
+      tierBanner.keyForm.hidden = false;
+      tierBanner.buyBatch.disabled = false;
+    }
+  });
+
+  tierBanner.buyPro.addEventListener("click", async () => {
+    tierBanner.buyPro.disabled = true;
+    try {
+      await startCheckout("pro", jobId || newJobId());
+    } catch (err) {
+      tierBanner.keyError.textContent = err.message;
+      tierBanner.keyError.hidden = false;
+      tierBanner.keyForm.hidden = false;
+      tierBanner.buyPro.disabled = false;
+    }
   });
 
   tierBanner.keyForm.addEventListener("submit", async (e) => {
@@ -238,7 +294,7 @@
     if (!key) return;
     tierBanner.keyError.hidden = true;
     try {
-      const record = await activateLicense(key);
+      const record = await redeemLicenseKey(key, jobId || "");
       isUnlocked = true;
       activeTier = record.tier;
       renderTierBanner();
@@ -248,23 +304,49 @@
     }
   });
 
-  async function initLicense() {
-    const cached = getStoredLicense();
-    if (!cached) {
-      renderTierBanner();
-      return;
+  tierBanner.recoverForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const email = tierBanner.recoverEmail.value.trim();
+    if (!email) return;
+    tierBanner.recoverStatus.hidden = true;
+    try {
+      const message = await requestLicenseRecovery(email);
+      tierBanner.recoverStatus.textContent = message;
+      tierBanner.recoverStatus.hidden = false;
+    } catch (err) {
+      tierBanner.recoverStatus.textContent = err.message;
+      tierBanner.recoverStatus.hidden = false;
     }
-    // Optimistic unlock so a returning Pro/Batch Pass user doesn't wait on a
-    // network round trip; quietly reconfirm and re-lock only if it's invalid.
-    isUnlocked = true;
-    activeTier = cached.tier;
+  });
+
+  // Re-checks access for whatever file is currently loaded. A Batch Pass
+  // only ever unlocks the specific file it was bought for -- uploading a
+  // different one correctly falls back to the free plan.
+  async function refreshAccessForCurrentJob() {
+    if (!jobId) return;
+    const access = await verifyAccessForJob(jobId).catch(() => null);
+    isUnlocked = Boolean(access);
+    activeTier = access?.tier ?? null;
     renderTierBanner();
-    const stillValid = await isLicenseValid(cached);
-    if (!stillValid) {
-      clearLicense();
-      isUnlocked = false;
-      activeTier = null;
-      renderTierBanner();
+  }
+
+  async function initTierBanner() {
+    let resumed = null;
+    try {
+      resumed = await resolvePendingCheckout();
+    } catch {
+      resumed = { failed: true };
+    }
+    const stored = getStoredPayment();
+    if (stored?.tier === "pro") {
+      isUnlocked = true;
+      activeTier = "pro";
+    }
+    renderTierBanner();
+    if (resumed?.failed) {
+      showError("Payment wasn't completed — nothing was charged.");
+    } else if (resumed && resumed.tier === "batch") {
+      tierBanner.desc.textContent = "Batch Pass confirmed — upload the same file to export it. We've also emailed you the license key.";
     }
   }
 
@@ -322,6 +404,7 @@
       return;
     }
     state = { headers, rows };
+    jobId = await jobIdFromFile(file);
 
     fileInfo.hidden = false;
     el("file-name").textContent = file.name;
@@ -334,6 +417,7 @@
     markStepDone("preview");
     renderPreview();
     updateBottomBar();
+    refreshAccessForCurrentJob();
   }
 
   function populateMapping() {
@@ -513,7 +597,7 @@
   });
 
   updateBottomBar();
-  initLicense();
+  initTierBanner();
 </script>
 
 <style>
@@ -540,6 +624,8 @@
   .tb-key-form input { flex: 1; min-width: 180px; font: inherit; font-size: 0.82rem; padding: 0.55rem 0.7rem; border: 1px solid var(--line); background: var(--bg); color: var(--ink); }
   .tb-key-form .btn { font-size: 0.76rem; padding: 0.55rem 0.9rem; }
   .tb-key-error { color: var(--red); font-size: 0.78rem; margin: 0.6rem 0 0; width: 100%; }
+  .tb-key-status { color: var(--success); font-size: 0.78rem; margin: 0.6rem 0 0; width: 100%; }
+  #tb-buy-batch:disabled { opacity: 0.5; cursor: not-allowed; }
 
   .panels { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; border: 1px solid var(--line); margin-bottom: 1.4rem; }
   .panel { padding: 1.4rem; border-right: 1px solid var(--line); min-width: 0; }

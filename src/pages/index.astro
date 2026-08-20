@@ -17,9 +17,6 @@ const tools = [
 ];
 const moreTools = ["WhatsApp"];
 
-const singleCheckoutUrl = `/api/checkout?productId=${import.meta.env.PUBLIC_DODO_PRODUCT_SINGLE_ID ?? ""}`;
-const proCheckoutUrl = `/api/checkout?productId=${import.meta.env.PUBLIC_DODO_PRODUCT_PRO_ID ?? ""}`;
-
 const plans = [
   {
     name: "Free",
@@ -35,8 +32,11 @@ const plans = [
     price: "$7",
     note: "once",
     features: ["One batch, up to 5,000 codes", "SVG + ZIP export", "Custom filenames"],
+    // A Batch Pass is scoped to a specific uploaded file, so buying it only
+    // makes sense from inside the bulk workspace once a file is loaded --
+    // this just routes there, same split as the Pro button below.
     cta: "Buy a batch pass",
-    href: singleCheckoutUrl,
+    href: "/bulk#upload",
     style: "",
   },
   {
@@ -44,8 +44,10 @@ const plans = [
     price: "$39",
     note: "once",
     features: ["Unlimited batches, forever", "Print-ready sheets (soon)", "Logo + presets (soon)"],
+    // Pro isn't scoped to any file, so it's a direct checkout button (wired
+    // in the script block below) instead of a link.
     cta: "Get Pro",
-    href: proCheckoutUrl,
+    href: null,
     style: "hi",
   },
 ];
@@ -146,7 +148,7 @@ const plans = [
               {p.href ? (
                 <a class:list={["btn", p.style === "hi" ? "btn-accent" : ""]} href={p.href}>{p.cta}</a>
               ) : (
-                <button class="btn" disabled>{p.cta}</button>
+                <button class:list={["btn", p.style === "hi" ? "btn-accent" : ""]} type="button" data-action="pricing-buy-pro">{p.cta}</button>
               )}
             </div>
           ))}
@@ -159,11 +161,28 @@ const plans = [
 
 <script>
   import { renderQR } from "../lib/qr.js";
+  import { startCheckout, newJobId } from "../lib/bulk/license.js";
 
   const canvas = document.getElementById("hero-qr");
   const text = typeof location !== "undefined" ? location.origin + "/" : "https://www.qrworkbench.com";
 
   renderQR(canvas, text, { width: 480 });
+
+  // Pro isn't scoped to any particular upload, so it can be bought straight
+  // from the pricing card with no file in play -- jobId is only meaningful
+  // for a Batch Pass, which routes to the bulk workspace instead (see the
+  // plans array above).
+  document.querySelectorAll('[data-action="pricing-buy-pro"]').forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      btn.disabled = true;
+      try {
+        await startCheckout("pro", newJobId());
+      } catch (err) {
+        alert(err.message || "Couldn't start checkout.");
+        btn.disabled = false;
+      }
+    });
+  });
 </script>
 
 <style>

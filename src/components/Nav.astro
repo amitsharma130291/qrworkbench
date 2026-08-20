@@ -55,24 +55,27 @@
 
 <style>
   .site-nav { border-bottom: 1px solid var(--ink); background: var(--bg); position: sticky; top: 0; z-index: 50; }
-  /* Vertical padding trimmed to 1.15rem (from 1.55rem) so the row settles at
-     ~85px tall with the logo's new 44px height -- the old padding was sized
-     around the previous, much shorter logo. */
-  .nav-row { display: flex; align-items: center; gap: 1.6rem; padding: 1.15rem 1.75rem; min-height: 84px; }
+  /* Vertical padding trimmed to 1.05rem (from 1.55rem originally) so the
+     header settles at ~87px tall with the logo's ~48px height, accounting
+     for site-nav's own 1px bottom border -- the old padding was sized
+     around a much shorter logo. */
+  .nav-row { display: flex; align-items: center; gap: 1.6rem; padding: 1.05rem 1.75rem; min-height: 84px; }
 
-  /* Desktop: clamped 190-260px, preferring 24% of the nav row's width. The
+  /* Desktop: clamped 190-280px, preferring 26.4% of the nav row's width --
+     a deliberate ~10% bump over the previous 24%/253.7px, per a follow-up
+     request to make the mark more prominent (explicitly capped under +15%
+     so it doesn't start crowding the nav links or the Upgrade button). The
      clamp() lives on .logo itself, not the <img> -- percentage widths only
      resolve against a containing block with a *definite* width, and .logo
      (a flex item of .nav-row, which has one) qualifies while <picture>/<img>
-     alone wouldn't. The 24% (not the nominally "20%" target) is deliberate:
-     .frame caps nav-row's content width at 1064px on every real desktop
-     viewport, so the preferred term needs to land near the 260px ceiling to
-     keep the logo's ~44px visible height at this fixed aspect ratio --
-     literal 20% would plateau around 213px/37px tall instead. height:auto on
-     the image (never a fixed height) is what keeps this from ever
-     stretching or squashing the logo -- the browser derives height from the
-     image's own aspect ratio at whatever width the clamp computes to. */
-  .logo { display: flex; align-items: center; margin-right: auto; flex: none; width: clamp(190px, 24%, 260px); }
+     alone wouldn't. .frame caps nav-row's content width at 1057px on every
+     real desktop viewport, so 26.4% of that lands right at the ~279px/~48px
+     target -- the 280px ceiling is a safety bound, not the active term here.
+     height:auto on the image (never a fixed height) is what keeps this from
+     ever stretching or squashing the logo -- the browser derives height
+     from the image's own aspect ratio at whatever width the clamp computes
+     to. */
+  .logo { display: flex; align-items: center; margin-right: auto; flex: none; width: clamp(190px, 26.4%, 280px); }
   .logo img { display: block; width: 100%; height: auto; }
 
   .primary-nav { display: flex; align-items: center; gap: 1.4rem; font-size: 0.84rem; font-weight: 500; flex: none; }

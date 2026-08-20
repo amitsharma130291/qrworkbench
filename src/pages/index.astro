@@ -17,39 +17,42 @@ const tools = [
 ];
 const moreTools = ["WhatsApp"];
 
+const singleCheckoutUrl = `/api/checkout?productId=${import.meta.env.PUBLIC_DODO_PRODUCT_SINGLE_ID ?? ""}`;
+const proCheckoutUrl = `/api/checkout?productId=${import.meta.env.PUBLIC_DODO_PRODUCT_PRO_ID ?? ""}`;
+
 const plans = [
   {
     name: "Free",
     price: "$0",
     note: "",
-    features: ["Unlimited single codes", "11 QR formats", "PNG + SVG export"],
+    features: ["Unlimited single codes", "Bulk batches up to 50 codes", "PNG + SVG export"],
     cta: "Start free",
     href: "/url-qr-code-generator",
     style: "",
   },
   {
-    name: "Single batch",
-    price: "$4.99",
-    note: "",
-    features: ["One CSV, any size", "SVG + ZIP export", "Custom filenames"],
-    cta: "Locked — coming soon",
-    href: "",
+    name: "Batch Pass",
+    price: "$7",
+    note: "once",
+    features: ["One batch, up to 5,000 codes", "SVG + ZIP export", "Custom filenames"],
+    cta: "Buy a batch pass",
+    href: singleCheckoutUrl,
     style: "",
   },
   {
     name: "Pro — lifetime",
-    price: "$19",
+    price: "$39",
     note: "once",
-    features: ["Unlimited batches", "Print-ready sheets (soon)", "Logo + presets (soon)"],
-    cta: "Locked — coming soon",
-    href: "",
+    features: ["Unlimited batches, forever", "Print-ready sheets (soon)", "Logo + presets (soon)"],
+    cta: "Get Pro",
+    href: proCheckoutUrl,
     style: "hi",
   },
 ];
 ---
 <Layout
   title="QR Workbench — Free QR Code Generator for 11 Formats"
-  description="Free QR codes for URLs, WiFi, vCards, email and more — generated entirely in your browser. Bulk CSV-to-ZIP generation for hundreds at once is coming soon."
+  description="Free QR codes for URLs, WiFi, vCards, email and more — generated entirely in your browser. Bulk CSV-to-ZIP generation for hundreds at once, one-time payment."
 >
   <div class="hero">
     <div class="frame hero-grid">
@@ -59,7 +62,7 @@ const plans = [
         <p class="lede">
           Every QR code is a grid of black and white modules. Generate one free — WiFi, vCard, URL
           and eight more formats — entirely in your browser, no tracking, no redirect server. Need
-          a few thousand at once? That's the paid bulk workspace, coming soon.
+          a few thousand at once? That's the paid bulk workspace, one-time payment to unlock.
         </p>
         <div class="cta-row">
           <a class="btn btn-accent" href="#tools">Generate a code</a>
@@ -123,7 +126,7 @@ const plans = [
           <div class="flow-step"><span class="n">02</span><h4>Map the columns</h4><p>Filename, caption, content, format, size, color.</p></div>
           <div class="flow-step"><span class="n">03</span><h4>Export the set</h4><p>Named SVGs or PNGs, packed into a ZIP.</p></div>
         </div>
-        <p class="section-note">Locked until payment launches — pricing below is what we're building toward.</p>
+        <p class="section-note">Free to try — up to 50 codes per batch. A one-time payment unlocks unlimited batches, see pricing below.</p>
         <a class="btn btn-fill bulk-link" href="/bulk-qr-code-generator">Learn more →</a>
       </div>
     </section>
@@ -148,7 +151,7 @@ const plans = [
             </div>
           ))}
         </div>
-        <p class="section-note pricing-note">Payment and licensing aren't live yet, so Single Batch and Pro are locked for now. Want to see what Pro will do first? The <a href="/bulk-qr-code-generator">bulk workspace</a> is open to explore in the meantime.</p>
+        <p class="section-note pricing-note">The bulk workspace is free to try — up to 50 codes per batch, no payment required. Batch Pass and Pro unlock instantly after checkout, no account needed, just a license key. <a href="/bulk">Try the bulk workspace →</a></p>
       </div>
     </section>
   </div>

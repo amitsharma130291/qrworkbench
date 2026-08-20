@@ -11,6 +11,23 @@
   </div>
 </div>
 
+<div id="tier-banner" class="tier-banner">
+  <div class="tb-status">
+    <strong id="tb-title">Free plan</strong>
+    <span id="tb-desc">Up to 50 QR codes per batch, then upgrade for unlimited.</span>
+  </div>
+  <div class="tb-actions" id="tb-actions">
+    <a class="btn btn-fill" id="tb-buy-batch" href="#">Batch Pass — $7</a>
+    <a class="btn btn-accent" id="tb-buy-pro" href="#">Pro — $39</a>
+    <button class="link-btn" id="tb-toggle-key" type="button">Have a license key?</button>
+  </div>
+  <form id="tb-key-form" class="tb-key-form" hidden>
+    <input id="tb-key-input" type="text" placeholder="License key" autocomplete="off" />
+    <button class="btn" type="submit">Unlock</button>
+    <p id="tb-key-error" class="tb-key-error" hidden></p>
+  </form>
+</div>
+
 <div id="error-banner" class="error-banner" hidden></div>
 
 <div class="panels">
@@ -154,13 +171,102 @@
 <script>
   import { renderQR, qrToSVGString, qrToPNGBlob } from "../lib/qr.js";
   import { parseCSV, guessColumn, buildFilename } from "../lib/csv.js";
+  import { getStoredLicense, clearLicense, activateLicense, isLicenseValid, tierLabel } from "../lib/license.js";
   import JSZip from "jszip";
+
+  const FREE_ROW_CAP = 50;
 
   const el = (id) => document.getElementById(id);
   const dropzone = el("dropzone");
   const fileInput = el("file-input");
   const fileInfo = el("file-info");
   const errorBanner = el("error-banner");
+
+  const tierBanner = {
+    title: el("tb-title"),
+    desc: el("tb-desc"),
+    actions: el("tb-actions"),
+    buyBatch: el("tb-buy-batch"),
+    buyPro: el("tb-buy-pro"),
+    toggleKey: el("tb-toggle-key"),
+    keyForm: el("tb-key-form"),
+    keyInput: el("tb-key-input"),
+    keyError: el("tb-key-error"),
+  };
+  tierBanner.buyBatch.href = `/api/checkout?productId=${import.meta.env.PUBLIC_DODO_PRODUCT_SINGLE_ID ?? ""}`;
+  tierBanner.buyPro.href = `/api/checkout?productId=${import.meta.env.PUBLIC_DODO_PRODUCT_PRO_ID ?? ""}`;
+
+  let isUnlocked = false;
+  let activeTier = null;
+
+  function renderTierBanner() {
+    tierBanner.keyForm.hidden = true;
+    if (isUnlocked) {
+      tierBanner.title.textContent = `${tierLabel(activeTier)} unlocked`;
+      tierBanner.desc.textContent = "Unlimited batches in this browser.";
+      tierBanner.actions.innerHTML = "";
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "link-btn";
+      btn.textContent = "Use a different license key";
+      btn.addEventListener("click", () => {
+        clearLicense();
+        isUnlocked = false;
+        activeTier = null;
+        renderTierBanner();
+        tierBanner.keyForm.hidden = false;
+      });
+      tierBanner.actions.appendChild(btn);
+    } else {
+      tierBanner.title.textContent = "Free plan";
+      tierBanner.desc.textContent = `Up to ${FREE_ROW_CAP} QR codes per batch, then upgrade for unlimited.`;
+      tierBanner.actions.innerHTML = "";
+      tierBanner.actions.appendChild(tierBanner.buyBatch);
+      tierBanner.actions.appendChild(tierBanner.buyPro);
+      tierBanner.actions.appendChild(tierBanner.toggleKey);
+    }
+    updateBottomBar();
+  }
+
+  tierBanner.toggleKey.addEventListener("click", () => {
+    tierBanner.keyForm.hidden = !tierBanner.keyForm.hidden;
+  });
+
+  tierBanner.keyForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const key = tierBanner.keyInput.value.trim();
+    if (!key) return;
+    tierBanner.keyError.hidden = true;
+    try {
+      const record = await activateLicense(key);
+      isUnlocked = true;
+      activeTier = record.tier;
+      renderTierBanner();
+    } catch (err) {
+      tierBanner.keyError.textContent = err.message;
+      tierBanner.keyError.hidden = false;
+    }
+  });
+
+  async function initLicense() {
+    const cached = getStoredLicense();
+    if (!cached) {
+      renderTierBanner();
+      return;
+    }
+    // Optimistic unlock so a returning Pro/Batch Pass user doesn't wait on a
+    // network round trip; quietly reconfirm and re-lock only if it's invalid.
+    isUnlocked = true;
+    activeTier = cached.tier;
+    renderTierBanner();
+    const stillValid = await isLicenseValid(cached);
+    if (!stillValid) {
+      clearLicense();
+      isUnlocked = false;
+      activeTier = null;
+      renderTierBanner();
+    }
+  }
 
   const mapSelects = {
     qrData: el("map-qrdata"),
@@ -288,12 +394,23 @@
 
   function updateBottomBar() {
     const n = state.rows.length;
-    readyCount.textContent = n ? `${n.toLocaleString()} QR codes ready to generate` : "Upload a CSV to get started";
+    const capped = !isUnlocked && n > FREE_ROW_CAP;
+    if (!n) {
+      readyCount.textContent = "Upload a CSV to get started";
+    } else if (capped) {
+      readyCount.textContent = `${FREE_ROW_CAP} of ${n.toLocaleString()} QR codes ready — free plan caps batches at ${FREE_ROW_CAP}`;
+    } else {
+      readyCount.textContent = `${n.toLocaleString()} QR codes ready to generate`;
+    }
     el("chip-format").textContent = format.toUpperCase();
     el("chip-size").textContent = `${cfgSize.value}×${cfgSize.value}`;
     el("chip-ec").textContent = `${cfgEc.value} (${ecLabel[cfgEc.value]})`;
     generateBtn.disabled = n === 0;
-    generateBtn.textContent = n ? `Generate ${n.toLocaleString()} QR codes` : "Generate QR codes";
+    generateBtn.textContent = capped
+      ? `Generate ${FREE_ROW_CAP} of ${n.toLocaleString()} (free limit)`
+      : n
+        ? `Generate ${n.toLocaleString()} QR codes`
+        : "Generate QR codes";
   }
 
   dropzone.addEventListener("click", () => fileInput.click());
@@ -349,8 +466,11 @@
     const used = new Set();
     let written = 0;
 
-    for (let i = 0; i < state.rows.length; i++) {
-      const row = state.rows[i];
+    const capped = !isUnlocked && state.rows.length > FREE_ROW_CAP;
+    const rows = capped ? state.rows.slice(0, FREE_ROW_CAP) : state.rows;
+
+    for (let i = 0; i < rows.length; i++) {
+      const row = rows[i];
       const value = row[mapping.qrData];
       if (!value) continue;
       let name = buildFilename(pattern, row, state.headers) + "." + format;
@@ -370,7 +490,7 @@
       }
       written++;
       if (i % 20 === 0) {
-        genProgress.textContent = `Generating… ${i + 1}/${state.rows.length}`;
+        genProgress.textContent = `Generating… ${i + 1}/${rows.length}`;
         await new Promise((r) => setTimeout(r, 0));
       }
     }
@@ -386,11 +506,14 @@
     a.click();
     a.remove();
     URL.revokeObjectURL(url);
-    genProgress.textContent = `Done — downloaded qrgrid-codes.zip (${written.toLocaleString()} files)`;
+    genProgress.textContent = capped
+      ? `Done — downloaded ${written.toLocaleString()} of ${state.rows.length.toLocaleString()} (free limit is ${FREE_ROW_CAP}). Unlock above to generate the rest.`
+      : `Done — downloaded qrgrid-codes.zip (${written.toLocaleString()} files)`;
     generateBtn.disabled = false;
   });
 
   updateBottomBar();
+  initLicense();
 </script>
 
 <style>
@@ -402,6 +525,21 @@
   .privacy-box span { display: block; font-size: 0.68rem; color: var(--ink-faint); }
 
   .error-banner { border: 1px solid var(--red); background: #FDECE8; color: #9A2A14; padding: 0.75rem 1rem; font-size: 0.85rem; margin-bottom: 1.4rem; }
+
+  .tier-banner {
+    display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap;
+    border: 1px solid var(--line); background: var(--surface); padding: 0.85rem 1.1rem; margin-bottom: 1.4rem;
+  }
+  .tb-status { display: flex; flex-direction: column; gap: 0.15rem; min-width: 0; }
+  .tb-status strong { font-size: 0.85rem; }
+  .tb-status span { font-size: 0.75rem; color: var(--ink-faint); }
+  .tb-actions { display: flex; align-items: center; gap: 0.7rem; flex-wrap: wrap; }
+  .tb-actions .btn { font-size: 0.76rem; padding: 0.55rem 0.9rem; }
+  .link-btn { font: inherit; font-size: 0.78rem; background: none; border: none; color: var(--red); text-decoration: underline; cursor: pointer; padding: 0; }
+  .tb-key-form { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; width: 100%; margin-top: 0.9rem; padding-top: 0.9rem; border-top: 1px solid var(--line); }
+  .tb-key-form input { flex: 1; min-width: 180px; font: inherit; font-size: 0.82rem; padding: 0.55rem 0.7rem; border: 1px solid var(--line); background: var(--bg); color: var(--ink); }
+  .tb-key-form .btn { font-size: 0.76rem; padding: 0.55rem 0.9rem; }
+  .tb-key-error { color: var(--red); font-size: 0.78rem; margin: 0.6rem 0 0; width: 100%; }
 
   .panels { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; border: 1px solid var(--line); margin-bottom: 1.4rem; }
   .panel { padding: 1.4rem; border-right: 1px solid var(--line); min-width: 0; }

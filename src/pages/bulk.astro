@@ -1,40 +1,7 @@
 ---
 import AppLayout from "../layouts/AppLayout.astro";
-import Layout from "../layouts/Layout.astro";
 import BulkWorkspace from "../components/BulkWorkspace.astro";
-
-const BULK_UNLOCKED = import.meta.env.BULK_UNLOCKED === "true";
 ---
-{BULK_UNLOCKED ? (
-  <AppLayout title="Bulk QR Generator — QR Workbench">
-    <BulkWorkspace />
-  </AppLayout>
-) : (
-  <Layout
-    title="Bulk QR Generator — Locked | QR Workbench"
-    description="The bulk QR workspace is locked until payment and licensing launch."
-    noindex
-  >
-    <div class="frame locked">
-      <div class="index-no">BULK GENERATOR</div>
-      <h1>This is locked until payment launches</h1>
-      <p>
-        The bulk workspace — CSV upload, column mapping, batch generation, ZIP export — is built and
-        works, but it's the paid part of QR Workbench. It's locked here until payment and licensing
-        are wired up, so it can't be used for free by finding this URL.
-      </p>
-      <div class="locked-actions">
-        <a class="btn btn-fill" href="/bulk-qr-code-generator">See what it does →</a>
-        <a class="btn" href="/#tools">Use a free single-code generator →</a>
-      </div>
-    </div>
-  </Layout>
-)}
-
-<style>
-  .locked { padding: 4rem 1.75rem 6rem; max-width: 640px; }
-  .index-no { font-family: var(--mono); font-size: 0.72rem; color: var(--red); margin-bottom: 1.2rem; letter-spacing: 0.04em; }
-  .locked h1 { font-size: 2rem; margin: 0 0 1.1rem; letter-spacing: -0.01em; line-height: 1.15; }
-  .locked p { color: var(--ink-dim); line-height: 1.65; margin: 0 0 2rem; }
-  .locked-actions { display: flex; gap: 0.9rem; flex-wrap: wrap; }
-</style>
+<AppLayout title="Bulk QR Generator — QR Workbench">
+  <BulkWorkspace />
+</AppLayout>

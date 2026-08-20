@@ -14,7 +14,7 @@
 <div id="tier-banner" class="tier-banner">
   <div class="tb-status">
     <strong id="tb-title">Free plan</strong>
-    <span id="tb-desc">Up to 50 QR codes per batch, then upgrade for unlimited.</span>
+    <span id="tb-desc">Up to 20 QR codes per batch, then upgrade for unlimited.</span>
   </div>
   <div class="tb-actions" id="tb-actions">
     <button class="btn btn-fill" id="tb-buy-batch" type="button">Batch Pass — $7</button>
@@ -204,7 +204,7 @@
   } from "../lib/bulk/license.js";
   import JSZip from "jszip";
 
-  const FREE_ROW_CAP = 50;
+  const FREE_ROW_CAP = 20;
 
   const el = (id) => document.getElementById(id);
   const dropzone = el("dropzone");

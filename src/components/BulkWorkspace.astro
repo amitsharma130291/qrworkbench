@@ -187,6 +187,7 @@
     redeemLicenseKey,
     requestLicenseRecovery,
     getStoredPayment,
+    clearStoredPayment,
     verifyAccessForJob,
   } from "../lib/bulk/license.js";
   import JSZip from "jszip";
@@ -227,12 +228,26 @@
   function renderTierBanner() {
     tierBanner.keyForm.hidden = true;
     tierBanner.recoverForm.hidden = true;
+    const stored = getStoredPayment();
+    // A Batch Pass bought with no file loaded (or before this file matched
+    // it) sits here: really paid, not yet claimed by a specific upload.
+    // Showing buy buttons in that state reads as "the payment didn't work" --
+    // it didn't fail, it just isn't scoped to anything yet.
+    const pendingClaim = !isUnlocked && stored?.tier === "batch" && !stored.jobId;
+
     if (isUnlocked) {
       tierBanner.title.textContent = `${tierLabel(activeTier)} unlocked`;
       tierBanner.desc.textContent =
         activeTier === "batch"
           ? "Unlocked for this file. Buy another Batch Pass for a different one, or upgrade to Pro for unlimited."
           : "Unlimited batches, on any device with your license key.";
+      tierBanner.buyBatch.hidden = true;
+      tierBanner.buyPro.hidden = true;
+      tierBanner.toggleKey.hidden = true;
+      tierBanner.changeKey.hidden = false;
+    } else if (pendingClaim) {
+      tierBanner.title.textContent = "Batch Pass confirmed";
+      tierBanner.desc.textContent = "Not tied to a file yet — upload yours below and it unlocks automatically. We've also emailed you the license key.";
       tierBanner.buyBatch.hidden = true;
       tierBanner.buyPro.hidden = true;
       tierBanner.toggleKey.hidden = true;
@@ -244,7 +259,7 @@
       // option once this browser already holds a valid Pro purchase, even
       // mid "use a different license key" (that only resets the on-screen
       // state, not the underlying stored payment).
-      tierBanner.buyBatch.hidden = getStoredPayment()?.tier === "pro";
+      tierBanner.buyBatch.hidden = stored?.tier === "pro";
       tierBanner.buyPro.hidden = false;
       tierBanner.toggleKey.hidden = false;
       tierBanner.changeKey.hidden = true;
@@ -253,6 +268,12 @@
   }
 
   tierBanner.changeKey.addEventListener("click", () => {
+    if (!isUnlocked) {
+      // Only reachable from the pending-claim state (an unclaimed Batch
+      // Pass) -- nothing is actually unlocked yet, so there's nothing lost
+      // by clearing it here; "Forgot your key?" can always re-send it.
+      clearStoredPayment();
+    }
     isUnlocked = false;
     activeTier = null;
     renderTierBanner();
@@ -346,17 +367,19 @@
     } catch {
       resumed = { failed: true };
     }
+    if (resumed?.failed) {
+      showError("Payment wasn't completed — nothing was charged.");
+    }
+    // A confirmed batch purchase with no jobId yet renders via the
+    // pending-claim branch in renderTierBanner() (derived from storage, not
+    // from this one-time resolution), so there's nothing further to do for
+    // that case here -- it stays correct across reloads, not just this visit.
     const stored = getStoredPayment();
     if (stored?.tier === "pro") {
       isUnlocked = true;
       activeTier = "pro";
     }
     renderTierBanner();
-    if (resumed?.failed) {
-      showError("Payment wasn't completed — nothing was charged.");
-    } else if (resumed && resumed.tier === "batch") {
-      tierBanner.desc.textContent = "Batch Pass confirmed — upload the same file to export it. We've also emailed you the license key.";
-    }
   }
 
   const mapSelects = {

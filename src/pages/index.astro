@@ -274,12 +274,12 @@ const sampleRows = [
         <p class="section-note lead-note">A dedicated PDF layout tool, not just a bigger QR export — one of the reasons this is a production toolkit, not just a generator.</p>
         <div class="label-demo">
           <div class="label-sheet" aria-hidden="true">
-            {Array.from({ length: 12 }).map(() => (
-              <div class="label-cell"><span class="label-qr"></span><span class="label-cap"></span></div>
+            {Array.from({ length: 12 }).map((_, i) => (
+              <div class="label-cell"><span class="label-qr" data-qr data-qr-size="32"></span><span class="label-cap">{`SKU${String(i + 1).padStart(3, "0")}`}</span></div>
             ))}
           </div>
           <div class="label-closeup" aria-hidden="true">
-            <span class="label-qr label-qr-big"></span>
+            <span class="label-qr-big" data-qr data-qr-size="90"></span>
             <span class="label-cap-big">SKU001-blue-shirt</span>
           </div>
           <ul class="label-controls">
@@ -613,7 +613,22 @@ const sampleRows = [
     startAuto();
   }
 
+  async function fillLabelSheet() {
+    const cells = document.querySelectorAll("[data-qr]");
+    let i = 0;
+    for (const cell of cells) {
+      const canvas = document.createElement("canvas");
+      const size = Number(cell.dataset.qrSize) || 32;
+      canvas.width = size;
+      canvas.height = size;
+      cell.appendChild(canvas);
+      await renderQR(canvas, CAROUSEL_URLS[i % CAROUSEL_URLS.length], { width: size, margin: 1, light: "#ffffff" });
+      i++;
+    }
+  }
+
   fillQrGrids();
+  fillLabelSheet();
   initCarousel();
 </script>
 
@@ -771,13 +786,15 @@ const sampleRows = [
     background: var(--surface); border: 1px solid var(--ink); padding: 1rem; width: 280px; flex: none;
   }
   .label-cell { border: 1px dashed var(--line); padding: 0.4rem; display: flex; flex-direction: column; align-items: center; gap: 0.3rem; }
-  .label-qr { width: 100%; aspect-ratio: 1; background: repeating-conic-gradient(var(--ink) 0% 25%, var(--surface) 0% 50%) 50% / 6px 6px; }
-  .label-cap { width: 70%; height: 4px; background: var(--line); }
+  .label-qr { display: block; width: 100%; aspect-ratio: 1; }
+  .label-qr canvas { width: 100%; height: 100%; display: block; border: 1px solid var(--line); background: #fff; }
+  .label-cap { font-family: var(--mono); font-size: 0.58rem; color: var(--ink-faint); }
   .label-closeup {
     display: flex; flex-direction: column; align-items: center; gap: 0.7rem; flex: none;
     border: 1px solid var(--ink); background: var(--surface); padding: 1.2rem; width: 140px;
   }
-  .label-qr-big { width: 90px; height: 90px; }
+  .label-qr-big { display: block; width: 90px; height: 90px; }
+  .label-qr-big canvas { width: 100%; height: 100%; display: block; border: 1px solid var(--line); background: #fff; }
   .label-cap-big { font-family: var(--mono); font-size: 0.68rem; color: var(--ink-dim); }
   .label-controls { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.6rem; flex: 1; min-width: 200px; }
   .label-controls li { font-size: 0.85rem; color: var(--ink-dim); padding-left: 1.2rem; position: relative; }

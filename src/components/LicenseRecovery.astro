@@ -25,7 +25,7 @@
 </div>
 
 <script>
-  import { redeemLicenseKey, requestLicenseRecovery } from "../lib/bulk/license.js";
+  import { redeemLicenseKey, requestLicenseRecovery, resolvePendingCheckout } from "../lib/bulk/license.js";
 
   const root = document.getElementById("license-recovery");
   const els = {
@@ -90,6 +90,33 @@
       btn.disabled = false;
     }
   });
+
+  // The "Reactivate license" button in purchase/resend emails links to
+  // /pricing?checkout=recover&paymentId=...&jobId=... -- resolve that here
+  // the same way the bulk workspace resolves a fresh checkout redirect, so
+  // clicking the email link unlocks automatically instead of requiring a
+  // manual copy-paste of the key.
+  (async function resolveFromEmailLink() {
+    const cameFromEmail = new URLSearchParams(window.location.search).get("checkout") === "recover";
+    if (!cameFromEmail) return;
+    try {
+      const result = await resolvePendingCheckout();
+      if (result?.failed) {
+        els.error.textContent = "That link isn't valid anymore, or the payment wasn't completed.";
+        els.error.hidden = false;
+      } else if (result) {
+        els.status.textContent =
+          result.tier === "pro"
+            ? "✓ Pro license reactivated — unlocked in this browser. Head to the bulk workspace to generate a batch."
+            : "✓ Batch Pass reactivated — unlocked in this browser. Upload your file on the bulk workspace to export it.";
+        els.status.hidden = false;
+      }
+    } catch (err) {
+      els.error.textContent = err.message || "Couldn't verify that link. Please try again.";
+      els.error.hidden = false;
+    }
+    root.scrollIntoView({ behavior: "smooth", block: "start" });
+  })();
 </script>
 
 <style>

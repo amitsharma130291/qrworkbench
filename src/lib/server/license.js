@@ -5,6 +5,7 @@
 import nodemailer from "nodemailer";
 
 const SITE_URL = "https://www.qrworkbench.com";
+const SITE_NAME = "QR Workbench";
 export const OWNER_EMAIL = "amitsharma00261@gmail.com";
 const TIER_LABEL = { batch: "Batch Pass ($7)", pro: "Pro ($39 lifetime)" };
 
@@ -23,7 +24,10 @@ export function parseLicenseKey(rawKey) {
 }
 
 export function buildRecoveryUrl({ sessionId, paymentId, jobId }) {
-  const url = new URL("/bulk", SITE_URL);
+  // Points at /pricing (not /bulk) -- that's where the standalone "Already
+  // purchased?" box lives, so a customer clicking this from their email
+  // lands somewhere that explains itself, not straight into the tool.
+  const url = new URL("/pricing", SITE_URL);
   url.searchParams.set("checkout", "recover");
   if (sessionId) url.searchParams.set("sessionId", sessionId);
   else if (paymentId) url.searchParams.set("paymentId", paymentId);
@@ -66,12 +70,12 @@ function customerHtml({ label, licenseKey, recoveryUrl, scopeNote, isResend }) {
 
     <p style="font-size:13px;line-height:1.6;color:#4A4C4F;margin:0 0 18px">Switching devices, cleared your browser, or just lost track of the key? Use it to restore access any time — no account or password needed.</p>
 
-    <a href="${recoveryUrl}" style="display:inline-block;background:#111111;color:#fff;font-size:14px;font-weight:700;text-decoration:none;padding:12px 22px;border-radius:6px;margin:0 0 26px">Restore purchase</a>
+    <a href="${recoveryUrl}" style="display:inline-block;background:#111111;color:#fff;font-size:14px;font-weight:700;text-decoration:none;padding:12px 22px;border-radius:6px;margin:0 0 26px">Reactivate license</a>
 
     <p style="font-size:13px;font-weight:700;margin:0 0 8px">How to recover access if you ever lose this email</p>
     <ol style="font-size:13px;line-height:1.7;color:#4A4C4F;margin:0 0 20px;padding-left:18px">
-      <li>Click <strong>Restore purchase</strong> above, on any device — it unlocks instantly, no login.</li>
-      <li>Or go to the <a href="${SITE_URL}/bulk">bulk workspace</a>, open <strong>"Already purchased? Enter your license key"</strong>, and paste: <strong>${escapeHtml(licenseKey)}</strong></li>
+      <li>Click <strong>Reactivate license</strong> above, on any device — it unlocks instantly, no login.</li>
+      <li>Or go to the <a href="${SITE_URL}/pricing">pricing page</a>, open <strong>"Already purchased?"</strong>, and paste: <strong>${escapeHtml(licenseKey)}</strong></li>
       <li>Lost the key itself, not just this email? On that same page, click <strong>"Forgot your key?"</strong>, enter the email you paid with, and every key tied to it gets re-sent automatically.</li>
     </ol>
 
@@ -92,11 +96,11 @@ function customerText({ label, licenseKey, recoveryUrl, scopeNote, isResend }) {
     `Product: ${label}`,
     `License key: ${licenseKey}`,
     "",
-    `Restore purchase: ${recoveryUrl}`,
+    `Reactivate license: ${recoveryUrl}`,
     "",
     "How to recover access if you ever lose this email:",
-    "1. Click the restore link above, on any device -- unlocks instantly, no login.",
-    `2. Or go to ${SITE_URL}/bulk, open "Already purchased? Enter your license key", and paste: ${licenseKey}`,
+    "1. Click the reactivate link above, on any device -- unlocks instantly, no login.",
+    `2. Or go to ${SITE_URL}/pricing, open "Already purchased?", and paste: ${licenseKey}`,
     `3. Lost the key itself? On that same page, click "Forgot your key?", enter the email you paid with, and every key tied to it gets re-sent automatically.`,
     "",
     scopeNote,
@@ -150,13 +154,17 @@ export async function sendLicenseEmails({ customerEmail, customerName, tier, lic
     }
   }
 
+  // Owner's inbox doubles as the order ledger across every site using this
+  // same pattern (barcodeflow, etc.) sending to the same address -- Website
+  // and Product need to be explicit, unambiguous fields here, not just
+  // folded into a sentence, so they're identifiable/filterable at a glance.
   try {
     await transporter.sendMail({
       from: `"QR Workbench" <${gmailUser}>`,
       to: OWNER_EMAIL,
-      subject: `[Order record] ${label} — ${licenseKey}`,
-      text: `${label} purchased.\n\nLicense key: ${licenseKey}\nCustomer: ${customerName || "(no name given)"} <${customerEmail || "no email"}>\nJob id: ${jobId || "n/a"}\n${isResend ? "(This was a resend, not a new purchase.)" : ""}`,
-      html: `<p>${escapeHtml(label)} purchased.</p><ul><li>License key: ${escapeHtml(licenseKey)}</li><li>Customer: ${escapeHtml(customerName || "(no name given)")} &lt;${escapeHtml(customerEmail || "no email")}&gt;</li><li>Job id: ${escapeHtml(jobId || "n/a")}</li></ul>${isResend ? "<p><em>This was a resend, not a new purchase.</em></p>" : ""}`,
+      subject: `[${SITE_NAME}] Order — ${label} — ${licenseKey}`,
+      text: `New order on ${SITE_NAME} (${SITE_URL}).\n\nWebsite: ${SITE_NAME} (${SITE_URL})\nProduct: ${label}\nLicense key: ${licenseKey}\nCustomer: ${customerName || "(no name given)"} <${customerEmail || "no email"}>\nJob id: ${jobId || "n/a"}\n${isResend ? "(This was a resend, not a new purchase.)" : ""}`,
+      html: `<p>New order on <strong>${escapeHtml(SITE_NAME)}</strong> (${escapeHtml(SITE_URL)}).</p><ul><li>Website: ${escapeHtml(SITE_NAME)} (${escapeHtml(SITE_URL)})</li><li>Product: ${escapeHtml(label)}</li><li>License key: ${escapeHtml(licenseKey)}</li><li>Customer: ${escapeHtml(customerName || "(no name given)")} &lt;${escapeHtml(customerEmail || "no email")}&gt;</li><li>Job id: ${escapeHtml(jobId || "n/a")}</li></ul>${isResend ? "<p><em>This was a resend, not a new purchase.</em></p>" : ""}`,
     });
     result.ownerSent = true;
   } catch (err) {

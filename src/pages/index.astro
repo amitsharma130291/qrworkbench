@@ -84,7 +84,7 @@ const sampleRows = [
         </p>
         <div class="cta-row">
           <a class="btn btn-accent" href="/bulk">Try a batch free</a>
-          <a class="btn" href="#tools">Generate one QR code</a>
+          <a class="btn" href="#free-generator">Create one QR now</a>
         </div>
         <p class="cta-micro">Up to 20 rows · No account · Nothing uploaded</p>
       </div>
@@ -119,9 +119,39 @@ const sampleRows = [
   </div>
 
   <div class="frame">
-    <section id="bulk" class="grid-row">
+    <section id="free-generator" class="grid-row">
       <div class="row-label">
         <div class="idx">B — 01</div>
+        <h2>Create one QR code free</h2>
+      </div>
+      <div class="row-content">
+        <p class="section-note lead-note">No account, nothing uploaded — paste a link and download a PNG in seconds.</p>
+        <div class="mini-gen">
+          <div class="mini-gen-input">
+            <label for="mini-url">Website URL</label>
+            <input id="mini-url" type="url" placeholder="https://example.com" autocomplete="off" />
+          </div>
+          <div class="mini-gen-preview">
+            <div class="mini-qr-panel">
+              <canvas id="mini-qr-canvas" width="200" height="200" hidden></canvas>
+              <p class="mini-qr-empty" id="mini-qr-empty">Your QR code will appear here.</p>
+            </div>
+            <button class="btn btn-fill" id="mini-download" type="button" disabled>Download PNG</button>
+          </div>
+        </div>
+        <a class="mini-more-link" href="#tools">More free QR types — WiFi, vCard, email &amp; more →</a>
+
+        <div class="mini-upsell" id="mini-upsell" hidden>
+          <strong>Need one for every row in a spreadsheet?</strong>
+          <p>Apply the same idea to hundreds or thousands of codes at once — named files, ZIP, or a printable sheet.</p>
+          <a class="btn btn-accent" href="/bulk">Try 20 rows free →</a>
+        </div>
+      </div>
+    </section>
+
+    <section id="bulk" class="grid-row">
+      <div class="row-label">
+        <div class="idx">C — 02</div>
         <h2>Need hundreds or thousands? Bulk workspace.</h2>
       </div>
       <div class="row-content">
@@ -138,7 +168,7 @@ const sampleRows = [
 
     <section class="grid-row" id="demo">
       <div class="row-label">
-        <div class="idx">C — 02</div>
+        <div class="idx">D — 03</div>
         <h2>See it work, before you upload anything</h2>
       </div>
       <div class="row-content">
@@ -172,7 +202,7 @@ const sampleRows = [
 
     <section class="grid-row">
       <div class="row-label">
-        <div class="idx">D — 03</div>
+        <div class="idx">E — 04</div>
         <h2>Replace hours of repetitive production with one workflow.</h2>
       </div>
       <div class="row-content">
@@ -189,7 +219,7 @@ const sampleRows = [
 
     <section class="grid-row">
       <div class="row-label">
-        <div class="idx">E — 04</div>
+        <div class="idx">F — 05</div>
         <h2>Real jobs this replaces</h2>
       </div>
       <div class="row-content">
@@ -209,7 +239,7 @@ const sampleRows = [
 
     <section class="grid-row">
       <div class="row-label">
-        <div class="idx">F — 05</div>
+        <div class="idx">G — 06</div>
         <h2>From spreadsheet to print-ready labels</h2>
       </div>
       <div class="row-content">
@@ -239,7 +269,7 @@ const sampleRows = [
 
     <section class="grid-row">
       <div class="row-label">
-        <div class="idx">G — 06</div>
+        <div class="idx">H — 07</div>
         <h2>Your spreadsheet never leaves your device</h2>
       </div>
       <div class="row-content">
@@ -265,7 +295,7 @@ const sampleRows = [
 
     <section id="tools" class="grid-row">
       <div class="row-label">
-        <div class="idx">H — 07</div>
+        <div class="idx">I — 08</div>
         <h2>Need one code? Free, forever.</h2>
       </div>
       <div class="row-content">
@@ -286,7 +316,7 @@ const sampleRows = [
 
     <section class="grid-row">
       <div class="row-label">
-        <div class="idx">I — 08</div>
+        <div class="idx">J — 09</div>
         <h2>Create the code, download it, own the result</h2>
       </div>
       <div class="row-content">
@@ -308,7 +338,7 @@ const sampleRows = [
 
     <section id="pricing" class="grid-row">
       <div class="row-label">
-        <div class="idx">J — 09</div>
+        <div class="idx">K — 10</div>
         <h2>Pricing</h2>
       </div>
       <div class="row-content">
@@ -335,7 +365,7 @@ const sampleRows = [
 
     <section class="grid-row">
       <div class="row-label">
-        <div class="idx">K — 10</div>
+        <div class="idx">L — 11</div>
         <h2>Questions</h2>
       </div>
       <div class="row-content">
@@ -352,18 +382,18 @@ const sampleRows = [
 
     <section class="grid-row final-row">
       <div class="row-label">
-        <div class="idx">L — 11</div>
+        <div class="idx">M — 12</div>
       </div>
       <div class="row-content">
-        <h2 class="final-h2">Your spreadsheet is already the hard part.</h2>
-        <p class="section-note lead-note">Turn it into a complete set of named, production-ready QR codes.</p>
+        <h2 class="final-h2" id="final-h2">Your spreadsheet is already the hard part.</h2>
+        <p class="section-note lead-note" id="final-sub">Turn it into a complete set of named, production-ready QR codes.</p>
         <div class="final-output" aria-hidden="true">
           <span>SKU001-blue-shirt.svg</span>
           <span>SKU002-red-hoodie.svg</span>
           <span>qr-codes.zip</span>
         </div>
         <div class="final-cta">
-          <a class="btn btn-accent" href="/bulk">Try a batch free</a>
+          <a class="btn btn-accent" href="/bulk" id="final-cta-btn">Try a batch free</a>
           <span class="cta-micro">Up to 20 rows · No account · Nothing uploaded</span>
         </div>
       </div>
@@ -372,7 +402,7 @@ const sampleRows = [
 </Layout>
 
 <script>
-  import { renderQR, qrToSVGString } from "../lib/qr.js";
+  import { renderQR, qrToSVGString, qrToPNGBlob } from "../lib/qr.js";
   import JSZip from "jszip";
   import { jsPDF } from "jspdf";
 
@@ -525,6 +555,68 @@ const sampleRows = [
   });
 
   renderDemo();
+
+  // Compact free generator: a real, minimal version of the individual URL
+  // generator, embedded directly on the homepage so SEO/broad-search
+  // visitors can complete a useful free action without leaving the page.
+  // The bulk upsell only appears once a code has actually been generated,
+  // never before -- it's a bridge from a completed free action, not an
+  // interruption.
+  (function initMiniGenerator() {
+    const input = document.getElementById("mini-url");
+    const canvas = document.getElementById("mini-qr-canvas");
+    const empty = document.getElementById("mini-qr-empty");
+    const downloadBtn = document.getElementById("mini-download");
+    const upsell = document.getElementById("mini-upsell");
+    const finalH2 = document.getElementById("final-h2");
+    const finalSub = document.getElementById("final-sub");
+    const finalCtaBtn = document.getElementById("final-cta-btn");
+    if (!input) return;
+
+    let lastValue = "";
+    let hasGeneratedOnce = false;
+
+    function markGeneratedOnce() {
+      if (hasGeneratedOnce) return;
+      hasGeneratedOnce = true;
+      if (finalH2) finalH2.textContent = "Your first QR is ready.";
+      if (finalSub) finalSub.textContent = "Apply the same idea to your whole spreadsheet.";
+      if (finalCtaBtn) finalCtaBtn.textContent = "Generate the complete batch";
+    }
+
+    async function update() {
+      const value = input.value.trim();
+      lastValue = value;
+      if (!value) {
+        canvas.hidden = true;
+        empty.hidden = false;
+        downloadBtn.disabled = true;
+        upsell.hidden = true;
+        return;
+      }
+      canvas.hidden = false;
+      empty.hidden = true;
+      downloadBtn.disabled = false;
+      await renderQR(canvas, value, { width: 200, margin: 2, light: "#ffffff" });
+      upsell.hidden = false;
+      markGeneratedOnce();
+    }
+
+    input.addEventListener("input", update);
+
+    downloadBtn.addEventListener("click", async () => {
+      if (!lastValue) return;
+      const blob = await qrToPNGBlob(lastValue, { width: 1000, margin: 4 });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "qr-code.png";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    });
+  })();
 </script>
 
 <style>
@@ -591,6 +683,31 @@ const sampleRows = [
   .flow-step h4 { margin: 0 0 0.5rem; font-size: 0.95rem; font-weight: 700; }
   .flow-step p { margin: 0; font-size: 0.83rem; color: var(--ink-dim); line-height: 1.5; }
   .bulk-link { font-size: 0.8rem; }
+
+  .mini-gen {
+    display: flex; gap: 2rem; align-items: flex-start; flex-wrap: wrap;
+    border: 1px solid var(--line); background: var(--surface); padding: 1.8rem; max-width: 62ch; margin-bottom: 1rem;
+  }
+  .mini-gen-input { display: flex; flex-direction: column; gap: 0.5rem; flex: 1 1 240px; min-width: 0; }
+  .mini-gen-input label { font-size: 0.8rem; font-weight: 600; color: var(--ink-dim); }
+  .mini-gen-input input {
+    font: inherit; font-size: 0.95rem; padding: 0.75rem 0.85rem; border: 1px solid var(--line); background: var(--bg); color: var(--ink); width: 100%;
+  }
+  .mini-gen-preview { display: flex; flex-direction: column; align-items: center; gap: 0.8rem; flex: none; }
+  .mini-qr-panel {
+    width: 160px; height: 160px; display: flex; align-items: center; justify-content: center;
+    border: 1px solid var(--line); background: #fff; padding: 0.6rem;
+  }
+  .mini-qr-panel canvas { width: 100%; height: 100%; display: block; }
+  .mini-qr-empty { font-size: 0.76rem; color: var(--ink-faint); text-align: center; margin: 0; padding: 0 0.5rem; }
+  .mini-gen-preview .btn { font-size: 0.8rem; padding: 0.6rem 1rem; white-space: nowrap; }
+  .mini-more-link { display: inline-block; font-size: 0.85rem; color: var(--red); text-decoration: underline; margin-bottom: 1.6rem; }
+
+  .mini-upsell {
+    border: 1.5px solid var(--red); background: #FFF6F4; padding: 1.2rem 1.4rem; max-width: 62ch;
+  }
+  .mini-upsell strong { display: block; font-size: 1rem; color: var(--red); margin-bottom: 0.4rem; }
+  .mini-upsell p { margin: 0 0 1rem; font-size: 0.88rem; color: var(--ink-dim); line-height: 1.5; }
 
   .demo-panel { border: 1px solid var(--line); background: var(--surface); padding: 1.8rem; max-width: 74ch; }
   .demo-table-wrap { overflow-x: auto; margin-bottom: 1.2rem; }

@@ -45,7 +45,7 @@
       <p><strong>Drop a CSV file here</strong><br />or click to browse</p>
       <span class="hint">Supports CSV · header row required</span>
     </div>
-    <button id="sample-csv" class="sample-link" type="button">↓ Download a sample CSV to try it</button>
+    <button id="sample-csv" class="sample-link" type="button">↓ Download a 75-row sample CSV to try it</button>
     <input id="file-input" type="file" accept=".csv,text/csv" hidden />
     <div id="file-info" class="file-info" hidden>
       <div class="file-info-icon">✓</div>
@@ -554,14 +554,22 @@
   });
 
   el("sample-csv").addEventListener("click", () => {
-    const sample = [
-      "SKU,Product,URL",
-      "SKU001,Blue Cotton T-Shirt,https://example.com/products/blue-tshirt",
-      "SKU002,Red Cotton T-Shirt,https://example.com/products/red-tshirt",
-      "SKU003,Green Cotton T-Shirt,https://example.com/products/green-tshirt",
-      "SKU004,Black Cotton T-Shirt,https://example.com/products/black-tshirt",
-      "SKU005,White Cotton T-Shirt,https://example.com/products/white-tshirt",
-    ].join("\n");
+    // 75 rows -- comfortably over the 50-code free cap, so uploading this
+    // as-is demonstrates the free/paid boundary through the real UI instead
+    // of needing devtools to fake a bigger file.
+    const colors = ["Blue", "Red", "Green", "Black", "White", "Gray", "Navy", "Yellow", "Purple", "Orange"];
+    const types = ["Cotton T-Shirt", "Hoodie", "Cap", "Tote Bag", "Mug", "Sticker Pack", "Notebook", "Water Bottle"];
+    const combos = [];
+    for (const type of types) {
+      for (const color of colors) combos.push({ color, type });
+    }
+    const lines = ["SKU,Product,URL"];
+    combos.slice(0, 75).forEach((c, i) => {
+      const sku = `SKU${String(i + 1).padStart(3, "0")}`;
+      const slug = `${c.color.toLowerCase()}-${c.type.toLowerCase().replace(/\s+/g, "-")}`;
+      lines.push(`${sku},${c.color} ${c.type},https://example.com/products/${slug}`);
+    });
+    const sample = lines.join("\n");
     const blob = new Blob([sample], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");

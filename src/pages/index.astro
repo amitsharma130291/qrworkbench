@@ -119,67 +119,6 @@ const sampleRows = [
   </div>
 
   <div class="frame">
-    <section class="carousel-section" aria-label="Product screens">
-      <div class="carousel" id="carousel">
-        <div class="carousel-track" id="carousel-track">
-          <div class="car-slide">
-            <div class="mock-window">
-              <div class="mock-bar"><span></span><span></span><span></span><em>qrworkbench.com/bulk</em></div>
-              <div class="mock-body">
-                <div class="mock-tb"><strong>Free plan</strong><span>Up to 20 QR codes per batch</span></div>
-                <div class="mock-file">✓ products.csv · 480 rows</div>
-                <div class="mock-grid" data-qr-grid="6"></div>
-              </div>
-            </div>
-            <div class="car-caption"><h3>Bulk workspace</h3><p>Upload a CSV, map columns, get a live preview instantly.</p></div>
-          </div>
-
-          <div class="car-slide">
-            <div class="mock-window">
-              <div class="mock-bar"><span></span><span></span><span></span><em>qrworkbench.com/labels</em></div>
-              <div class="mock-body">
-                <div class="mock-sheet" data-qr-grid="12"></div>
-              </div>
-            </div>
-            <div class="car-caption"><h3>Printable label sheets</h3><p>A real print-ready PDF, laid out in columns and rows automatically.</p></div>
-          </div>
-
-          <div class="car-slide">
-            <div class="mock-window">
-              <div class="mock-bar"><span></span><span></span><span></span><em>qrworkbench.com/wifi-qr-code-generator</em></div>
-              <div class="mock-body mock-generator">
-                <div class="mock-fields">
-                  <label>Network name<span>Office-Guest</span></label>
-                  <label>Password<span>••••••••••</span></label>
-                  <label>Security<span>WPA / WPA2</span></label>
-                </div>
-                <div class="mock-qr-single" data-qr-grid="1" data-qr-content="WIFI:T:WPA;S:Office-Guest;P:demopassword;H:false;;"></div>
-              </div>
-            </div>
-            <div class="car-caption"><h3>14 free generators</h3><p>WiFi, vCard, URL and more — unlimited, no account, ever.</p></div>
-          </div>
-
-          <div class="car-slide">
-            <div class="mock-window">
-              <div class="mock-bar"><span></span><span></span><span></span><em>qrworkbench.com/pricing</em></div>
-              <div class="mock-body mock-pricing">
-                <div class="mock-plan"><strong>Free</strong><span>$0</span></div>
-                <div class="mock-plan mock-plan-hi"><strong>Batch Pass</strong><span>$7</span></div>
-                <div class="mock-plan"><strong>Pro</strong><span>$39</span></div>
-              </div>
-            </div>
-            <div class="car-caption"><h3>Simple, one-time pricing</h3><p>No subscription, ever — pay once, use it on any device.</p></div>
-          </div>
-        </div>
-
-        <button class="car-arrow car-prev" id="car-prev" type="button" aria-label="Previous screen">‹</button>
-        <button class="car-arrow car-next" id="car-next" type="button" aria-label="Next screen">›</button>
-      </div>
-      <div class="car-dots" id="car-dots"></div>
-    </section>
-  </div>
-
-  <div class="frame">
     <section id="bulk" class="grid-row">
       <div class="row-label">
         <div class="idx">B — 01</div>
@@ -274,12 +213,12 @@ const sampleRows = [
         <p class="section-note lead-note">A dedicated PDF layout tool, not just a bigger QR export — one of the reasons this is a production toolkit, not just a generator.</p>
         <div class="label-demo">
           <div class="label-sheet" aria-hidden="true">
-            {Array.from({ length: 12 }).map((_, i) => (
-              <div class="label-cell"><span class="label-qr" data-qr data-qr-size="32"></span><span class="label-cap">{`SKU${String(i + 1).padStart(3, "0")}`}</span></div>
+            {Array.from({ length: 12 }).map(() => (
+              <div class="label-cell"><span class="label-qr"></span><span class="label-cap"></span></div>
             ))}
           </div>
           <div class="label-closeup" aria-hidden="true">
-            <span class="label-qr-big" data-qr data-qr-size="90"></span>
+            <span class="label-qr label-qr-big"></span>
             <span class="label-cap-big">SKU001-blue-shirt</span>
           </div>
           <ul class="label-controls">
@@ -520,116 +459,6 @@ const sampleRows = [
   });
 
   renderDemo();
-
-  // Carousel slides show real product screens -- the QR codes inside them
-  // are genuinely rendered with the same renderQR() the rest of the app
-  // uses (real modules, not a decorative placeholder), just illustrating
-  // realistic sample content rather than live-captured screenshots.
-  const CAROUSEL_URLS = [
-    "https://example.com/products/blue-cotton-t-shirt",
-    "https://example.com/products/red-hoodie",
-    "https://example.com/products/green-cap",
-    "https://example.com/products/black-tote-bag",
-    "https://example.com/products/white-mug",
-    "https://example.com/products/navy-notebook",
-    "https://example.com/products/gray-beanie",
-    "https://example.com/products/yellow-socks",
-    "https://example.com/products/purple-scarf",
-    "https://example.com/products/orange-visor",
-    "https://example.com/products/silver-keychain",
-    "https://example.com/products/teal-water-bottle",
-  ];
-
-  async function fillQrGrids() {
-    const grids = document.querySelectorAll("[data-qr-grid]");
-    for (const grid of grids) {
-      const count = Number(grid.dataset.qrGrid) || 1;
-      const single = grid.classList.contains("mock-qr-single");
-      for (let i = 0; i < count; i++) {
-        const canvas = document.createElement("canvas");
-        const size = single ? 96 : 44;
-        canvas.width = size;
-        canvas.height = size;
-        grid.appendChild(canvas);
-        const content = grid.dataset.qrContent || CAROUSEL_URLS[i % CAROUSEL_URLS.length];
-        await renderQR(canvas, content, { width: size, margin: 1, light: "#ffffff" });
-      }
-    }
-  }
-
-  function initCarousel() {
-    const track = document.getElementById("carousel-track");
-    const slides = track ? [...track.children] : [];
-    if (!track || slides.length === 0) return;
-    const dotsWrap = document.getElementById("car-dots");
-    const prevBtn = document.getElementById("car-prev");
-    const nextBtn = document.getElementById("car-next");
-    let index = 0;
-    let timer = null;
-
-    slides.forEach((_, i) => {
-      const dot = document.createElement("button");
-      dot.type = "button";
-      dot.setAttribute("aria-label", `Go to screen ${i + 1}`);
-      dot.addEventListener("click", () => goTo(i));
-      dotsWrap.appendChild(dot);
-    });
-    const dots = [...dotsWrap.children];
-
-    function render() {
-      track.style.transform = `translateX(-${index * 100}%)`;
-      dots.forEach((d, i) => d.classList.toggle("is-active", i === index));
-    }
-    function goTo(i) {
-      index = (i + slides.length) % slides.length;
-      render();
-    }
-    function next() {
-      goTo(index + 1);
-    }
-    function startAuto() {
-      stopAuto();
-      timer = setInterval(next, 4500);
-    }
-    function stopAuto() {
-      if (timer) clearInterval(timer);
-    }
-
-    prevBtn.addEventListener("click", () => {
-      goTo(index - 1);
-      startAuto();
-    });
-    nextBtn.addEventListener("click", () => {
-      goTo(index + 1);
-      startAuto();
-    });
-    const root = document.getElementById("carousel");
-    root.addEventListener("mouseenter", stopAuto);
-    root.addEventListener("mouseleave", startAuto);
-    root.addEventListener("focusin", stopAuto);
-    root.addEventListener("focusout", startAuto);
-
-    render();
-    startAuto();
-  }
-
-  async function fillLabelSheet() {
-    const cells = document.querySelectorAll("[data-qr]");
-    let i = 0;
-    for (const cell of cells) {
-      const canvas = document.createElement("canvas");
-      const size = Number(cell.dataset.qrSize) || 32;
-      canvas.width = size;
-      canvas.height = size;
-      cell.appendChild(canvas);
-      await renderQR(canvas, CAROUSEL_URLS[i % CAROUSEL_URLS.length], { width: size, margin: 1, light: "#ffffff" });
-      i++;
-    }
-  }
-
-  fillQrGrids();
-  fillLabelSheet();
-  initCarousel();
 </script>
 
 <style>
@@ -664,56 +493,6 @@ const sampleRows = [
   .cred-strip li { display: flex; flex-direction: column; gap: 0.15rem; }
   .cred-strip strong { font-size: 1.1rem; letter-spacing: -0.01em; }
   .cred-strip span { font-family: var(--mono); font-size: 0.7rem; color: var(--ink-faint); text-transform: uppercase; letter-spacing: 0.04em; }
-
-  .carousel-section { padding: 3rem 0; border-bottom: 1px solid var(--line); }
-  .carousel { position: relative; max-width: 720px; margin: 0 auto; }
-  .carousel-track { display: flex; transition: transform 0.5s var(--ease-standard); }
-  .car-slide { flex: 0 0 100%; min-width: 0; }
-
-  .mock-window { border: 1px solid var(--ink); background: var(--surface); box-shadow: 6px 6px 0 var(--line); }
-  .mock-bar { display: flex; align-items: center; gap: 0.4rem; padding: 0.6rem 0.8rem; border-bottom: 1px solid var(--line); background: var(--bg); }
-  .mock-bar span { width: 8px; height: 8px; border-radius: 50%; background: var(--line); display: inline-block; }
-  .mock-bar em { font-style: normal; font-family: var(--mono); font-size: 0.68rem; color: var(--ink-faint); margin-left: 0.6rem; }
-  .mock-body { padding: 1.6rem; min-height: 260px; display: flex; flex-direction: column; justify-content: center; }
-
-  .mock-tb { display: flex; justify-content: space-between; align-items: baseline; border: 1px solid var(--line); padding: 0.6rem 0.9rem; margin-bottom: 0.9rem; font-size: 0.8rem; }
-  .mock-tb strong { font-weight: 700; }
-  .mock-tb span { color: var(--ink-faint); font-size: 0.72rem; }
-  .mock-file { font-family: var(--mono); font-size: 0.76rem; color: var(--success); margin-bottom: 1.1rem; }
-  .mock-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 0.6rem; }
-  .mock-grid canvas { width: 100%; height: auto; border: 1px solid var(--line); background: #fff; }
-
-  .mock-sheet { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.7rem; }
-  .mock-sheet canvas { width: 100%; height: auto; border: 1px dashed var(--line); background: #fff; padding: 4px; }
-
-  .mock-generator { flex-direction: row; align-items: center; gap: 2rem; }
-  .mock-fields { display: flex; flex-direction: column; gap: 0.7rem; flex: 1; }
-  .mock-fields label { display: flex; flex-direction: column; gap: 0.3rem; font-size: 0.74rem; font-weight: 600; color: var(--ink-dim); }
-  .mock-fields label span { font-weight: 400; font-family: var(--mono); font-size: 0.8rem; color: var(--ink); border: 1px solid var(--line); background: var(--bg); padding: 0.5rem 0.6rem; }
-  .mock-qr-single { flex: none; }
-  .mock-qr-single canvas { width: 96px; height: 96px; border: 1px solid var(--line); background: #fff; }
-
-  .mock-pricing { flex-direction: row; gap: 1rem; }
-  .mock-plan { flex: 1; border: 1px solid var(--line); padding: 1rem; text-align: center; }
-  .mock-plan-hi { border-color: var(--red); background: var(--bg); }
-  .mock-plan strong { display: block; font-size: 0.85rem; margin-bottom: 0.4rem; }
-  .mock-plan span { font-family: var(--mono); font-size: 1.1rem; font-weight: 700; }
-
-  .car-caption { text-align: center; padding-top: 1.1rem; }
-  .car-caption h3 { margin: 0 0 0.3rem; font-size: 1rem; font-weight: 700; }
-  .car-caption p { margin: 0; font-size: 0.85rem; color: var(--ink-faint); }
-
-  .car-arrow {
-    position: absolute; top: 40%; transform: translateY(-50%); z-index: 5;
-    width: 34px; height: 34px; border: 1px solid var(--ink); background: var(--bg); color: var(--ink);
-    font-size: 1.1rem; cursor: pointer; display: flex; align-items: center; justify-content: center;
-  }
-  .car-arrow:hover { background: var(--red); border-color: var(--red); color: #fff; }
-  .car-prev { left: -44px; }
-  .car-next { right: -44px; }
-  .car-dots { display: flex; justify-content: center; gap: 0.5rem; margin-top: 1.2rem; }
-  .car-dots button { width: 8px; height: 8px; border-radius: 50%; border: none; background: var(--line); padding: 0; cursor: pointer; }
-  .car-dots button.is-active { background: var(--red); }
 
   .grid-row { display: grid; grid-template-columns: repeat(12, 1fr); border-bottom: 1px solid var(--line); }
   .row-label { grid-column: 1 / 4; padding: 3rem 1.5rem 3rem 0; border-right: 1px solid var(--line); }
@@ -786,15 +565,13 @@ const sampleRows = [
     background: var(--surface); border: 1px solid var(--ink); padding: 1rem; width: 280px; flex: none;
   }
   .label-cell { border: 1px dashed var(--line); padding: 0.4rem; display: flex; flex-direction: column; align-items: center; gap: 0.3rem; }
-  .label-qr { display: block; width: 100%; aspect-ratio: 1; }
-  .label-qr canvas { width: 100%; height: 100%; display: block; border: 1px solid var(--line); background: #fff; }
-  .label-cap { font-family: var(--mono); font-size: 0.58rem; color: var(--ink-faint); }
+  .label-qr { width: 100%; aspect-ratio: 1; background: repeating-conic-gradient(var(--ink) 0% 25%, var(--surface) 0% 50%) 50% / 6px 6px; }
+  .label-cap { width: 70%; height: 4px; background: var(--line); }
   .label-closeup {
     display: flex; flex-direction: column; align-items: center; gap: 0.7rem; flex: none;
     border: 1px solid var(--ink); background: var(--surface); padding: 1.2rem; width: 140px;
   }
-  .label-qr-big { display: block; width: 90px; height: 90px; }
-  .label-qr-big canvas { width: 100%; height: 100%; display: block; border: 1px solid var(--line); background: #fff; }
+  .label-qr-big { width: 90px; height: 90px; }
   .label-cap-big { font-family: var(--mono); font-size: 0.68rem; color: var(--ink-dim); }
   .label-controls { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.6rem; flex: 1; min-width: 200px; }
   .label-controls li { font-size: 0.85rem; color: var(--ink-dim); padding-left: 1.2rem; position: relative; }
@@ -844,19 +621,11 @@ const sampleRows = [
     .usecase-grid { grid-template-columns: 1fr 1fr; }
     .privacy-list { grid-template-columns: 1fr 1fr; }
     .label-demo { flex-direction: column; }
-    .carousel { max-width: 100%; }
-    .car-prev { left: 0.4rem; }
-    .car-next { right: 0.4rem; }
-    .mock-generator { flex-direction: column; }
-    .mock-grid { grid-template-columns: repeat(4, 1fr); }
-    .mock-sheet { grid-template-columns: repeat(3, 1fr); }
-    .mock-pricing { flex-direction: column; }
   }
   @media (max-width: 560px) {
     .usecase-grid { grid-template-columns: 1fr; }
     .privacy-list { grid-template-columns: 1fr; }
     .cred-strip { gap: 1.2rem 2rem; }
     .demo-map { flex-direction: column; }
-    .mock-body { padding: 1.1rem; min-height: 0; }
   }
 </style>

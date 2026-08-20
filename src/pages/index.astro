@@ -86,28 +86,23 @@ const sampleRows = [
           <a class="btn btn-accent" href="/bulk">Try a batch free</a>
           <a class="btn" href="#tools">Generate one QR code</a>
         </div>
-        <p class="cta-micro">No account · Nothing leaves your browser · No subscription · 20 codes free</p>
+        <p class="cta-micro">Up to 20 rows · No account · Nothing uploaded</p>
       </div>
 
       <div class="hero-visual">
         <div class="flow-card" aria-hidden="true">
-          <div class="fc-label">products.csv · 2,500 rows</div>
-          <table class="fc-table">
-            <tr><th>SKU</th><th>Product</th><th>URL</th></tr>
-            <tr><td>SKU001</td><td>Blue Shirt</td><td>…/blue-shirt</td></tr>
-            <tr><td>SKU002</td><td>Red Hoodie</td><td>…/red-hoodie</td></tr>
-          </table>
-          <div class="flow-card-arrow">↓ mapped &amp; generated ↓</div>
-          <div class="flow-card-files">
-            <span>SKU001-blue-shirt.svg</span>
-            <span>SKU002-red-hoodie.svg</span>
-            <span class="fc-more">+ 2,498 more</span>
+          <div class="fc-file">products.csv <span>— 2,500 rows</span></div>
+          <div class="fc-arrow">↓</div>
+          <div class="fc-map">
+            <span><b>URL</b> → QR content</span>
+            <span><b>SKU</b> → filename</span>
+            <span><b>Product</b> → caption</span>
           </div>
-          <div class="flow-card-outputs">
-            <span class="fc-badge">ZIP</span>
-            <span class="fc-badge">SVG</span>
-            <span class="fc-badge">PNG</span>
-            <span class="fc-badge">PDF</span>
+          <div class="fc-arrow">↓</div>
+          <div class="fc-out">
+            <span>2,500 named SVGs</span>
+            <span>qr-codes.zip</span>
+            <span>printable-labels.pdf</span>
           </div>
         </div>
       </div>
@@ -163,9 +158,10 @@ const sampleRows = [
             <label>Caption<select id="demo-caption"><option value="product" selected>Product</option><option value="sku">SKU</option><option value="url">URL</option></select></label>
           </div>
           <div class="demo-output" id="demo-output"></div>
+          <p class="demo-hint">Click any code to open it full size.</p>
           <div class="demo-actions">
             <button class="btn btn-fill" id="demo-download" type="button">Download sample ZIP</button>
-            <a class="btn btn-accent" href="/bulk">Upload your own CSV →</a>
+            <a class="btn btn-accent" href="/bulk">Upload your CSV →</a>
           </div>
         </div>
       </div>
@@ -358,6 +354,11 @@ const sampleRows = [
       <div class="row-content">
         <h2 class="final-h2">Your spreadsheet is already the hard part.</h2>
         <p class="section-note lead-note">Turn it into a complete set of named, production-ready QR codes.</p>
+        <div class="final-output" aria-hidden="true">
+          <span>SKU001-blue-shirt.svg</span>
+          <span>SKU002-red-hoodie.svg</span>
+          <span>qr-codes.zip</span>
+        </div>
         <div class="final-cta">
           <a class="btn btn-accent" href="/bulk">Try a batch free</a>
           <span class="cta-micro">Up to 20 rows · No account · Nothing uploaded</span>
@@ -396,15 +397,30 @@ const sampleRows = [
       const item = document.createElement("div");
       item.className = "demo-item";
       const canvas = document.createElement("canvas");
-      canvas.width = 110;
-      canvas.height = 110;
+      canvas.width = 150;
+      canvas.height = 150;
+      canvas.tabIndex = 0;
+      canvas.setAttribute("role", "button");
+      canvas.setAttribute("aria-label", "Open this sample QR code full size");
       item.appendChild(canvas);
       const label = document.createElement("div");
       const filename = `${sanitize(row[filenameSel.value])}.svg`;
       label.innerHTML = `<strong>${filename}</strong><span>${row[captionSel.value]}</span>`;
       item.appendChild(label);
       output.appendChild(item);
-      await renderQR(canvas, row[contentSel.value], { width: 110, margin: 1 });
+      await renderQR(canvas, row[contentSel.value], { width: 150, margin: 1, light: "#ffffff" });
+
+      const openFull = () => {
+        const win = window.open();
+        if (win) win.document.write(`<title>${filename}</title><body style="margin:0;display:flex;align-items:center;justify-content:center;min-height:100vh;background:#fff"><img src="${canvas.toDataURL("image/png")}" style="width:min(80vw,480px);height:auto" /></body>`);
+      };
+      canvas.addEventListener("click", openFull);
+      canvas.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          openFull();
+        }
+      });
     }
   }
 
@@ -461,17 +477,14 @@ const sampleRows = [
   .hero-visual { display: flex; flex-direction: column; align-items: center; }
   .flow-card {
     width: 100%; max-width: 420px; background: var(--surface); border: 1px solid var(--line);
-    padding: 1.4rem; display: flex; flex-direction: column; gap: 0.7rem;
+    padding: 1.8rem; display: flex; flex-direction: column; gap: 0.9rem;
   }
-  .fc-label { font-family: var(--mono); font-size: 0.72rem; font-weight: 700; color: var(--ink); }
-  .fc-table { width: 100%; border-collapse: collapse; font-size: 0.7rem; }
-  .fc-table th { text-align: left; font-family: var(--mono); font-size: 0.6rem; text-transform: uppercase; color: var(--ink-faint); padding: 0.25rem 0.4rem; border-bottom: 1px solid var(--line); }
-  .fc-table td { padding: 0.3rem 0.4rem; color: var(--ink-dim); border-bottom: 1px solid var(--line); }
-  .flow-card-arrow { text-align: center; color: var(--red); font-family: var(--mono); font-size: 0.66rem; font-weight: 700; }
-  .flow-card-files { display: flex; flex-direction: column; gap: 0.3rem; font-family: var(--mono); font-size: 0.7rem; color: var(--ink-dim); background: var(--bg); border: 1px solid var(--line); padding: 0.7rem 0.8rem; }
-  .fc-more { color: var(--ink-faint); }
-  .flow-card-outputs { display: flex; gap: 0.5rem; }
-  .fc-badge { font-family: var(--mono); font-size: 0.66rem; font-weight: 700; border: 1px solid var(--ink); padding: 0.25rem 0.5rem; }
+  .fc-file { font-family: var(--mono); font-size: 1rem; font-weight: 700; color: var(--ink); }
+  .fc-file span { font-weight: 400; color: var(--ink-faint); }
+  .fc-arrow { text-align: center; color: var(--red); font-size: 1.1rem; font-weight: 700; }
+  .fc-map, .fc-out { display: flex; flex-direction: column; gap: 0.55rem; font-size: 0.92rem; color: var(--ink-dim); background: var(--bg); border: 1px solid var(--line); padding: 0.9rem 1rem; }
+  .fc-map b { color: var(--ink); }
+  .fc-out { font-family: var(--mono); font-weight: 700; color: var(--ink); }
 
   .cred-strip {
     list-style: none; margin: 0; padding: 1.6rem 0; display: flex; flex-wrap: wrap; gap: 2rem 3rem;
@@ -513,7 +526,7 @@ const sampleRows = [
   .flow-step p { margin: 0; font-size: 0.83rem; color: var(--ink-dim); line-height: 1.5; }
   .bulk-link { font-size: 0.8rem; }
 
-  .demo-panel { border: 1px solid var(--line); background: var(--surface); padding: 1.6rem; max-width: 62ch; }
+  .demo-panel { border: 1px solid var(--line); background: var(--surface); padding: 1.8rem; max-width: 74ch; }
   .demo-table-wrap { overflow-x: auto; margin-bottom: 1.2rem; }
   .demo-table { border-collapse: collapse; width: 100%; font-size: 0.8rem; }
   .demo-table th { text-align: left; font-family: var(--mono); font-size: 0.64rem; text-transform: uppercase; color: var(--ink-faint); padding: 0.4rem 0.6rem; border-bottom: 1px solid var(--line); white-space: nowrap; }
@@ -521,11 +534,13 @@ const sampleRows = [
   .demo-map { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.2rem; }
   .demo-map label { display: flex; flex-direction: column; gap: 0.3rem; font-size: 0.75rem; font-weight: 600; color: var(--ink-dim); flex: 1; min-width: 130px; }
   .demo-map select { font: inherit; font-size: 0.82rem; padding: 0.5rem 0.6rem; border: 1px solid var(--line); background: var(--bg); color: var(--ink); }
-  .demo-output { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 0.9rem; margin-bottom: 1.3rem; }
-  .demo-item { display: flex; flex-direction: column; align-items: center; gap: 0.4rem; text-align: center; }
-  .demo-item canvas { width: 100%; max-width: 110px; height: auto; border: 1px solid var(--line); background: #fff; }
-  .demo-item strong { font-size: 0.68rem; font-family: var(--mono); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%; }
-  .demo-item span { font-size: 0.68rem; color: var(--ink-faint); }
+  .demo-output { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 1.3rem; margin-bottom: 1.3rem; }
+  .demo-item { display: flex; flex-direction: column; align-items: center; gap: 0.5rem; text-align: center; }
+  .demo-item canvas { width: 100%; max-width: 150px; height: auto; border: 1px solid var(--line); background: #fff; cursor: zoom-in; transition: border-color var(--dur-fast) var(--ease-standard); }
+  .demo-item canvas:hover, .demo-item canvas:focus-visible { border-color: var(--red); }
+  .demo-item strong { font-size: 0.74rem; font-family: var(--mono); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%; }
+  .demo-item span { font-size: 0.74rem; color: var(--ink-faint); }
+  .demo-hint { font-size: 0.7rem; color: var(--ink-faint); margin: -0.6rem 0 1.3rem; }
   .demo-actions { display: flex; gap: 0.8rem; flex-wrap: wrap; }
 
   .compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 0.5rem; max-width: 62ch; }
@@ -590,6 +605,8 @@ const sampleRows = [
 
   .final-row { border-bottom: none; }
   .final-h2 { font-size: clamp(1.5rem, 3vw, 2rem) !important; max-width: 20ch; }
+  .final-output { display: flex; gap: 0.6rem; flex-wrap: wrap; margin: 1.4rem 0 1.8rem; }
+  .final-output span { font-family: var(--mono); font-size: 0.72rem; font-weight: 700; color: var(--ink-dim); border: 1px solid var(--line); background: var(--surface); padding: 0.4rem 0.7rem; }
   .final-cta { display: flex; align-items: center; gap: 1.2rem; flex-wrap: wrap; }
   .final-cta .cta-micro { margin: 0; }
 

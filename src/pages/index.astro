@@ -21,11 +21,11 @@ const tools = [
 ];
 
 const useCases = [
-  { n: "01", title: "Product & inventory labels", body: "Encode product URLs, use SKUs as filenames, and add product names as captions.", io: "product URL  →  SKU001-blue-shirt.svg" },
-  { n: "02", title: "Employee & event vCards", body: "Turn a staff or attendee spreadsheet into individually named contact QR codes.", io: "Jordan Rivera row  →  jordan-rivera.svg (vCard)" },
-  { n: "03", title: "Asset tracking", body: "Generate sequentially named codes for equipment, rooms, containers, or inventory.", io: "Room 204 row  →  room-204.svg" },
-  { n: "04", title: "Print-shop production", body: "Export high-resolution SVGs, transparent PNGs, and print-ready label sheets from one CSV.", io: "client.csv  →  codes.zip + labels.pdf" },
-  { n: "05", title: "Events & hospitality", body: "Produce codes for tickets, menus, or tables — named and captioned automatically.", io: "Table 12 row  →  table-12.svg" },
+  { n: "01", title: "Product & inventory", body: "SKU, product name, and URL — one named code per item.", io: "SKU + Product + URL  →  named SVGs & label sheets" },
+  { n: "02", title: "Employees & contacts", body: "A staff spreadsheet becomes individual contact cards.", io: "Name + Phone + Email  →  individual vCard QR codes" },
+  { n: "03", title: "Assets & equipment", body: "Every room, container, or unit gets its own code.", io: "Asset ID + Destination  →  numbered QR labels" },
+  { n: "04", title: "Print-shop production", body: "High-res SVGs, transparent PNGs, print-ready sheets.", io: "client.csv  →  codes.zip + labels.pdf" },
+  { n: "05", title: "Events & hospitality", body: "Tickets, menus, or tables — named automatically.", io: "Table 12 row  →  table-12.svg" },
 ];
 
 const taskRows = [
@@ -119,7 +119,7 @@ const sampleRows = [
   </div>
 
   <div class="frame">
-    <section id="free-generator" class="grid-row">
+    <section id="free-generator" class="grid-row section-tint">
       <div class="row-label">
         <div class="idx">B — 01</div>
         <h2>Create one QR code free</h2>
@@ -152,7 +152,7 @@ const sampleRows = [
               <canvas id="mini-qr-canvas" width="200" height="200" hidden></canvas>
               <p class="mini-qr-empty" id="mini-qr-empty">Your QR code will appear here.</p>
             </div>
-            <button class="btn btn-fill" id="mini-download" type="button" disabled>Download PNG</button>
+            <button class="btn btn-fill mini-download-btn" id="mini-download" type="button" disabled title="Enter a URL above to enable this">Download PNG</button>
           </div>
         </div>
         <a class="mini-more-link" href="#tools">More free QR types — WiFi, vCard, email &amp; more →</a>
@@ -192,7 +192,7 @@ const sampleRows = [
       </div>
     </section>
 
-    <section class="grid-row" id="demo">
+    <section class="grid-row section-tint" id="demo">
       <div class="row-label">
         <div class="idx">D — 03</div>
         <h2>See it work, before you upload anything</h2>
@@ -299,7 +299,7 @@ const sampleRows = [
       </div>
     </section>
 
-    <section class="grid-row">
+    <section class="grid-row section-tint">
       <div class="row-label">
         <div class="idx">H — 07</div>
         <h2>Your spreadsheet never leaves your device</h2>
@@ -412,7 +412,7 @@ const sampleRows = [
       </div>
     </section>
 
-    <section class="grid-row final-row">
+    <section class="grid-row final-row section-tint">
       <div class="row-label">
         <div class="idx">M — 12</div>
       </div>
@@ -819,9 +819,10 @@ const sampleRows = [
   }
   .cred-strip li { display: flex; flex-direction: column; gap: 0.15rem; }
   .cred-strip strong { font-size: 1.1rem; letter-spacing: -0.01em; }
-  .cred-strip span { font-family: var(--mono); font-size: 0.7rem; color: var(--ink-faint); text-transform: uppercase; letter-spacing: 0.04em; }
+  .cred-strip span { font-family: var(--mono); font-size: 0.78rem; color: var(--ink-dim); text-transform: uppercase; letter-spacing: 0.04em; }
 
   .grid-row { display: grid; grid-template-columns: repeat(12, 1fr); border-bottom: 1px solid var(--line); }
+  .section-tint { background: var(--surface); }
   .row-label { grid-column: 1 / 4; padding: 3rem 1.5rem 3rem 0; border-right: 1px solid var(--line); }
   .row-label .idx { font-family: var(--mono); font-size: 0.72rem; color: var(--red); margin-bottom: 0.7rem; }
   .row-label h2 { font-size: 1.2rem; font-weight: 700; margin: 0; letter-spacing: -0.01em; line-height: 1.25; }
@@ -850,7 +851,7 @@ const sampleRows = [
   .flow-step + .flow-step { padding-left: 1.8rem; border-left: 1px solid var(--line); }
   .flow-step .n { font-family: var(--mono); font-size: 1.3rem; font-weight: 700; color: var(--red); display: block; margin-bottom: 0.7rem; }
   .flow-step h4 { margin: 0 0 0.5rem; font-size: 0.95rem; font-weight: 700; }
-  .flow-step p { margin: 0; font-size: 0.83rem; color: var(--ink-dim); line-height: 1.5; }
+  .flow-step p { margin: 0; font-size: 0.9rem; color: var(--ink-dim); line-height: 1.55; }
   .bulk-link { font-size: 0.8rem; }
 
   .mini-gen {
@@ -867,11 +868,11 @@ const sampleRows = [
     background: none; border: none; padding: 0.2rem 0; cursor: pointer; text-decoration: underline;
   }
   .mini-custom-panel { display: flex; gap: 1rem; flex-wrap: wrap; border-top: 1px solid var(--line); padding-top: 0.9rem; }
-  .mini-custom-panel label { display: flex; flex-direction: column; gap: 0.3rem; font-size: 0.76rem; font-weight: 600; color: var(--ink-dim); flex: 1; min-width: 140px; }
+  .mini-custom-panel label { display: flex; flex-direction: column; gap: 0.3rem; font-size: 0.82rem; font-weight: 600; color: var(--ink-dim); flex: 1; min-width: 140px; }
   .mini-custom-panel select { font: inherit; font-size: 0.85rem; padding: 0.55rem 0.6rem; border: 1px solid var(--line); background: var(--bg); color: var(--ink); }
   .mini-check { flex-direction: row !important; align-items: center; gap: 0.5rem !important; }
   .mini-check input { width: 16px; height: 16px; accent-color: var(--red); }
-  .mini-gen-badge { font-family: var(--mono); font-size: 0.72rem; color: var(--ink-faint); margin: 0.3rem 0 0; }
+  .mini-gen-badge { font-family: var(--mono); font-size: 0.8rem; color: var(--ink-dim); margin: 0.3rem 0 0; }
 
   .mini-gen-preview { display: flex; flex-direction: column; align-items: center; gap: 0.9rem; flex: none; }
   .mini-qr-panel {
@@ -881,6 +882,7 @@ const sampleRows = [
   .mini-qr-panel canvas { width: 100%; height: 100%; display: block; }
   .mini-qr-empty { font-size: 0.8rem; color: var(--ink-faint); text-align: center; margin: 0; padding: 0 0.5rem; }
   .mini-gen-preview .btn { font-size: 0.85rem; padding: 0.7rem 1.1rem; white-space: nowrap; }
+  .mini-download-btn:disabled { opacity: 0.6; }
   .mini-more-link { display: inline-block; font-size: 0.88rem; color: var(--red); text-decoration: underline; margin-bottom: 1.8rem; }
 
   .mini-success { border: 1px solid var(--ink); background: var(--surface); padding: 1.8rem; max-width: 68ch; }
@@ -901,7 +903,7 @@ const sampleRows = [
   .demo-table th { text-align: left; font-family: var(--mono); font-size: 0.64rem; text-transform: uppercase; color: var(--ink-faint); padding: 0.4rem 0.6rem; border-bottom: 1px solid var(--line); white-space: nowrap; }
   .demo-table td { padding: 0.4rem 0.6rem; color: var(--ink-dim); border-bottom: 1px solid var(--line); white-space: nowrap; }
   .demo-map { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.2rem; }
-  .demo-map label { display: flex; flex-direction: column; gap: 0.3rem; font-size: 0.75rem; font-weight: 600; color: var(--ink-dim); flex: 1; min-width: 130px; }
+  .demo-map label { display: flex; flex-direction: column; gap: 0.3rem; font-size: 0.82rem; font-weight: 600; color: var(--ink-dim); flex: 1; min-width: 130px; }
   .demo-map select { font: inherit; font-size: 0.82rem; padding: 0.5rem 0.6rem; border: 1px solid var(--line); background: var(--bg); color: var(--ink); }
   .demo-output { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 1.3rem; margin-bottom: 1.3rem; }
   .demo-item { display: flex; flex-direction: column; align-items: center; gap: 0.5rem; text-align: center; }
@@ -909,7 +911,7 @@ const sampleRows = [
   .demo-item canvas:hover, .demo-item canvas:focus-visible { border-color: var(--red); }
   .demo-item strong { font-size: 0.82rem; font-family: var(--mono); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%; }
   .demo-item span { font-size: 0.8rem; color: var(--ink-dim); }
-  .demo-hint { font-size: 0.7rem; color: var(--ink-faint); margin: -0.6rem 0 1.3rem; }
+  .demo-hint { font-size: 0.8rem; color: var(--ink-dim); margin: -0.5rem 0 1.3rem; }
   .demo-actions { display: flex; gap: 0.8rem; flex-wrap: wrap; }
   .demo-safeguards { font-size: 0.82rem; color: var(--ink-faint); line-height: 1.55; margin: 1.1rem 0 0; max-width: 58ch; }
 

@@ -11,6 +11,26 @@ function download(blob, filename) {
   URL.revokeObjectURL(url);
 }
 
+const MAX_LOGO_BYTES = 2 * 1024 * 1024;
+
+function fileToDataURL(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = () => reject(reader.error);
+    reader.readAsDataURL(file);
+  });
+}
+
+function loadImage(dataUrl) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => resolve(img);
+    img.onerror = () => reject(new Error("Could not read that image file"));
+    img.src = dataUrl;
+  });
+}
+
 export function initGeneratorTool({ getText, filenamePrefix = "qr-code", onEmpty, onReady }) {
   const el = (id) => document.getElementById(id);
   const canvas = el("qr-canvas");
@@ -24,6 +44,13 @@ export function initGeneratorTool({ getText, filenamePrefix = "qr-code", onEmpty
   const dlSvg = el("dl-svg");
   const meta = el("qr-meta-text");
   const empty = el("qr-empty");
+  const logoInput = el("ctrl-logo");
+  const logoControls = el("logo-controls");
+  const logoScale = el("ctrl-logo-scale");
+  const logoRemove = el("logo-remove");
+  const logoNote = el("logo-note");
+
+  let logoState = null; // { image, dataUrl }
 
   function currentOpts() {
     return {
@@ -32,7 +59,49 @@ export function initGeneratorTool({ getText, filenamePrefix = "qr-code", onEmpty
       width: Number(size.value),
       margin: margin.checked ? 4 : 0,
       errorCorrectionLevel: ecc.value,
+      logo: logoState
+        ? {
+            image: logoState.image,
+            dataUrl: logoState.dataUrl,
+            scale: Number(logoScale.value),
+            backdrop: transparent.checked ? "#ffffff" : bg.value,
+          }
+        : null,
     };
+  }
+
+  if (logoInput) {
+    logoInput.addEventListener("change", async () => {
+      const file = logoInput.files[0];
+      if (!file) return;
+      if (file.size > MAX_LOGO_BYTES) {
+        alert("Logo must be under 2MB.");
+        logoInput.value = "";
+        return;
+      }
+      try {
+        const dataUrl = await fileToDataURL(file);
+        const image = await loadImage(dataUrl);
+        logoState = { image, dataUrl };
+        logoControls.hidden = false;
+        logoNote.hidden = false;
+        if (ecc.value === "L" || ecc.value === "M") ecc.value = "H";
+        update();
+      } catch {
+        alert("Could not read that image file.");
+        logoInput.value = "";
+      }
+    });
+
+    logoRemove.addEventListener("click", () => {
+      logoState = null;
+      logoInput.value = "";
+      logoControls.hidden = true;
+      logoNote.hidden = true;
+      update();
+    });
+
+    logoScale.addEventListener("change", update);
   }
 
   let lastText = "";

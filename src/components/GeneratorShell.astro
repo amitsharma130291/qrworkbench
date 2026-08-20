@@ -18,6 +18,22 @@ const { filenamePrefix = "qr-code" } = Astro.props;
       </div>
       <div class="qr-meta-row" id="qr-meta-text"></div>
 
+      <div class="logo-row">
+        <label class="logo-label" for="ctrl-logo">
+          Logo (optional)
+          <input id="ctrl-logo" type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml" />
+        </label>
+        <div class="logo-controls" id="logo-controls" hidden>
+          <label>Logo size<select id="ctrl-logo-scale">
+            <option value="0.16">Small</option>
+            <option value="0.22" selected>Medium</option>
+            <option value="0.28">Large</option>
+          </select></label>
+          <button id="logo-remove" class="btn" type="button">Remove logo</button>
+        </div>
+        <p class="logo-note" id="logo-note" hidden>Logo added — error correction bumped to H so the code still scans reliably.</p>
+      </div>
+
       <div class="ctrl-grid">
         <label>Foreground<input id="ctrl-fg" type="color" value="#111111" /></label>
         <label>Background<input id="ctrl-bg" type="color" value="#ffffff" /></label>
@@ -89,6 +105,15 @@ const { filenamePrefix = "qr-code" } = Astro.props;
   .c-br { bottom: 6px; right: 6px; } .c-br::before, .c-br::after { bottom: 0; right: 0; }
 
   .qr-meta-row { text-align: center; font-family: var(--mono); font-size: 0.68rem; color: var(--ink-faint); margin: 0.7rem 0 1.3rem; min-height: 1em; }
+
+  .logo-row { margin-bottom: 1.3rem; }
+  .logo-label { display: flex; flex-direction: column; gap: 0.35rem; font-size: 0.72rem; font-weight: 600; color: var(--ink-dim); margin-bottom: 0.6rem; }
+  .logo-label input[type="file"] { font: inherit; font-size: 0.78rem; color: var(--ink-dim); }
+  .logo-controls { display: flex; align-items: flex-end; gap: 0.7rem; }
+  .logo-controls label { display: flex; flex-direction: column; gap: 0.3rem; font-size: 0.72rem; font-weight: 600; color: var(--ink-dim); flex: 1; }
+  .logo-controls select { font: inherit; font-size: 0.8rem; padding: 0.5rem 0.6rem; border: 1px solid var(--line); background: var(--bg); color: var(--ink); }
+  .logo-controls .btn { font-size: 0.75rem; padding: 0.5rem 0.7rem; }
+  .logo-note { font-size: 0.72rem; color: var(--ink-faint); margin: 0.6rem 0 0; }
 
   .ctrl-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem 1rem; margin-bottom: 1.3rem; }
   .ctrl-grid label { display: flex; flex-direction: column; gap: 0.3rem; font-size: 0.72rem; font-weight: 600; color: var(--ink-dim); }

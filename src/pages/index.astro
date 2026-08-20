@@ -19,6 +19,53 @@ const tools = [
   { icon: "social", name: "YouTube", desc: "Link to a video or channel.", href: "/youtube-qr-code-generator" },
   { icon: "social", name: "Spotify", desc: "Link to a track or playlist.", href: "/spotify-qr-code-generator" },
 ];
+
+const useCases = [
+  { n: "01", title: "Product & inventory labels", body: "Encode product URLs, use SKUs as filenames, and add product names as captions — one row per label." },
+  { n: "02", title: "Employee & event vCards", body: "Turn a staff or attendee spreadsheet into individually named contact QR codes, ready for badges." },
+  { n: "03", title: "Asset tracking", body: "Generate sequentially named codes for equipment, rooms, containers, or inventory." },
+  { n: "04", title: "Print-shop production", body: "Export high-resolution SVGs, transparent PNGs, and print-ready label sheets from one CSV." },
+  { n: "05", title: "Events & hospitality", body: "Produce codes for tickets, menus, tables, or schedules — named and captioned automatically." },
+];
+
+const beforeItems = [
+  "Generate every QR code individually",
+  "Rename hundreds of files by hand",
+  "Copy and paste captions one at a time",
+  "Rebuild files from scratch after a mistake",
+  "Manually arrange labels for printing",
+];
+const afterItems = [
+  "Upload one spreadsheet",
+  "Map the columns once",
+  "Rows with missing data are skipped automatically",
+  "Export consistently named files",
+  "Generate printable label sheets",
+];
+
+const tierRows = [
+  { label: "Generate one QR code", free: true, batch: true, pro: true },
+  { label: "Import a spreadsheet, any size", free: true, batch: true, pro: true },
+  { label: "Map filename, caption & content columns", free: true, batch: true, pro: true },
+  { label: "WiFi & vCard-formatted bulk codes", free: true, batch: true, pro: true },
+  { label: "SVG + PNG production files", free: true, batch: true, pro: true },
+  { label: "Export past the free 20-row cap", free: false, batch: true, pro: true },
+  { label: "Unlimited batches, forever", free: false, batch: false, pro: true },
+  { label: "Logo overlay on every code in a batch", free: false, batch: false, pro: true },
+  { label: "Printable label sheets (PDF)", free: false, batch: false, pro: true },
+];
+
+const faq = [
+  { q: "Are the QR codes permanent? Will they stop working?", a: "Yes, permanent — every code here is static, meaning the destination is encoded directly into the pattern. It keeps working for as long as the destination exists, with no dependency on QR Workbench staying online." },
+  { q: "Is my spreadsheet uploaded anywhere?", a: "No. CSV parsing, QR generation, ZIP packing, and PDF layout all happen in your browser tab — the file itself is never sent to a server." },
+  { q: "Do people who scan my codes pass through a QR Workbench redirect?", a: "No. There's no redirect server in the loop — a scan goes straight to the destination you encoded." },
+  { q: "Do I need an account?", a: "No, for anything — the free generators, the bulk workspace, and paid plans all work with no signup, ever." },
+  { q: "What happens if my CSV has errors?", a: "A row missing its required QR-data value is skipped automatically — it won't produce an empty or broken code in your export." },
+  { q: "Which spreadsheet columns can I map?", a: "QR content (or, for WiFi/vCard batches, the relevant fields like SSID or name/phone/email), filename, caption, price, and category." },
+  { q: "Can I add a logo?", a: "Yes — free on every individual generator, and on Pro for bulk batches, where it's applied to every code at once." },
+  { q: "Can I create A4 or Letter label sheets?", a: "Yes, on Pro — set page size, columns, rows, margin and spacing, and export a print-ready PDF." },
+  { q: "Is there a sample CSV to try first?", a: "Yes — the bulk workspace has a one-click sample download so you can see the whole workflow before uploading your own file." },
+];
 ---
 <Layout
   title="QR Workbench — Free QR Code Generator for 14 Formats"
@@ -27,38 +74,65 @@ const tools = [
   <div class="hero">
     <div class="frame hero-grid">
       <div class="hero-text">
-        <div class="index-no">A1 — STATIC QR</div>
-        <h1>A grid that turns <span class="rd">anything</span> into a scan.</h1>
+        <div class="index-no">A1 — CSV TO QR PRODUCTION</div>
+        <h1>Turn a spreadsheet into <span class="rd">thousands</span> of production-ready QR codes.</h1>
         <p class="lede">
-          Every QR code is a grid of black and white modules. Generate one free — WiFi, vCard, URL
-          and eleven more formats — entirely in your browser, no tracking, no redirect server. Need
-          a few thousand at once? That's the paid bulk workspace, one-time payment to unlock.
+          Upload a CSV, map your columns, and export correctly named PNGs, SVGs, or printable label
+          sheets. Everything is processed privately in your browser — nothing you upload ever leaves it.
         </p>
         <div class="cta-row">
-          <a class="btn btn-accent" href="#tools">Generate a code</a>
-          <a class="btn" href="/bulk-qr-code-generator">See the bulk workspace</a>
+          <a class="btn btn-accent" href="/bulk">Try a batch free</a>
+          <a class="btn" href="#tools">Generate one QR code</a>
         </div>
+        <p class="cta-micro">No account · Nothing leaves your browser · No subscription · 20 codes free</p>
       </div>
 
       <div class="hero-visual">
-        <div class="qr-panel">
-          <span class="corner c-tl" aria-hidden="true"></span>
-          <span class="corner c-tr" aria-hidden="true"></span>
-          <span class="corner c-bl" aria-hidden="true"></span>
-          <span class="corner c-br" aria-hidden="true"></span>
-          <canvas id="hero-qr" width="480" height="480" aria-label="Live example QR code, generated in your browser"></canvas>
+        <div class="flow-card" aria-hidden="true">
+          <div class="flow-card-row flow-card-file">
+            <span class="fc-icon">▤</span><span>products.csv</span>
+          </div>
+          <div class="flow-card-arrow">↓</div>
+          <div class="flow-card-map">
+            <span><b>URL</b> → QR content</span>
+            <span><b>SKU</b> → filename</span>
+            <span><b>Product</b> → caption</span>
+          </div>
+          <div class="flow-card-arrow">↓</div>
+          <div class="flow-card-files">
+            <span>SKU001-blue-shirt.svg</span>
+            <span>SKU002-red-shirt.svg</span>
+            <span>SKU003-green-shirt.svg</span>
+            <span class="fc-more">+ 2,497 more</span>
+          </div>
+          <div class="flow-card-outputs">
+            <span class="fc-badge">ZIP</span>
+            <span class="fc-badge">PNG</span>
+            <span class="fc-badge">SVG</span>
+            <span class="fc-badge">PDF</span>
+          </div>
         </div>
       </div>
     </div>
   </div>
 
   <div class="frame">
+    <ul class="cred-strip">
+      <li><strong>5,000 codes</strong><span>per batch</span></li>
+      <li><strong>100%</strong><span>browser processing</span></li>
+      <li><strong>PNG · SVG · PDF</strong><span>output formats</span></li>
+      <li><strong>No account</strong><span>ever required</span></li>
+    </ul>
+  </div>
+
+  <div class="frame">
     <section id="tools" class="grid-row">
       <div class="row-label">
         <div class="idx">B — 01</div>
-        <h2>Free, single-code generation</h2>
+        <h2>Need one code? Free, forever.</h2>
       </div>
       <div class="row-content">
+        <p class="section-note lead-note">Create unlimited individual static QR codes — no account, no limit.</p>
         <div class="tool-strip">
           {tools.map((t) => (
             <a class="tool-item" href={t.href}>
@@ -76,69 +150,216 @@ const tools = [
     <section id="bulk" class="grid-row">
       <div class="row-label">
         <div class="idx">C — 02</div>
-        <h2>Bulk generation, the paid layer</h2>
+        <h2>Need hundreds or thousands? Bulk workspace.</h2>
       </div>
       <div class="row-content">
+        <p class="section-note lead-note">Upload a spreadsheet and export a complete, correctly named production set.</p>
         <div class="flow">
           <div class="flow-step"><span class="n">01</span><h4>Upload the sheet</h4><p>A CSV of names, SKUs or links — any number of rows.</p></div>
           <div class="flow-step"><span class="n">02</span><h4>Map the columns</h4><p>Filename, caption, content, format, size, color.</p></div>
-          <div class="flow-step"><span class="n">03</span><h4>Export the set</h4><p>Named SVGs or PNGs, packed into a ZIP.</p></div>
+          <div class="flow-step"><span class="n">03</span><h4>Export the set</h4><p>Named SVGs or PNGs, packed into a ZIP — or a printable PDF sheet.</p></div>
         </div>
-        <p class="section-note">Free to try — up to 20 codes per batch. A one-time payment unlocks unlimited batches, see pricing below.</p>
-        <a class="btn btn-fill bulk-link" href="/bulk-qr-code-generator">Learn more →</a>
+        <p class="section-note">Free to try — up to 20 codes per batch, a real export, not a locked preview. A one-time payment unlocks the rest, see pricing below.</p>
+        <a class="btn btn-fill bulk-link" href="/bulk">Try a batch free →</a>
+      </div>
+    </section>
+
+    <section class="grid-row">
+      <div class="row-label">
+        <div class="idx">D — 03</div>
+        <h2>Hours of repetitive production, reduced to one workflow.</h2>
+      </div>
+      <div class="row-content">
+        <div class="compare-grid">
+          <div class="compare-col">
+            <div class="compare-head compare-head-bad">Without QR Workbench</div>
+            <ul class="compare-list">{beforeItems.map((i) => <li>{i}</li>)}</ul>
+          </div>
+          <div class="compare-col">
+            <div class="compare-head compare-head-good">With QR Workbench</div>
+            <ul class="compare-list">{afterItems.map((i) => <li>{i}</li>)}</ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="grid-row">
+      <div class="row-label">
+        <div class="idx">E — 04</div>
+        <h2>Real jobs this replaces</h2>
+      </div>
+      <div class="row-content">
+        <div class="usecase-grid">
+          {useCases.map((u) => (
+            <div class="usecase-card">
+              <span class="uc-n">{u.n}</span>
+              <h3>{u.title}</h3>
+              <p>{u.body}</p>
+            </div>
+          ))}
+        </div>
+        <a class="btn btn-fill" href="/bulk">Try a batch free →</a>
+      </div>
+    </section>
+
+    <section class="grid-row">
+      <div class="row-label">
+        <div class="idx">F — 05</div>
+        <h2>From spreadsheet to print-ready labels</h2>
+      </div>
+      <div class="row-content">
+        <p class="section-note lead-note">A dedicated PDF layout tool, not just a bigger QR export — one of the reasons this is a production toolkit, not just a generator.</p>
+        <div class="label-demo">
+          <div class="label-sheet" aria-hidden="true">
+            {Array.from({ length: 9 }).map(() => (
+              <div class="label-cell"><span class="label-qr"></span><span class="label-cap"></span></div>
+            ))}
+          </div>
+          <ul class="label-controls">
+            <li>A4 or US Letter</li>
+            <li>Columns &amp; rows per page</li>
+            <li>Margin &amp; spacing</li>
+            <li>Caption / SKU text</li>
+            <li>Error correction level</li>
+            <li>Paginated automatically</li>
+          </ul>
+        </div>
+        <a class="btn btn-fill" href="/labels">Create a sample label sheet →</a>
+      </div>
+    </section>
+
+    <section class="grid-row">
+      <div class="row-label">
+        <div class="idx">G — 06</div>
+        <h2>Your spreadsheet never leaves your device</h2>
+      </div>
+      <div class="row-content">
+        <p class="section-note lead-note">QR generation, CSV processing, ZIP creation and PDF layout all happen locally in your browser. Customer details, employee contacts, inventory records and internal URLs are never uploaded to QR Workbench.</p>
+        <div class="privacy-flow">
+          <div class="pf-node">Your CSV</div>
+          <div class="pf-arrow">→</div>
+          <div class="pf-node">Processed in your browser</div>
+          <div class="pf-arrow">→</div>
+          <div class="pf-node">QR files &amp; printable sheets</div>
+        </div>
+        <ul class="privacy-list">
+          <li>No cloud upload</li>
+          <li>No account database</li>
+          <li>No tracking redirect</li>
+          <li>No hosted dependency</li>
+          <li>No expiration</li>
+          <li>No vendor lock-in</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="grid-row">
+      <div class="row-label">
+        <div class="idx">H — 07</div>
+        <h2>Create the code, download it, own the result</h2>
+      </div>
+      <div class="row-content">
+        <p class="section-note lead-note">Static codes like these encode their destination directly — no ongoing dependency on us or anyone else.</p>
+        <div class="table-wrap">
+          <table class="cmp-table">
+            <thead><tr><th>QR Workbench static codes</th><th>Typical dynamic QR services</th></tr></thead>
+            <tbody>
+              <tr><td>Destination encoded directly</td><td>Routes through a provider's server</td></tr>
+              <tr><td>Continues working independently</td><td>May depend on an active service</td></tr>
+              <tr><td>No redirect tracking</td><td>Redirects may be tracked</td></tr>
+              <tr><td>One-time production workflow</td><td>Commonly tied to a subscription</td></tr>
+              <tr><td>No hosted-code dependency</td><td>Provider remains in the loop</td></tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </section>
 
     <section id="pricing" class="grid-row">
       <div class="row-label">
-        <div class="idx">D — 03</div>
+        <div class="idx">I — 08</div>
         <h2>Pricing</h2>
       </div>
       <div class="row-content">
         <PricingCards />
-        <p class="section-note pricing-note">The bulk workspace is free to try — up to 20 codes per batch, no payment required. <a href="/pricing">See the full pricing page →</a></p>
+        <p class="section-note pricing-note">Test the complete workflow with your first 20 rows before paying for anything. <a href="/pricing">See the full pricing page →</a></p>
+
+        <div class="table-wrap tier-table-wrap">
+          <table class="cmp-table tier-table">
+            <thead><tr><th>Capability</th><th>Free</th><th>Batch Pass</th><th>Pro</th></tr></thead>
+            <tbody>
+              {tierRows.map((r) => (
+                <tr>
+                  <td>{r.label}</td>
+                  <td class="tier-mark">{r.free ? "✓" : "—"}</td>
+                  <td class="tier-mark">{r.batch ? "✓" : "—"}</td>
+                  <td class="tier-mark">{r.pro ? "✓" : "—"}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="grid-row">
+      <div class="row-label">
+        <div class="idx">J — 09</div>
+        <h2>Questions</h2>
+      </div>
+      <div class="row-content">
+        <div class="home-faq">
+          {faq.map((item) => (
+            <details class="faq-item">
+              <summary>{item.q}</summary>
+              <p>{item.a}</p>
+            </details>
+          ))}
+        </div>
+        <div class="final-cta">
+          <a class="btn btn-accent" href="/bulk">Try a batch free</a>
+          <span class="cta-micro">No account required · Your data stays on your device</span>
+        </div>
       </div>
     </section>
   </div>
 </Layout>
-
-<script>
-  import { renderQR } from "../lib/qr.js";
-
-  const canvas = document.getElementById("hero-qr");
-  const text = typeof location !== "undefined" ? location.origin + "/" : "https://www.qrworkbench.com";
-
-  renderQR(canvas, text, { width: 480 });
-</script>
 
 <style>
   .hero { border-bottom: 1px solid var(--line); position: relative; overflow: hidden; }
   .hero-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 3rem; align-items: center; padding: 3.5rem 1.75rem; }
   .index-no { font-family: var(--mono); font-size: 0.72rem; color: var(--red); margin-bottom: 1.2rem; letter-spacing: 0.04em; }
   h1 {
-    font-weight: 700; font-size: clamp(2.4rem, 4.6vw, 3.6rem); line-height: 1.04;
-    letter-spacing: -0.02em; margin: 0 0 1.4rem; text-wrap: balance; max-width: 15ch;
+    font-weight: 700; font-size: clamp(2.2rem, 4.2vw, 3.2rem); line-height: 1.08;
+    letter-spacing: -0.02em; margin: 0 0 1.4rem; text-wrap: balance; max-width: 17ch;
   }
   h1 .rd { color: var(--red); }
-  .lede { font-size: 1.05rem; color: var(--ink-dim); max-width: 46ch; line-height: 1.6; margin: 0 0 2rem; }
+  .lede { font-size: 1.05rem; color: var(--ink-dim); max-width: 46ch; line-height: 1.6; margin: 0 0 1.6rem; }
   .cta-row { display: flex; gap: 0.9rem; flex-wrap: wrap; }
+  .cta-micro { font-family: var(--mono); font-size: 0.7rem; color: var(--ink-faint); margin: 1rem 0 0; }
 
   .hero-visual { display: flex; flex-direction: column; align-items: center; }
-  .qr-panel {
-    position: relative; width: 100%; max-width: 420px; aspect-ratio: 1;
-    display: flex; align-items: center; justify-content: center; padding: 1.8rem;
-    background: var(--surface);
-    border: 1px solid var(--line);
+  .flow-card {
+    width: 100%; max-width: 420px; background: var(--surface); border: 1px solid var(--line);
+    padding: 1.4rem; display: flex; flex-direction: column; gap: 0.6rem;
   }
-  .qr-panel canvas { width: 100%; height: auto; background: var(--surface); }
-  .qr-panel .corner { position: absolute; width: 22px; height: 22px; }
-  .qr-panel .corner::before, .qr-panel .corner::after { content: ""; position: absolute; background: var(--red); }
-  .qr-panel .corner::before { width: 100%; height: 2px; }
-  .qr-panel .corner::after { width: 2px; height: 100%; }
-  .c-tl { top: 8px; left: 8px; } .c-tl::before, .c-tl::after { top: 0; left: 0; }
-  .c-tr { top: 8px; right: 8px; } .c-tr::before, .c-tr::after { top: 0; right: 0; }
-  .c-bl { bottom: 8px; left: 8px; } .c-bl::before, .c-bl::after { bottom: 0; left: 0; }
-  .c-br { bottom: 8px; right: 8px; } .c-br::before, .c-br::after { bottom: 0; right: 0; }
+  .flow-card-row { display: flex; align-items: center; gap: 0.6rem; font-family: var(--mono); font-size: 0.85rem; font-weight: 700; }
+  .fc-icon { color: var(--red); }
+  .flow-card-arrow { text-align: center; color: var(--ink-faint); font-size: 0.9rem; }
+  .flow-card-map { display: flex; flex-direction: column; gap: 0.35rem; font-size: 0.78rem; color: var(--ink-dim); background: var(--bg); border: 1px solid var(--line); padding: 0.7rem 0.8rem; }
+  .flow-card-map b { color: var(--ink); }
+  .flow-card-files { display: flex; flex-direction: column; gap: 0.3rem; font-family: var(--mono); font-size: 0.7rem; color: var(--ink-dim); }
+  .fc-more { color: var(--ink-faint); }
+  .flow-card-outputs { display: flex; gap: 0.5rem; margin-top: 0.4rem; }
+  .fc-badge { font-family: var(--mono); font-size: 0.66rem; font-weight: 700; border: 1px solid var(--ink); padding: 0.25rem 0.5rem; }
+
+  .cred-strip {
+    list-style: none; margin: 0; padding: 1.6rem 0; display: flex; flex-wrap: wrap; gap: 2rem 3rem;
+    border-bottom: 1px solid var(--line);
+  }
+  .cred-strip li { display: flex; flex-direction: column; gap: 0.15rem; }
+  .cred-strip strong { font-size: 1rem; letter-spacing: -0.01em; }
+  .cred-strip span { font-family: var(--mono); font-size: 0.68rem; color: var(--ink-faint); text-transform: uppercase; letter-spacing: 0.04em; }
 
   .grid-row { display: grid; grid-template-columns: repeat(12, 1fr); border-bottom: 1px solid var(--line); }
   .row-label { grid-column: 1 / 4; padding: 3rem 1.5rem 3rem 0; border-right: 1px solid var(--line); }
@@ -147,6 +368,7 @@ const tools = [
   .row-content { grid-column: 4 / 13; padding: 3rem 0 3rem 2.5rem; }
 
   .section-note { font-size: 0.8rem; color: var(--ink-faint); margin: 0 0 1.6rem; max-width: 52ch; }
+  .lead-note { font-size: 0.92rem; color: var(--ink-dim); }
   .pricing-note { margin: 1.6rem 0 0; }
 
   .tool-strip { display: flex; flex-wrap: wrap; gap: 0; }
@@ -170,6 +392,62 @@ const tools = [
   .flow-step p { margin: 0; font-size: 0.83rem; color: var(--ink-dim); line-height: 1.5; }
   .bulk-link { font-size: 0.8rem; }
 
+  .compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 0.5rem; max-width: 62ch; }
+  .compare-head { font-family: var(--mono); font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 0.9rem; padding-bottom: 0.6rem; border-bottom: 2px solid var(--line); }
+  .compare-head-bad { color: var(--ink-faint); }
+  .compare-head-good { color: var(--red); border-bottom-color: var(--red); }
+  .compare-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.7rem; }
+  .compare-list li { font-size: 0.85rem; color: var(--ink-dim); line-height: 1.5; padding-left: 1.2rem; position: relative; }
+  .compare-list li::before { content: "—"; position: absolute; left: 0; color: var(--ink-faint); }
+  .compare-head-good + .compare-list li::before { color: var(--red); content: "✓"; }
+
+  .usecase-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.6rem; margin-bottom: 1.8rem; }
+  .usecase-card { border: 1px solid var(--line); padding: 1.2rem; }
+  .uc-n { font-family: var(--mono); font-size: 0.68rem; color: var(--red); display: block; margin-bottom: 0.6rem; }
+  .usecase-card h3 { margin: 0 0 0.5rem; font-size: 0.92rem; font-weight: 700; }
+  .usecase-card p { margin: 0; font-size: 0.8rem; color: var(--ink-dim); line-height: 1.5; }
+
+  .label-demo { display: flex; gap: 2rem; align-items: flex-start; margin-bottom: 1.6rem; flex-wrap: wrap; }
+  .label-sheet {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem;
+    background: var(--surface); border: 1px solid var(--ink); padding: 0.8rem; width: 220px; flex: none;
+  }
+  .label-cell { border: 1px dashed var(--line); padding: 0.4rem; display: flex; flex-direction: column; align-items: center; gap: 0.3rem; }
+  .label-qr { width: 100%; aspect-ratio: 1; background: repeating-conic-gradient(var(--ink) 0% 25%, var(--surface) 0% 50%) 50% / 6px 6px; }
+  .label-cap { width: 70%; height: 4px; background: var(--line); }
+  .label-controls { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.6rem; flex: 1; min-width: 200px; }
+  .label-controls li { font-size: 0.85rem; color: var(--ink-dim); padding-left: 1.2rem; position: relative; }
+  .label-controls li::before { content: "—"; position: absolute; left: 0; color: var(--red); }
+
+  .privacy-flow { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.8rem; }
+  .pf-node { border: 1px solid var(--ink); padding: 0.8rem 1.1rem; font-size: 0.85rem; font-weight: 600; }
+  .pf-arrow { color: var(--red); font-weight: 700; }
+  .privacy-list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.7rem 1.6rem; max-width: 52ch; }
+  .privacy-list li { font-size: 0.85rem; color: var(--ink-dim); padding-left: 1.2rem; position: relative; }
+  .privacy-list li::before { content: "—"; position: absolute; left: 0; color: var(--red); }
+
+  .table-wrap { overflow-x: auto; margin-bottom: 0.5rem; }
+  .cmp-table { border-collapse: collapse; width: 100%; max-width: 62ch; font-size: 0.85rem; }
+  .cmp-table th { text-align: left; font-family: var(--mono); font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--ink-faint); padding: 0 0 0.7rem; border-bottom: 2px solid var(--line); }
+  .cmp-table td { padding: 0.7rem 0; border-bottom: 1px solid var(--line); color: var(--ink-dim); }
+  .cmp-table tr:last-child td { border-bottom: none; }
+
+  .tier-table-wrap { margin-top: 2.6rem; }
+  .tier-table { max-width: 68ch; }
+  .tier-table th:not(:first-child), .tier-table td.tier-mark { text-align: center; }
+  .tier-table td:first-child { color: var(--ink); }
+
+  .home-faq { max-width: 68ch; margin-bottom: 2rem; }
+  .faq-item { border-top: 1px solid var(--line); padding: 0.9rem 0; }
+  .faq-item summary { cursor: pointer; font-size: 0.9rem; font-weight: 600; list-style: none; }
+  .faq-item summary::-webkit-details-marker { display: none; }
+  .faq-item summary::before { content: "+"; display: inline-block; width: 1em; color: var(--red); font-weight: 700; }
+  .faq-item[open] summary::before { content: "–"; }
+  .faq-item p { margin: 0.7rem 0 0 1em; font-size: 0.85rem; color: var(--ink-dim); line-height: 1.6; }
+
+  .final-cta { display: flex; align-items: center; gap: 1.2rem; flex-wrap: wrap; }
+  .final-cta .cta-micro { margin: 0; }
+
   @media (max-width: 860px) {
     .hero-grid { grid-template-columns: 1fr; padding: 2.5rem 1.75rem; }
     .grid-row { grid-template-columns: 1fr; }
@@ -177,5 +455,14 @@ const tools = [
     .tool-item { border-left: none !important; padding-left: 0 !important; flex-basis: 100%; }
     .flow { flex-direction: column; gap: 1.6rem; }
     .flow-step + .flow-step { border-left: none; padding-left: 0; }
+    .compare-grid { grid-template-columns: 1fr; gap: 1.6rem; }
+    .usecase-grid { grid-template-columns: 1fr 1fr; }
+    .privacy-list { grid-template-columns: 1fr 1fr; }
+    .label-demo { flex-direction: column; }
+  }
+  @media (max-width: 560px) {
+    .usecase-grid { grid-template-columns: 1fr; }
+    .privacy-list { grid-template-columns: 1fr; }
+    .cred-strip { gap: 1.2rem 2rem; }
   }
 </style>

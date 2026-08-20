@@ -51,6 +51,13 @@ function customerHtml({ label, licenseKey, recoveryUrl, scopeNote, isResend }) {
   const intro = isResend
     ? "You asked for your QR Workbench license key to be resent — here it is."
     : `${escapeHtml(label)} is unlocked — here's your license key for whenever you need to restore access.`;
+  // Claiming "already active" only makes sense right after a purchase --
+  // someone requesting a resend is asking specifically *because* it isn't
+  // active wherever they are, so the same claim there would be simply
+  // wrong, not just unnecessary.
+  const activationNote = isResend
+    ? `Click below to activate your ${escapeHtml(label)} license in this browser — it only takes a second.`
+    : `<strong>Your ${escapeHtml(label)} is already active</strong> in the browser you checked out in — there's nothing else to do there. If you don't see it unlocked, switched devices, or cleared your browser, click below to reactivate it instantly.`;
   return `
   <div style="font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;max-width:520px;margin:0 auto;color:#111111">
     <p style="font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:#E63312;margin:0 0 10px">QR Workbench</p>
@@ -68,7 +75,7 @@ function customerHtml({ label, licenseKey, recoveryUrl, scopeNote, isResend }) {
       </tr>
     </table>
 
-    <p style="font-size:13px;line-height:1.6;color:#4A4C4F;margin:0 0 18px"><strong>Your ${escapeHtml(label)} is already active</strong> in the browser you checked out in — there's nothing else to do there. If you don't see it unlocked, switched devices, or cleared your browser, click below to reactivate it instantly.</p>
+    <p style="font-size:13px;line-height:1.6;color:#4A4C4F;margin:0 0 18px">${activationNote}</p>
 
     <a href="${recoveryUrl}" style="display:inline-block;background:#111111;color:#fff;font-size:14px;font-weight:700;text-decoration:none;padding:12px 22px;border-radius:6px;margin:0 0 26px">Reactivate license</a>
 
@@ -90,13 +97,16 @@ function customerText({ label, licenseKey, recoveryUrl, scopeNote, isResend }) {
   const intro = isResend
     ? "You asked for your QR Workbench license key to be resent — here it is."
     : `${label} is unlocked — here's your license key for whenever you need to restore access.`;
+  const activationNote = isResend
+    ? `Click the link below to activate your ${label} license in this browser -- it only takes a second.`
+    : `Your ${label} is already active in the browser you checked out in -- there's nothing else to do there. If you don't see it unlocked, switched devices, or cleared your browser, use the link below to reactivate it instantly.`;
   return [
     intro,
     "",
     `Product: ${label}`,
     `License key: ${licenseKey}`,
     "",
-    `Your ${label} is already active in the browser you checked out in -- there's nothing else to do there. If you don't see it unlocked, switched devices, or cleared your browser, use the link below to reactivate it instantly.`,
+    activationNote,
     "",
     `Reactivate license: ${recoveryUrl}`,
     "",

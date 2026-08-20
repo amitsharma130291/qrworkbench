@@ -5,7 +5,7 @@
     <a class="logo" href="/">
       <picture>
         <source srcset="/logo.webp" type="image/webp" />
-        <img src="/logo.png" width="680" height="120" alt="QR Workbench" />
+        <img src="/logo.png" width="900" height="156" alt="QR Workbench" />
       </picture>
     </a>
 
@@ -52,10 +52,25 @@
 
 <style>
   .site-nav { border-bottom: 1px solid var(--ink); background: var(--bg); position: sticky; top: 0; z-index: 50; }
-  .nav-row { display: flex; align-items: center; gap: 1.6rem; padding: 1.15rem 1.75rem; }
+  /* Vertical padding trimmed to 1.15rem (from 1.55rem) so the row settles at
+     ~85px tall with the logo's new 44px height -- the old padding was sized
+     around the previous, much shorter logo. */
+  .nav-row { display: flex; align-items: center; gap: 1.6rem; padding: 1.15rem 1.75rem; min-height: 84px; }
 
-  .logo { display: flex; align-items: center; margin-right: auto; flex: none; }
-  .logo img { height: 58px; width: auto; display: block; }
+  /* Desktop: clamped 190-260px, preferring 24% of the nav row's width. The
+     clamp() lives on .logo itself, not the <img> -- percentage widths only
+     resolve against a containing block with a *definite* width, and .logo
+     (a flex item of .nav-row, which has one) qualifies while <picture>/<img>
+     alone wouldn't. The 24% (not the nominally "20%" target) is deliberate:
+     .frame caps nav-row's content width at 1064px on every real desktop
+     viewport, so the preferred term needs to land near the 260px ceiling to
+     keep the logo's ~44px visible height at this fixed aspect ratio --
+     literal 20% would plateau around 213px/37px tall instead. height:auto on
+     the image (never a fixed height) is what keeps this from ever
+     stretching or squashing the logo -- the browser derives height from the
+     image's own aspect ratio at whatever width the clamp computes to. */
+  .logo { display: flex; align-items: center; margin-right: auto; flex: none; width: clamp(190px, 24%, 260px); }
+  .logo img { display: block; width: 100%; height: auto; }
 
   .primary-nav { display: flex; align-items: center; gap: 1.4rem; font-size: 0.84rem; font-weight: 500; flex: none; }
   .primary-nav > a { color: var(--ink-dim); text-decoration: none; display: inline-flex; align-items: center; gap: 0.4rem; white-space: nowrap; }
@@ -94,5 +109,26 @@
     .nav-row { flex-wrap: wrap; row-gap: 0.9rem; }
     .primary-nav { order: 3; flex-basis: 100%; flex-wrap: wrap; gap: 1rem 1.4rem; }
     .drop-panel { position: static; box-shadow: none; border: none; grid-template-columns: 1fr; padding: 0.2rem 0 0 0.8rem; }
+  }
+
+  /* Tablet: capped at 220px, preferring 34% (floored at the same 190px
+     desktop starts from, so there's no size jump crossing this breakpoint
+     from the desktop side). Unlike desktop, this row's width scales freely
+     with the viewport (no .frame max-width ceiling in play here), so a
+     modest percentage would drift down toward the 190px floor for most of
+     the 601-900px band -- 34% instead keeps it saturated near the 220px
+     ceiling (~38px visible height, close to the ~40px target) across most
+     of that range. */
+  @media (max-width: 900px) {
+    .nav-row { padding: 1.15rem 1.5rem; min-height: 76px; }
+    .logo { width: clamp(190px, 34%, 220px); }
+  }
+
+  /* Mobile: 150-190px, preferring 52% so ordinary phone widths (~375px+)
+     saturate at the 190px ceiling, landing the visible height at ~33px --
+     inside the 32-36px target -- rather than drifting toward 27-28px. */
+  @media (max-width: 600px) {
+    .nav-row { padding: 0.85rem 1.1rem; min-height: 64px; }
+    .logo { width: clamp(150px, 52%, 190px); }
   }
 </style>

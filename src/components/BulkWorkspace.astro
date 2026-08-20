@@ -60,7 +60,23 @@
   <section id="map" class="panel">
     <h2><span class="pn">02</span>Map columns</h2>
     <div class="field-list" id="map-fields">
-      <label>QR data <em>(required)</em><select id="map-qrdata" disabled></select></label>
+      <div class="map-group" data-type="url">
+        <label>QR data <em>(required)</em><select id="map-qrdata" disabled></select></label>
+      </div>
+      <div class="map-group" data-type="wifi" hidden>
+        <label>Network name / SSID <em>(required)</em><select id="map-wifi-ssid" disabled></select></label>
+        <label>Password <em>(optional)</em><select id="map-wifi-password" disabled></select></label>
+      </div>
+      <div class="map-group" data-type="vcard" hidden>
+        <label>First name <em>(required)</em><select id="map-vcard-first" disabled></select></label>
+        <label>Last name <em>(optional)</em><select id="map-vcard-last" disabled></select></label>
+        <label>Company <em>(optional)</em><select id="map-vcard-org" disabled></select></label>
+        <label>Job title <em>(optional)</em><select id="map-vcard-title" disabled></select></label>
+        <label>Phone <em>(optional)</em><select id="map-vcard-phone" disabled></select></label>
+        <label>Email <em>(optional)</em><select id="map-vcard-email" disabled></select></label>
+        <label>Website <em>(optional)</em><select id="map-vcard-url" disabled></select></label>
+        <label>Address <em>(optional)</em><select id="map-vcard-address" disabled></select></label>
+      </div>
       <label>Filename<select id="map-filename" disabled></select></label>
       <label>Caption <em>(optional)</em><select id="map-caption" disabled></select></label>
       <label>Price <em>(optional)</em><select id="map-price" disabled></select></label>
@@ -71,7 +87,19 @@
   <section id="configure" class="panel">
     <h2><span class="pn">03</span>Configure</h2>
     <div class="field-list">
-      <label>QR code type<select id="cfg-type"><option>URL / plain text</option></select></label>
+      <label>QR code type<select id="cfg-type">
+        <option value="url" selected>URL / plain text</option>
+        <option value="wifi">WiFi</option>
+        <option value="vcard">vCard</option>
+      </select></label>
+      <div class="field-row" id="cfg-wifi-extra" hidden>
+        <label>Security type<select id="cfg-wifi-security">
+          <option value="WPA" selected>WPA / WPA2</option>
+          <option value="WEP">WEP</option>
+          <option value="nopass">Open (no password)</option>
+        </select></label>
+        <label class="toggle-row"><span>Hidden network</span><input id="cfg-wifi-hidden" type="checkbox" /></label>
+      </div>
       <div class="field-row">
         <label>Size<select id="cfg-size">
           <option value="500">500 px</option>
@@ -90,7 +118,6 @@
         <div class="seg" id="format-seg">
           <button type="button" data-format="svg" class="is-active">SVG</button>
           <button type="button" data-format="png">PNG</button>
-          <button type="button" disabled title="Print-ready PDF sheets are a Pro feature">PDF · Pro</button>
         </div>
       </label>
       <label class="toggle-row">
@@ -98,6 +125,22 @@
         <input id="cfg-quietzone" type="checkbox" checked />
       </label>
       <label>File naming<input id="cfg-pattern" type="text" placeholder="{filename}" /></label>
+      <div class="logo-row">
+        <label class="logo-label" for="cfg-logo">
+          Logo overlay (optional, applied to every code) <em>— Pro feature</em>
+          <input id="cfg-logo" type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml" disabled />
+        </label>
+        <div class="logo-controls" id="cfg-logo-controls" hidden>
+          <label>Logo size<select id="cfg-logo-scale">
+            <option value="0.16">Small</option>
+            <option value="0.22" selected>Medium</option>
+            <option value="0.28">Large</option>
+          </select></label>
+          <button id="cfg-logo-remove" class="btn" type="button">Remove logo</button>
+        </div>
+        <p class="logo-note" id="cfg-logo-note" hidden>Logo added — error correction bumped to H so every code still scans reliably.</p>
+        <p class="logo-note" id="cfg-logo-locked">Unlock Pro to add a logo to every code in this batch.</p>
+      </div>
     </div>
   </section>
 
@@ -184,13 +227,18 @@
   </details>
   <details class="faq-item">
     <summary>Can I generate WiFi or vCard-formatted codes in bulk?</summary>
-    <p>Not yet — bulk mode encodes whatever text or URL is in your mapped column directly. For WiFi or vCard-formatted codes, use the <a href="/wifi-qr-code-generator">WiFi</a> or <a href="/vcard-qr-code-generator">vCard</a> generator for now.</p>
+    <p>Yes — pick WiFi or vCard as the QR code type in step 03, then map the relevant columns (SSID/password for WiFi, name/company/phone/etc. for vCard) in step 02. Each row is built to the real WiFi or vCard 3.0 format, the same as the individual <a href="/wifi-qr-code-generator">WiFi</a> and <a href="/vcard-qr-code-generator">vCard</a> generators produce.</p>
+  </details>
+  <details class="faq-item">
+    <summary>Can I add a logo to every code in a batch?</summary>
+    <p>Yes, on Pro — upload a logo in step 03 and it's overlaid on every code in the batch, the same way the individual generators do it. Error correction is bumped to H automatically so the codes still scan reliably with a logo covering part of the pattern.</p>
   </details>
 </div>
 
 <script>
   import { renderQR, qrToSVGString, qrToPNGBlob } from "../lib/qr.js";
   import { parseCSV, guessColumn, buildFilename } from "../lib/csv.js";
+  import { buildWifiPayload, buildVCardPayload } from "../lib/formats.js";
   import {
     newJobId,
     jobIdFromFile,
@@ -290,6 +338,7 @@
       tierBanner.toggleKey.hidden = false;
       tierBanner.changeKey.hidden = true;
     }
+    updateLogoLock();
     updateBottomBar();
   }
 
@@ -410,17 +459,43 @@
 
   const mapSelects = {
     qrData: el("map-qrdata"),
+    wifiSsid: el("map-wifi-ssid"),
+    wifiPassword: el("map-wifi-password"),
+    vcardFirst: el("map-vcard-first"),
+    vcardLast: el("map-vcard-last"),
+    vcardOrg: el("map-vcard-org"),
+    vcardTitle: el("map-vcard-title"),
+    vcardPhone: el("map-vcard-phone"),
+    vcardEmail: el("map-vcard-email"),
+    vcardUrl: el("map-vcard-url"),
+    vcardAddress: el("map-vcard-address"),
     filename: el("map-filename"),
     caption: el("map-caption"),
     price: el("map-price"),
     category: el("map-category"),
   };
+  // Selects that take an empty "None" option, not just a header guess --
+  // required fields (SSID, first name, URL/plain-text data) always default
+  // to some header since there's no meaningful "skip this" state for them.
+  const OPTIONAL_MAP_KEYS = ["wifiPassword", "vcardLast", "vcardOrg", "vcardTitle", "vcardPhone", "vcardEmail", "vcardUrl", "vcardAddress", "caption", "price", "category"];
 
+  const cfgType = el("cfg-type");
+  const cfgWifiExtra = el("cfg-wifi-extra");
+  const cfgWifiSecurity = el("cfg-wifi-security");
+  const cfgWifiHidden = el("cfg-wifi-hidden");
   const cfgSize = el("cfg-size");
   const cfgEc = el("cfg-ec");
   const cfgQuietZone = el("cfg-quietzone");
   const cfgPattern = el("cfg-pattern");
   const formatSeg = el("format-seg");
+
+  const cfgLogo = el("cfg-logo");
+  const cfgLogoControls = el("cfg-logo-controls");
+  const cfgLogoScale = el("cfg-logo-scale");
+  const cfgLogoRemove = el("cfg-logo-remove");
+  const cfgLogoNote = el("cfg-logo-note");
+  const cfgLogoLocked = el("cfg-logo-locked");
+  let logoState = null; // { image, dataUrl } -- Pro-only, applied to every code in the batch
 
   const previewList = el("preview-list");
   const previewCount = el("preview-count");
@@ -481,30 +556,76 @@
 
   function populateMapping() {
     const { headers } = state;
-    const qrGuess = guessColumn(headers, ["url", "link", "website"], headers[0]);
     const fileGuess = guessColumn(headers, ["sku", "id", "code"], headers[0]);
-    const capGuess = guessColumn(headers, ["name", "product", "title", "caption"]);
-    const priceGuess = guessColumn(headers, ["price", "cost"]);
-    const catGuess = guessColumn(headers, ["category", "type"]);
+    const guesses = {
+      qrData: guessColumn(headers, ["url", "link", "website"], headers[0]),
+      wifiSsid: guessColumn(headers, ["ssid", "network", "wifi"], headers[0]),
+      wifiPassword: guessColumn(headers, ["password", "pass", "pwd"]),
+      vcardFirst: guessColumn(headers, ["first", "fname", "name"], headers[0]),
+      vcardLast: guessColumn(headers, ["last", "lname", "surname"]),
+      vcardOrg: guessColumn(headers, ["company", "org", "organization"]),
+      vcardTitle: guessColumn(headers, ["title", "role", "position"]),
+      vcardPhone: guessColumn(headers, ["phone", "tel", "mobile"]),
+      vcardEmail: guessColumn(headers, ["email"]),
+      vcardUrl: guessColumn(headers, ["website", "url", "site"]),
+      vcardAddress: guessColumn(headers, ["address"]),
+      filename: fileGuess,
+      caption: guessColumn(headers, ["name", "product", "title", "caption"]),
+      price: guessColumn(headers, ["price", "cost"]),
+      category: guessColumn(headers, ["category", "type"]),
+    };
 
-    mapSelects.qrData.innerHTML = headers.map((h) => `<option ${h === qrGuess ? "selected" : ""}>${h}</option>`).join("");
-    mapSelects.filename.innerHTML = headers.map((h) => `<option ${h === fileGuess ? "selected" : ""}>${h}</option>`).join("");
-    for (const [key, guess] of [["caption", capGuess], ["price", priceGuess], ["category", catGuess]]) {
-      const sel = mapSelects[key];
-      sel.innerHTML = `<option value="">None</option>` + headers.map((h) => `<option ${h === guess ? "selected" : ""}>${h}</option>`).join("");
+    for (const [key, sel] of Object.entries(mapSelects)) {
+      const guess = guesses[key];
+      const noneOption = OPTIONAL_MAP_KEYS.includes(key) ? `<option value="">None</option>` : "";
+      sel.innerHTML = noneOption + headers.map((h) => `<option ${h === guess ? "selected" : ""}>${h}</option>`).join("");
+      sel.disabled = false;
     }
-    Object.values(mapSelects).forEach((s) => (s.disabled = false));
     cfgPattern.value = `{${fileGuess}}`;
+    updateMapVisibility();
+  }
+
+  // Only the field group matching the selected QR type is shown -- the rest
+  // stay populated in the background so switching types back and forth
+  // doesn't lose whatever was already mapped.
+  function updateMapVisibility() {
+    document.querySelectorAll(".map-group").forEach((g) => {
+      g.hidden = g.dataset.type !== cfgType.value;
+    });
+    cfgWifiExtra.hidden = cfgType.value !== "wifi";
   }
 
   function currentMapping() {
-    return {
-      qrData: mapSelects.qrData.value,
-      filename: mapSelects.filename.value,
-      caption: mapSelects.caption.value,
-      price: mapSelects.price.value,
-      category: mapSelects.category.value,
-    };
+    const m = {};
+    for (const key of Object.keys(mapSelects)) m[key] = mapSelects[key].value;
+    return m;
+  }
+
+  // Builds the actual QR payload for one row, per the selected type -- the
+  // same encoders the individual WiFi/vCard generators use, so a bulk WiFi
+  // or vCard code is byte-for-byte the same format as a hand-made one.
+  function buildQRValue(mapping, row) {
+    if (cfgType.value === "wifi") {
+      return buildWifiPayload({
+        ssid: row[mapping.wifiSsid] || "",
+        password: mapping.wifiPassword ? row[mapping.wifiPassword] || "" : "",
+        security: cfgWifiSecurity.value,
+        hidden: cfgWifiHidden.checked,
+      });
+    }
+    if (cfgType.value === "vcard") {
+      return buildVCardPayload({
+        firstName: row[mapping.vcardFirst] || "",
+        lastName: mapping.vcardLast ? row[mapping.vcardLast] || "" : "",
+        org: mapping.vcardOrg ? row[mapping.vcardOrg] || "" : "",
+        title: mapping.vcardTitle ? row[mapping.vcardTitle] || "" : "",
+        phone: mapping.vcardPhone ? row[mapping.vcardPhone] || "" : "",
+        email: mapping.vcardEmail ? row[mapping.vcardEmail] || "" : "",
+        url: mapping.vcardUrl ? row[mapping.vcardUrl] || "" : "",
+        address: mapping.vcardAddress ? row[mapping.vcardAddress] || "" : "",
+      });
+    }
+    return row[mapping.qrData] || "";
   }
 
   function renderPreview() {
@@ -523,8 +644,8 @@
       text.innerHTML = `<strong>${buildFilename(cfgPattern.value || "{" + mapping.filename + "}", row, state.headers)}</strong><span>${parts.join(" · ") || "&nbsp;"}</span>`;
       item.appendChild(text);
       previewList.appendChild(item);
-      const value = row[mapping.qrData] || "";
-      if (value) renderQR(canvas, value, { width: 200, margin: 1 });
+      const value = buildQRValue(mapping, row);
+      if (value) renderQR(canvas, value, { width: 200, margin: 1, logo: activeLogo() });
     });
     previewCount.textContent = state.rows.length
       ? previewExpanded
@@ -612,6 +733,80 @@
   cfgPattern.addEventListener("input", () => renderPreview());
   cfgSize.addEventListener("change", updateBottomBar);
   cfgEc.addEventListener("change", updateBottomBar);
+  cfgType.addEventListener("change", () => {
+    updateMapVisibility();
+    renderPreview();
+  });
+  cfgWifiSecurity.addEventListener("change", () => renderPreview());
+  cfgWifiHidden.addEventListener("change", () => renderPreview());
+
+  const MAX_LOGO_BYTES = 2 * 1024 * 1024;
+  function fileToDataURL(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = () => reject(reader.error);
+      reader.readAsDataURL(file);
+    });
+  }
+  function loadImage(dataUrl) {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => resolve(img);
+      img.onerror = () => reject(new Error("Could not read that image file"));
+      img.src = dataUrl;
+    });
+  }
+  // Logo is Pro-only -- returns null (no overlay) unless the current
+  // browser holds an unlocked Pro purchase, even if a file was chosen
+  // before the input got locked back down (e.g. switching license keys).
+  function activeLogo() {
+    if (!logoState || activeTier !== "pro") return null;
+    return { image: logoState.image, dataUrl: logoState.dataUrl, scale: Number(cfgLogoScale.value), backdrop: "#ffffff" };
+  }
+  // Enables/disables the logo upload based on the current tier -- called
+  // from renderTierBanner() so it stays in sync with every unlock/lock
+  // transition (buy, redeem, switch key) without duplicating that logic.
+  function updateLogoLock() {
+    const unlockedPro = isUnlocked && activeTier === "pro";
+    cfgLogo.disabled = !unlockedPro;
+    cfgLogoLocked.hidden = unlockedPro;
+    if (!unlockedPro && logoState) {
+      logoState = null;
+      cfgLogo.value = "";
+      cfgLogoControls.hidden = true;
+      cfgLogoNote.hidden = true;
+      renderPreview();
+    }
+  }
+  cfgLogo.addEventListener("change", async () => {
+    const file = cfgLogo.files[0];
+    if (!file) return;
+    if (file.size > MAX_LOGO_BYTES) {
+      alert("Logo must be under 2MB.");
+      cfgLogo.value = "";
+      return;
+    }
+    try {
+      const dataUrl = await fileToDataURL(file);
+      const image = await loadImage(dataUrl);
+      logoState = { image, dataUrl };
+      cfgLogoControls.hidden = false;
+      cfgLogoNote.hidden = false;
+      renderPreview();
+    } catch {
+      alert("Could not read that image file.");
+      cfgLogo.value = "";
+    }
+  });
+  cfgLogoRemove.addEventListener("click", () => {
+    logoState = null;
+    cfgLogo.value = "";
+    cfgLogoControls.hidden = true;
+    cfgLogoNote.hidden = true;
+    renderPreview();
+  });
+  cfgLogoScale.addEventListener("change", () => renderPreview());
   formatSeg.addEventListener("click", (e) => {
     const btn = e.target.closest("button[data-format]");
     if (!btn) return;
@@ -641,9 +836,14 @@
     const capped = !isUnlocked && state.rows.length > FREE_ROW_CAP;
     const rows = capped ? state.rows.slice(0, FREE_ROW_CAP) : state.rows;
 
+    const logo = activeLogo();
+    // A logo covering part of the pattern needs a higher error-correction
+    // floor to stay scannable -- same rule the single-code generators use.
+    const effectiveEc = logo && (ec === "L" || ec === "M") ? "H" : ec;
+
     for (let i = 0; i < rows.length; i++) {
       const row = rows[i];
-      const value = row[mapping.qrData];
+      const value = buildQRValue(mapping, row);
       if (!value) continue;
       let name = buildFilename(pattern, row, state.headers) + "." + format;
       let n = 1;
@@ -654,10 +854,10 @@
       used.add(name);
 
       if (format === "svg") {
-        const svg = await qrToSVGString(value, { errorCorrectionLevel: ec, margin, width: size });
+        const svg = await qrToSVGString(value, { errorCorrectionLevel: effectiveEc, margin, width: size, logo });
         zip.file(name, svg);
       } else {
-        const blob = await qrToPNGBlob(value, { errorCorrectionLevel: ec, margin, width: size });
+        const blob = await qrToPNGBlob(value, { errorCorrectionLevel: effectiveEc, margin, width: size, logo });
         zip.file(name, blob);
       }
       written++;
@@ -847,6 +1047,18 @@
   }
   .field-list select:disabled { color: var(--ink-faint); background: var(--bg); }
   .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; }
+  .map-group { display: flex; flex-direction: column; gap: 0.9rem; }
+  .map-group + label, .map-group + .map-group { margin-top: 0.9rem; }
+
+  .logo-row { border-top: 1px solid var(--line); padding-top: 0.9rem; margin-top: 0.2rem; }
+  .logo-label { display: flex; flex-direction: column; gap: 0.35rem; font-size: 0.75rem; font-weight: 600; color: var(--ink-dim); margin-bottom: 0.6rem; }
+  .logo-label input[type="file"] { font: inherit; font-size: 0.78rem; color: var(--ink-dim); }
+  .logo-label input[type="file"]:disabled { color: var(--ink-faint); }
+  .logo-controls { display: flex; align-items: flex-end; gap: 0.7rem; }
+  .logo-controls label { display: flex; flex-direction: column; gap: 0.3rem; font-size: 0.72rem; font-weight: 600; color: var(--ink-dim); flex: 1; }
+  .logo-controls select { font: inherit; font-size: 0.8rem; padding: 0.5rem 0.6rem; border: 1px solid var(--line); background: var(--bg); color: var(--ink); }
+  .logo-controls .btn { font-size: 0.75rem; padding: 0.5rem 0.7rem; }
+  .logo-note { font-size: 0.72rem; color: var(--ink-faint); margin: 0.6rem 0 0; }
 
   .seg { display: flex; border: 1px solid var(--ink); width: fit-content; }
   .seg button { font: inherit; font-size: 0.75rem; font-weight: 700; padding: 0.5rem 0.9rem; border: none; background: transparent; color: var(--ink); cursor: pointer; border-right: 1px solid var(--ink); }

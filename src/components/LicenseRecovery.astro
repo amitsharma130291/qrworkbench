@@ -38,9 +38,31 @@
     status: root.querySelector("#lr-status"),
   };
 
+  const BULK_LINK = '<a href="/bulk">Go to the bulk workspace →</a>';
+
   function clearMessages() {
     els.error.hidden = true;
     els.status.hidden = true;
+  }
+
+  function showStatusHtml(html) {
+    els.status.innerHTML = html;
+    els.status.hidden = false;
+  }
+
+  // Runs an async submit handler with the button showing a loading label
+  // (disabled, text swapped) until it settles, always restored after --
+  // the request can take a moment (real network round trip to Dodo).
+  async function withLoading(btn, loadingLabel, fn) {
+    const originalLabel = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = loadingLabel;
+    try {
+      await fn();
+    } finally {
+      btn.disabled = false;
+      btn.textContent = originalLabel;
+    }
   }
 
   els.redeemForm.addEventListener("submit", async (e) => {
@@ -49,23 +71,22 @@
     const key = els.keyInput.value.trim();
     if (!key) return;
     const btn = els.redeemForm.querySelector("button");
-    btn.disabled = true;
-    try {
-      // No file loaded here -- jobId is intentionally empty, so a Batch
-      // Pass confirms without enforcing which file it's scoped to yet.
-      const payment = await redeemLicenseKey(key, "");
-      els.status.textContent =
-        payment.tier === "pro"
-          ? "✓ Valid Pro license — unlocked. Head to the bulk workspace to generate a batch."
-          : "✓ Valid Batch Pass confirmed. Upload your file on the bulk workspace to export it.";
-      els.status.hidden = false;
-      els.keyInput.value = "";
-    } catch (err) {
-      els.error.textContent = err.message;
-      els.error.hidden = false;
-    } finally {
-      btn.disabled = false;
-    }
+    await withLoading(btn, "Checking…", async () => {
+      try {
+        // No file loaded here -- jobId is intentionally empty, so a Batch
+        // Pass confirms without enforcing which file it's scoped to yet.
+        const payment = await redeemLicenseKey(key, "");
+        showStatusHtml(
+          payment.tier === "pro"
+            ? `✓ Valid Pro license — unlocked. ${BULK_LINK}`
+            : `✓ Valid Batch Pass confirmed. ${BULK_LINK}`
+        );
+        els.keyInput.value = "";
+      } catch (err) {
+        els.error.textContent = err.message;
+        els.error.hidden = false;
+      }
+    });
   });
 
   els.toggleRecover.addEventListener("click", () => {
@@ -78,17 +99,16 @@
     const email = els.recoverEmail.value.trim();
     if (!email) return;
     const btn = els.recoverForm.querySelector("button");
-    btn.disabled = true;
-    try {
-      const message = await requestLicenseRecovery(email);
-      els.status.textContent = message;
-      els.status.hidden = false;
-    } catch (err) {
-      els.error.textContent = err.message;
-      els.error.hidden = false;
-    } finally {
-      btn.disabled = false;
-    }
+    await withLoading(btn, "Sending…", async () => {
+      try {
+        const message = await requestLicenseRecovery(email);
+        els.status.textContent = message;
+        els.status.hidden = false;
+      } catch (err) {
+        els.error.textContent = err.message;
+        els.error.hidden = false;
+      }
+    });
   });
 
   // The "Reactivate license" button in purchase/resend emails links to
@@ -105,11 +125,11 @@
         els.error.textContent = "That link isn't valid anymore, or the payment wasn't completed.";
         els.error.hidden = false;
       } else if (result) {
-        els.status.textContent =
+        showStatusHtml(
           result.tier === "pro"
-            ? "✓ Pro license reactivated — unlocked in this browser. Head to the bulk workspace to generate a batch."
-            : "✓ Batch Pass reactivated — unlocked in this browser. Upload your file on the bulk workspace to export it.";
-        els.status.hidden = false;
+            ? `✓ Pro license reactivated — unlocked in this browser. ${BULK_LINK}`
+            : `✓ Batch Pass reactivated — unlocked in this browser. ${BULK_LINK}`
+        );
       }
     } catch (err) {
       els.error.textContent = err.message || "Couldn't verify that link. Please try again.";
@@ -135,6 +155,7 @@
 
   .lr-error { color: var(--red); font-size: 0.82rem; margin: 1rem 0 0; }
   .lr-status { color: var(--success); font-size: 0.82rem; margin: 1rem 0 0; }
+  .lr-status a { margin-left: 0.4rem; font-weight: 700; }
 
   @media (max-width: 480px) {
     .lr-form { flex-direction: column; max-width: none; }

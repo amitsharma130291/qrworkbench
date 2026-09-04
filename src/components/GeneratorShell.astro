@@ -132,4 +132,16 @@ const { filenamePrefix = "qr-code" } = Astro.props;
     .tool-grid { grid-template-columns: 1fr; }
     .tool-inputs :global(.field-row) { grid-template-columns: 1fr; }
   }
+
+  /* Smallest phones (iPhone SE and similar, ~320-380px wide): the fixed
+     1.8rem shell padding plus a permanent 2-column control grid leaves each
+     select only ~90px, cramped enough to matter. Trim padding and let the
+     lower-value controls (foreground/background/size/error-correction) go
+     full width instead of fighting for half a row. */
+  @media (max-width: 400px) {
+    .tool-shell { padding: 1.1rem; }
+    .ctrl-grid { grid-template-columns: 1fr; }
+    .ctrl-check { grid-column: span 1; }
+    .dl-row { flex-direction: column; }
+  }
 </style>

@@ -20,7 +20,7 @@ const faq = [
   { q: "What happens when someone scans it?", a: "Their phone offers to save your details as a new contact — name, company, phone, email and website all filled in, nothing retyped." },
   { q: "Which contact format does this use?", a: "vCard 3.0 — the format with the broadest support across iPhone, Android and desktop scanning apps." },
   { q: "Can I put this on a printed business card?", a: "Yes — download the SVG for a clean vector print at any size. That's the main reason people use this over just texting someone their number." },
-  { q: "I need this for a whole team, not just me.", a: "The bulk workspace takes a CSV of names, titles, phone numbers and emails and generates one vCard QR per row." },
+  { q: "I need this for a whole team, not just me.", a: "Use the bulk vCard generator — upload a CSV of names, titles, phone numbers and emails and it generates one properly formatted vCard QR per row, ready to print on badges or cards." },
   { q: "Can I leave out my company or address?", a: "Yes — first and last name are the only fields that shape the contact card meaningfully; everything else is optional and simply omitted if left blank." },
   { q: "Can I update my details after the card is printed?", a: "No — like any static QR, your details are encoded directly into the pattern. Changing anything means generating a new code and reprinting." },
   { q: "Is this the same as Apple Wallet or Google Wallet contact cards?", a: "No — this creates a standard vCard that any phone's default camera or contacts app can read and save. It doesn't require Apple Wallet, Google Wallet, or any specific app." },
@@ -36,6 +36,7 @@ const faq = [
   howTo={howTo}
   tips={tips}
   bulkNote="Creating vCards for your whole team? Generate hundreds from CSV →"
+  bulkHref="/bulk-vcard-qr-code-generator"
   faq={faq}
 >
   <GeneratorShell filenamePrefix="vcard-qr-code">

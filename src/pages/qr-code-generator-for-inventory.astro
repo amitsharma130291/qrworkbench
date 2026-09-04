@@ -1,0 +1,172 @@
+---
+import Layout from "../layouts/Layout.astro";
+import ProPromo from "../components/ProPromo.astro";
+
+const sampleRows = [
+  { sku: "WH-0142", name: "Pallet jack #3", url: "https://example.com/assets/WH-0142" },
+  { sku: "WH-0143", name: "Forklift charger, Bay 2", url: "https://example.com/assets/WH-0143" },
+  { sku: "WH-0144", name: "Shelf unit, Aisle 6", url: "https://example.com/assets/WH-0144" },
+];
+
+const faq = [
+  { q: "What should each QR code actually link to?", a: "Whatever's most useful when someone scans it standing next to the item: a product page, a spec sheet or manual (PDF), an internal asset record, or even just a plain-text SKU if you're scanning into a separate system rather than opening a link." },
+  { q: "Do I need special inventory software to use this?", a: "No — the input is a plain CSV. Export one from whatever you already use (a spreadsheet, Shopify, Airtable, a warehouse system's own export) and upload it directly. Nothing needs to integrate with anything." },
+  { q: "How durable are the printed codes for a warehouse or shop floor?", a: "That's a print-stock and error-correction question, not a QR one. Use the highest error-correction level (H, ~30%) for anything that might get dirty, scratched, or partially obscured, and print on a label material rated for the environment — the code itself degrades gracefully as long as roughly two-thirds of it is still readable." },
+  { q: "Can I regenerate just the codes that changed, not the whole batch?", a: "Yes — filter your CSV down to just the changed rows before uploading (in the spreadsheet you already have it in) and generate that smaller batch on its own. Filenames stay consistent as long as you keep using the same column for filenames." },
+  { q: "What about codes for individual products vs. whole categories or locations?", a: "The same workflow handles both — it's just what's in your spreadsheet. A row can represent a SKU, a shelf, a room, a piece of equipment, or a delivery pallet; the tool doesn't care what the thing is, only that each row gets its own code and filename." },
+  { q: "Can I print these directly onto labels, not just get image files?", a: "Yes — export as individual SVG/PNG files for use in your own label software, or use the printable label-sheet mode to get a laid-out, captioned PDF sized for real label stock, without a separate design step." },
+  { q: "Is our inventory data uploaded anywhere?", a: "No. The CSV is read, the QR codes are generated, and the ZIP is built entirely in your browser tab — none of it touches a server, which matters if your inventory sheet has internal SKUs, locations, or supplier data you'd rather not put through a third-party service." },
+];
+
+const appSchema = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  name: "QR Code Generator for Inventory",
+  description: "Generate a named QR code per SKU or asset from a spreadsheet, exported as individual files or a printable label sheet, entirely in the browser.",
+  applicationCategory: "UtilitiesApplication",
+  operatingSystem: "Any (runs in the browser)",
+  offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+};
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faq.map((item) => ({
+    "@type": "Question",
+    name: item.q,
+    acceptedAnswer: { "@type": "Answer", text: item.a },
+  })),
+};
+---
+<Layout
+  title="QR Code Generator for Inventory & Asset Labels | QR Workbench"
+  description="Generate a QR code per SKU, asset or unit from a spreadsheet — named files, print-ready label sheets, and no inventory data uploaded anywhere."
+>
+  <Fragment slot="head">
+    <script type="application/ld+json" set:html={JSON.stringify(appSchema)} />
+    <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+  </Fragment>
+
+  <div class="frame gen-page">
+    <div class="gen-head">
+      <div class="index-no">QR CODES FOR INVENTORY</div>
+      <h1>One QR code per SKU, straight from your spreadsheet</h1>
+      <p class="intro">
+        Inventory and asset tracking is where QR codes actually earn their keep — a code on a shelf, a bin, or a piece of equipment that a phone can scan in under a second instead of someone typing a SKU or asset ID by hand. The part nobody wants to do manually is generating and naming hundreds of those codes correctly. That's what this workflow is for.
+      </p>
+      <div class="cta-row">
+        <a class="btn btn-accent" href="/bulk-qr-code-generator">See the bulk generator →</a>
+        <a class="cta-price-note" href="/pricing">Free for 20 tags, then $7 per batch or $39 lifetime →</a>
+      </div>
+    </div>
+
+    <section class="usecase-section">
+      <h2>What a row in your spreadsheet becomes</h2>
+      <p class="body-copy">
+        Any spreadsheet with an identifier, a name, and something to link to works. Map which column is the QR content, which becomes the filename, and which becomes a human-readable caption if you're also printing labels:
+      </p>
+      <div class="table-wrap">
+        <table class="sample-table">
+          <thead><tr><th>SKU / Asset ID</th><th>Name</th><th>URL</th></tr></thead>
+          <tbody>
+            {sampleRows.map((r) => (
+              <tr><td>{r.sku}</td><td>{r.name}</td><td>{r.url.replace("https://example.com", "…")}</td></tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p class="body-copy">That row becomes a file named <code>WH-0142.svg</code>, encoding the URL, captioned "Pallet jack #3" if you print it on a label sheet.</p>
+    </section>
+
+    <section class="how-section">
+      <h2>How it works</h2>
+      <div class="flow">
+        <div class="flow-step"><span class="n">01</span><h3>Export your list</h3><p>From a spreadsheet, Shopify, Airtable, or your warehouse system's own CSV export.</p></div>
+        <div class="flow-step"><span class="n">02</span><h3>Map the columns</h3><p>QR content, filename, and an optional caption — auto-guessed first, adjustable if it's wrong.</p></div>
+        <div class="flow-step"><span class="n">03</span><h3>Set format and error correction</h3><p>Higher error correction for labels that'll get dirty, scratched, or handled roughly.</p></div>
+        <div class="flow-step"><span class="n">04</span><h3>Generate</h3><p>Individually named SVG/PNG files in a ZIP, or a print-ready label sheet.</p></div>
+      </div>
+    </section>
+
+    <section class="usecase-section">
+      <h2>Two ways to get the codes onto physical items</h2>
+      <ul class="usecase-list">
+        <li><strong>Individual files</strong> — a named SVG or PNG per row, for use in your own label design software or a printer that takes image files directly.</li>
+        <li><strong>Printable label sheets</strong> — skip the design step entirely and export a laid-out, captioned <a href="/qr-code-label-generator">PDF sheet</a> sized to real label stock, paginated automatically across as many pages as your inventory needs.</li>
+      </ul>
+    </section>
+
+    <ProPromo variant="panel" heading="Tagging a whole warehouse? Here's the cost" />
+
+    <div class="gen-faq">
+      <h2>Questions</h2>
+      {faq.map((item) => (
+        <details class="faq-item">
+          <summary>{item.q}</summary>
+          <p>{item.a}</p>
+        </details>
+      ))}
+    </div>
+
+    <section class="related-section">
+      <h2>Related</h2>
+      <div class="related-grid">
+        <a class="related-link" href="/bulk-qr-code-generator">Bulk QR generator →</a>
+        <a class="related-link" href="/qr-code-generator-from-csv">QR codes from a CSV →</a>
+        <a class="related-link" href="/qr-code-label-generator">Printable QR labels →</a>
+        <a class="related-link" href="/url-qr-code-generator">URL QR generator →</a>
+      </div>
+    </section>
+  </div>
+</Layout>
+
+<style>
+  .gen-page { padding: 3rem 1.75rem 5rem; max-width: 900px; }
+  .gen-head { max-width: 68ch; margin-bottom: 3rem; }
+  .index-no { font-family: var(--mono); font-size: 0.72rem; color: var(--red); margin-bottom: 1rem; letter-spacing: 0.04em; text-transform: uppercase; }
+  .gen-page h1 { font-size: clamp(1.8rem, 3.6vw, 2.5rem); margin: 0 0 1.1rem; letter-spacing: -0.015em; line-height: 1.1; text-wrap: balance; }
+  .intro { color: var(--ink-dim); line-height: 1.6; font-size: 1rem; margin: 0 0 1.7rem; }
+  .cta-row { display: flex; flex-direction: column; align-items: flex-start; gap: 0.8rem; }
+  .cta-price-note { font-size: 0.82rem; color: var(--ink-faint); text-decoration: none; border-bottom: 1px solid var(--line); padding-bottom: 2px; }
+  .cta-price-note:hover { color: var(--red); border-bottom-color: var(--red); }
+
+  .gen-page h2 { font-size: 1.2rem; margin: 0 0 1.4rem; letter-spacing: -0.01em; }
+  .how-section, .usecase-section { margin-bottom: 3rem; }
+  .body-copy { max-width: 68ch; font-size: 0.92rem; color: var(--ink-dim); line-height: 1.65; margin: 0 0 1.1rem; }
+  .body-copy code { font-family: var(--mono); font-size: 0.85em; background: var(--surface); border: 1px solid var(--line); padding: 0.05em 0.35em; }
+  .body-copy a { color: var(--red); text-decoration: underline; text-underline-offset: 2px; }
+
+  .table-wrap { overflow-x: auto; margin: 1.2rem 0 1.4rem; }
+  .sample-table { border-collapse: collapse; width: 100%; font-size: 0.8rem; min-width: 480px; }
+  .sample-table th { text-align: left; font-family: var(--mono); font-size: 0.66rem; text-transform: uppercase; letter-spacing: 0.03em; color: var(--ink-faint); padding: 0.5rem 0.7rem; border-bottom: 2px solid var(--line); white-space: nowrap; }
+  .sample-table td { padding: 0.55rem 0.7rem; color: var(--ink-dim); border-bottom: 1px solid var(--line); white-space: nowrap; }
+
+  .flow { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.6rem; }
+  .flow-step .n { font-family: var(--mono); font-size: 1.2rem; font-weight: 700; color: var(--red); display: block; margin-bottom: 0.6rem; }
+  .flow-step h3 { margin: 0 0 0.4rem; font-size: 0.92rem; font-weight: 700; }
+  .flow-step p { margin: 0; font-size: 0.8rem; color: var(--ink-dim); line-height: 1.5; }
+
+  .usecase-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.8rem; }
+  .usecase-list li { font-size: 0.9rem; color: var(--ink-dim); line-height: 1.55; padding-left: 1.2rem; position: relative; }
+  .usecase-list li::before { content: "—"; position: absolute; left: 0; color: var(--red); }
+  .usecase-list strong { color: var(--ink); }
+  .usecase-list a { color: var(--red); text-decoration: underline; text-underline-offset: 2px; }
+
+  .faq-item { border-top: 1px solid var(--line); padding: 0.9rem 0; }
+  .faq-item summary { cursor: pointer; font-size: 0.9rem; font-weight: 600; list-style: none; }
+  .faq-item summary::-webkit-details-marker { display: none; }
+  .faq-item summary::before { content: "+"; display: inline-block; width: 1em; color: var(--red); font-weight: 700; }
+  .faq-item[open] summary::before { content: "–"; }
+  .faq-item p { margin: 0.7rem 0 0 1em; font-size: 0.85rem; color: var(--ink-dim); line-height: 1.6; }
+
+  .related-section { margin-top: 3rem; }
+  .related-grid { display: flex; flex-wrap: wrap; gap: 0.7rem; }
+  .related-link { font-size: 0.85rem; font-weight: 600; color: var(--ink-dim); text-decoration: none; border: 1px solid var(--line); padding: 0.6rem 0.9rem; }
+  .related-link:hover { border-color: var(--red); color: var(--red); }
+
+  @media (max-width: 700px) {
+    .flow { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 460px) {
+    .flow { grid-template-columns: 1fr; }
+  }
+</style>

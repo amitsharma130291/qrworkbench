@@ -41,6 +41,10 @@
     color: var(--ink);
     font-family: var(--sans);
     -webkit-font-smoothing: antialiased;
+    /* Safety net matching AppLayout's .app-body -- a single unguarded
+       min-content width (a long nowrap string in a grid item, say) should
+       never be able to push the whole page into horizontal scroll. */
+    overflow-x: hidden;
   }
   a { color: var(--red); }
   img, svg { max-width: 100%; display: block; }

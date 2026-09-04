@@ -1,5 +1,6 @@
 ---
 import Layout from "./Layout.astro";
+import ProPromo from "../components/ProPromo.astro";
 import { relatedTools, toolBySlug } from "../data/tools.js";
 
 const { title, description, eyebrow, h1, intro, slug, howTo = [], tips = [], bulkNote, bulkHref = "/bulk-qr-code-generator", faq = [] } = Astro.props;
@@ -8,10 +9,17 @@ const related = slug ? relatedTools(slug) : [];
 const self = slug ? toolBySlug(slug) : null;
 const canonicalPath = new URL(Astro.url.pathname, Astro.site).toString();
 
+// Schema `name` fields want the product/task name a search engine can match
+// against a query ("WiFi QR Code Generator") -- not the marketing headline
+// (h1 is copy like "Scan to join your WiFi, no typing"), which reads as
+// keyword-stuffed ad copy to a structured-data parser even though it's fine
+// as visible page copy.
+const productName = self ? `${self.name} Code Generator` : eyebrow;
+
 const appSchema = {
   "@context": "https://schema.org",
   "@type": "SoftwareApplication",
-  name: h1,
+  name: productName,
   description,
   applicationCategory: "UtilitiesApplication",
   operatingSystem: "Any (runs in the browser)",
@@ -21,7 +29,7 @@ const appSchema = {
 const howToSchema = howTo.length > 0 ? {
   "@context": "https://schema.org",
   "@type": "HowTo",
-  name: h1,
+  name: `How to make a ${productName}`,
   step: howTo.map((s) => ({ "@type": "HowToStep", text: s })),
 } : null;
 
@@ -96,6 +104,8 @@ const breadcrumbSchema = self ? {
         <span class="arrow">Generate from CSV →</span>
       </a>
     )}
+
+    <ProPromo variant="strip" />
 
     {faq.length > 0 && (
       <div class="gen-faq">

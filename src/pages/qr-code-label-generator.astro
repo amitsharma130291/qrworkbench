@@ -1,0 +1,152 @@
+---
+import Layout from "../layouts/Layout.astro";
+import ProPromo from "../components/ProPromo.astro";
+
+const faq = [
+  { q: "Is this different from just generating a bunch of QR codes?", a: "Yes. Bulk generation gives you individual files — one PNG or SVG per row. A label sheet is a single laid-out PDF page: a grid of codes at a fixed size, spaced and margined to match real label stock or plain paper, with a caption printed under each one. You're not placing 200 separate images into a document by hand." },
+  { q: "What page sizes are supported?", a: "US Letter (8.5 × 11 in) and A4 (210 × 297 mm). Pick whichever matches your printer and paper stock." },
+  { q: "Can I use actual peel-and-stick label sheets, not just plain paper?", a: "Yes — set the columns, rows, margin and spacing to match your label sheet's own layout (most label brands publish these dimensions), and the grid lines up with the die-cut labels. Print a test page on plain paper first and hold it up to a blank label sheet to confirm alignment before running actual labels through the printer." },
+  { q: "Do I need a spreadsheet, or can I generate a sample first?", a: "You can preview the exact layout with sample data with no upload at all — the tool shows a live grid before you bring your own CSV." },
+  { q: "What's under each QR code — just the code, or text too?", a: "Whatever you map from your CSV as the caption — a SKU, a name, a short label. It prints directly under each code at a size you control." },
+  { q: "Is this free?", a: "Configuring a sheet — page size, grid, margins, captions, live preview — is free on any plan. Exporting the finished PDF requires Pro. A Batch Pass (the $7 one-time bulk-export tier) doesn't cover this specifically; see pricing for the full breakdown." },
+  { q: "Does this upload my spreadsheet anywhere?", a: "No. The CSV, the QR generation, and the PDF layout itself are all built in your browser tab. Nothing is sent to a server." },
+];
+
+const appSchema = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  name: "QR Code Label Generator",
+  description: "Turn a spreadsheet into a print-ready PDF sheet of QR code labels — A4 or Letter, configurable grid, captions, generated entirely in the browser.",
+  applicationCategory: "UtilitiesApplication",
+  operatingSystem: "Any (runs in the browser)",
+  offers: { "@type": "Offer", price: "39", priceCurrency: "USD" },
+};
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faq.map((item) => ({
+    "@type": "Question",
+    name: item.q,
+    acceptedAnswer: { "@type": "Answer", text: item.a },
+  })),
+};
+---
+<Layout
+  title="QR Code Label Generator — Printable A4/Letter PDF Sheets | QR Workbench"
+  description="Turn a spreadsheet into a print-ready PDF sheet of QR code labels. Set page size, grid and captions, preview live, generated entirely in your browser."
+>
+  <Fragment slot="head">
+    <script type="application/ld+json" set:html={JSON.stringify(appSchema)} />
+    <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+  </Fragment>
+
+  <div class="frame gen-page">
+    <div class="gen-head">
+      <div class="index-no">QR CODE LABEL GENERATOR</div>
+      <h1>From spreadsheet to print-ready QR labels</h1>
+      <p class="intro">
+        A single QR code is easy to print. A sheet of 200 correctly spaced, correctly captioned codes — sized to fit real label stock, laid out so nothing overlaps or runs off the page — isn't something you build in a word processor. This tool takes a CSV and a few layout settings and gives you a print-ready PDF instead.
+      </p>
+      <div class="cta-row">
+        <a class="btn btn-accent" href="/labels">Open the label workspace →</a>
+        <a class="cta-price-note" href="/pricing">Label export is a Pro feature — $39 once, lifetime →</a>
+      </div>
+    </div>
+
+    <section class="how-section">
+      <h2>How it works</h2>
+      <div class="flow">
+        <div class="flow-step"><span class="n">01</span><h3>Upload a CSV</h3><p>One row per label — a SKU, a name, a link, whatever you're tagging.</p></div>
+        <div class="flow-step"><span class="n">02</span><h3>Map your columns</h3><p>Which column becomes the QR content, which becomes the caption underneath it.</p></div>
+        <div class="flow-step"><span class="n">03</span><h3>Set the sheet layout</h3><p>Page size, columns × rows per page, margin and spacing between labels.</p></div>
+        <div class="flow-step"><span class="n">04</span><h3>Export the PDF</h3><p>Every row placed and captioned automatically, paginated across as many pages as your list needs.</p></div>
+      </div>
+    </section>
+
+    <section class="usecase-section">
+      <h2>What people print with it</h2>
+      <ul class="usecase-list">
+        <li><strong>Warehouse and asset tags</strong> — a durable code per shelf, bin, or piece of equipment, sized for a label printer or plain paper cut into strips.</li>
+        <li><strong>Retail shelf and product tags</strong> — one code per SKU linking to a product page, spec sheet, or care instructions, captioned with the SKU or product name.</li>
+        <li><strong>Event badges and table cards</strong> — a code per guest or table, generated from the same guest-list spreadsheet you already have.</li>
+        <li><strong>Print-shop production runs</strong> — a client's CSV in, a page-accurate PDF out, with no manual placement of individual images.</li>
+      </ul>
+    </section>
+
+    <section class="usecase-section">
+      <h2>Why a PDF sheet instead of a folder of images</h2>
+      <p class="body-copy">
+        Bulk-exporting QR codes as individual PNG or SVG files is the right tool when those files are going into an existing design — a product listing, a packaging template, a slide deck. It's the wrong tool when the goal is simply "print these on paper," because then someone still has to place every image, size it consistently, add the caption, and make sure nothing collides with the next one across dozens or hundreds of labels.
+      </p>
+      <p class="body-copy">
+        The label workspace skips that step. It lays out the whole grid — page size, column and row count, margins, gaps between labels — and paginates automatically once a page is full, so a 500-row spreadsheet becomes a 21-page PDF you can send straight to a printer, not 500 files you still have to arrange.
+      </p>
+    </section>
+
+    <ProPromo variant="panel" heading="What it costs to export a label sheet" />
+
+    <div class="gen-faq">
+      <h2>Questions</h2>
+      {faq.map((item) => (
+        <details class="faq-item">
+          <summary>{item.q}</summary>
+          <p>{item.a}</p>
+        </details>
+      ))}
+    </div>
+
+    <section class="related-section">
+      <h2>Related</h2>
+      <div class="related-grid">
+        <a class="related-link" href="/bulk-qr-code-generator">Bulk QR generator →</a>
+        <a class="related-link" href="/qr-code-generator-for-inventory">QR codes for inventory →</a>
+        <a class="related-link" href="/qr-code-generator-from-csv">QR codes from a CSV →</a>
+        <a class="related-link" href="/pricing">Pricing →</a>
+      </div>
+    </section>
+  </div>
+</Layout>
+
+<style>
+  .gen-page { padding: 3rem 1.75rem 5rem; max-width: 900px; }
+  .gen-head { max-width: 68ch; margin-bottom: 3rem; }
+  .index-no { font-family: var(--mono); font-size: 0.72rem; color: var(--red); margin-bottom: 1rem; letter-spacing: 0.04em; text-transform: uppercase; }
+  .gen-page h1 { font-size: clamp(1.8rem, 3.6vw, 2.5rem); margin: 0 0 1.1rem; letter-spacing: -0.015em; line-height: 1.1; text-wrap: balance; }
+  .intro { color: var(--ink-dim); line-height: 1.6; font-size: 1rem; margin: 0 0 1.7rem; }
+  .cta-row { display: flex; flex-direction: column; align-items: flex-start; gap: 0.8rem; }
+  .cta-price-note { font-size: 0.82rem; color: var(--ink-faint); text-decoration: none; border-bottom: 1px solid var(--line); padding-bottom: 2px; }
+  .cta-price-note:hover { color: var(--red); border-bottom-color: var(--red); }
+
+  .gen-page h2 { font-size: 1.2rem; margin: 0 0 1.4rem; letter-spacing: -0.01em; }
+  .how-section, .usecase-section { margin-bottom: 3rem; }
+  .body-copy { max-width: 68ch; font-size: 0.92rem; color: var(--ink-dim); line-height: 1.65; margin: 0 0 1.1rem; }
+
+  .flow { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.6rem; }
+  .flow-step .n { font-family: var(--mono); font-size: 1.2rem; font-weight: 700; color: var(--red); display: block; margin-bottom: 0.6rem; }
+  .flow-step h3 { margin: 0 0 0.4rem; font-size: 0.92rem; font-weight: 700; }
+  .flow-step p { margin: 0; font-size: 0.8rem; color: var(--ink-dim); line-height: 1.5; }
+
+  .usecase-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.8rem; }
+  .usecase-list li { font-size: 0.9rem; color: var(--ink-dim); line-height: 1.55; padding-left: 1.2rem; position: relative; }
+  .usecase-list li::before { content: "—"; position: absolute; left: 0; color: var(--red); }
+  .usecase-list strong { color: var(--ink); }
+
+  .faq-item { border-top: 1px solid var(--line); padding: 0.9rem 0; }
+  .faq-item summary { cursor: pointer; font-size: 0.9rem; font-weight: 600; list-style: none; }
+  .faq-item summary::-webkit-details-marker { display: none; }
+  .faq-item summary::before { content: "+"; display: inline-block; width: 1em; color: var(--red); font-weight: 700; }
+  .faq-item[open] summary::before { content: "–"; }
+  .faq-item p { margin: 0.7rem 0 0 1em; font-size: 0.85rem; color: var(--ink-dim); line-height: 1.6; }
+
+  .related-section { margin-top: 3rem; }
+  .related-grid { display: flex; flex-wrap: wrap; gap: 0.7rem; }
+  .related-link { font-size: 0.85rem; font-weight: 600; color: var(--ink-dim); text-decoration: none; border: 1px solid var(--line); padding: 0.6rem 0.9rem; }
+  .related-link:hover { border-color: var(--red); color: var(--red); }
+
+  @media (max-width: 700px) {
+    .flow { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 460px) {
+    .flow { grid-template-columns: 1fr; }
+  }
+</style>

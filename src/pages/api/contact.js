@@ -4,10 +4,14 @@
 export const prerender = false;
 
 import nodemailer from "nodemailer";
+import { OWNER_EMAIL } from "../../lib/server/license.js";
 
 const MAX_LENGTHS = { name: 100, email: 254, subject: 150, message: 5000 };
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const RECIPIENT = "amitsharma00261@gmail.com";
+// Same address license.js emails license keys/recovery from -- centralized
+// there (via OWNER_EMAIL, itself sourced from the OWNER_EMAIL env var) so
+// there's one place to change it instead of two literals drifting apart.
+const RECIPIENT = OWNER_EMAIL;
 
 function escapeHtml(str) {
   return str.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));

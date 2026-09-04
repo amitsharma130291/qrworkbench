@@ -1,0 +1,156 @@
+---
+import Layout from "../layouts/Layout.astro";
+import ProPromo from "../components/ProPromo.astro";
+
+const faq = [
+  { q: "Does the delimiter have to be a comma?", a: "Yes — the parser reads comma-separated values. If your file uses semicolons (common in some regional Excel exports) or tabs, re-save it with commas as the delimiter before uploading, or open it in Google Sheets and export a fresh CSV from there." },
+  { q: "What if a value itself contains a comma, like \"123 Main St, Suite 4\"?", a: "Wrap that field in double quotes in the CSV — \"123 Main St, Suite 4\" — and the comma inside it won't be treated as a column break. Any normal spreadsheet program does this automatically when you save as CSV; it only becomes a problem with a hand-edited file." },
+  { q: "Does the first row have to be headers?", a: "Yes — row one is always read as column names, not data. Every row after it is treated as one QR code. A file with no header row will have its first real row silently used as headers and skipped as data, so always include one." },
+  { q: "My export is .xlsx, not .csv — does that work?", a: "Not directly. Open it in Excel or Google Sheets and use \"Save As\" / \"Download\" → CSV first. This is the single most common reason a file fails to upload — an .xlsx renamed to .csv isn't actually a CSV." },
+  { q: "What happens to a row that's missing a value?", a: "If the column you mapped as the QR content is blank for that row, that row is skipped automatically rather than producing a broken or empty code. Every other mapped column is optional and simply omitted if blank." },
+  { q: "Can two rows produce the same filename?", a: "If your filename pattern would collide — two rows both mapping to \"blue-shirt\", say — a number is appended automatically (blue-shirt-1, blue-shirt-2) so nothing silently overwrites another file in the ZIP." },
+  { q: "Does column order matter?", a: "No — you map each column to its purpose (QR content, filename, caption, etc.) by name after uploading, regardless of what order they're in or what they're called in your original file." },
+  { q: "How large a CSV can this actually handle?", a: "There's no hard row limit built into the tool — people have run a few thousand rows through it. Practical limits come from your browser and device's own memory, not the software, so a very large file (tens of thousands of rows) is worth testing in a smaller batch first." },
+];
+
+const appSchema = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  name: "QR Code Generator from CSV",
+  description: "Turn a CSV spreadsheet into named QR codes, entirely in the browser, with column mapping and a printable label option.",
+  applicationCategory: "UtilitiesApplication",
+  operatingSystem: "Any (runs in the browser)",
+  offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+};
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faq.map((item) => ({
+    "@type": "Question",
+    name: item.q,
+    acceptedAnswer: { "@type": "Answer", text: item.a },
+  })),
+};
+---
+<Layout
+  title="QR Code Generator from CSV — Spreadsheet to QR Codes | QR Workbench"
+  description="Everything your CSV needs to become QR codes: required format, common export mistakes, column mapping, and how large a file can actually run."
+>
+  <Fragment slot="head">
+    <script type="application/ld+json" set:html={JSON.stringify(appSchema)} />
+    <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+  </Fragment>
+
+  <div class="frame gen-page">
+    <div class="gen-head">
+      <div class="index-no">QR CODES FROM A CSV</div>
+      <h1>What your CSV actually needs to look like</h1>
+      <p class="intro">
+        Most bulk QR code failures aren't QR problems — they're spreadsheet-format problems. A file saved as the wrong type, a missing header row, a comma inside a field that wasn't quoted. This page covers exactly what a CSV needs to work correctly, then hands you to the actual generator.
+      </p>
+      <div class="cta-row">
+        <a class="btn btn-accent" href="/bulk">Open the bulk workspace →</a>
+        <a class="cta-price-note" href="/pricing">Free for 20 rows, then $7 per batch or $39 lifetime →</a>
+      </div>
+    </div>
+
+    <section class="usecase-section">
+      <h2>The format, precisely</h2>
+      <ul class="usecase-list">
+        <li><strong>Comma-separated, not semicolon or tab.</strong> Some regional Excel installs default to semicolons — check by opening the file in a plain text editor if you're not sure.</li>
+        <li><strong>A header row is required.</strong> Row one becomes your column names; every row after it becomes one QR code.</li>
+        <li><strong>Quote fields that contain a comma.</strong> <code>"123 Main St, Suite 4"</code> — the quotes keep that comma from being read as a new column. Any spreadsheet program does this for you automatically on save.</li>
+        <li><strong>.csv, not .xlsx.</strong> An Excel or Google Sheets file has to be exported or "Saved As" CSV first — renaming the extension doesn't convert the file.</li>
+        <li><strong>Column order doesn't matter.</strong> You map each column to its purpose by name after uploading, whatever order they're in.</li>
+      </ul>
+    </section>
+
+    <section class="how-section">
+      <h2>From spreadsheet to QR codes</h2>
+      <div class="flow">
+        <div class="flow-step"><span class="n">01</span><h3>Export as CSV</h3><p>From Excel, Google Sheets, Shopify, Airtable, or wherever your data already lives.</p></div>
+        <div class="flow-step"><span class="n">02</span><h3>Upload it</h3><p>Read entirely in your browser tab — nothing is sent to a server.</p></div>
+        <div class="flow-step"><span class="n">03</span><h3>Map your columns</h3><p>Which one is the QR content, filename, caption — auto-guessed first, adjustable if it's wrong.</p></div>
+        <div class="flow-step"><span class="n">04</span><h3>Generate</h3><p>Individually named SVG or PNG files, packed into one ZIP.</p></div>
+      </div>
+    </section>
+
+    <section class="usecase-section">
+      <h2>What happens with messy real-world data</h2>
+      <p class="body-copy">
+        Real spreadsheets have gaps. A row with no value in the column you mapped as the QR content is skipped automatically — it won't produce a broken or blank code, and it won't stop the rest of the batch. If two rows would end up with the same filename (two products both named "blue-shirt", say), a number is appended to whichever one arrives second, so nothing in the output ZIP silently overwrites another file.
+      </p>
+      <p class="body-copy">
+        Optional columns — caption, price, category, or the vCard/WiFi-specific fields if you're generating those types in bulk — can simply be left unmapped if your sheet doesn't have them. Nothing about the format is fixed beyond the header row and comma delimiter above; the mapping step is what makes an arbitrary spreadsheet usable.
+      </p>
+    </section>
+
+    <ProPromo variant="panel" heading="How far the free tier goes, and what's next" />
+
+    <div class="gen-faq">
+      <h2>Questions</h2>
+      {faq.map((item) => (
+        <details class="faq-item">
+          <summary>{item.q}</summary>
+          <p>{item.a}</p>
+        </details>
+      ))}
+    </div>
+
+    <section class="related-section">
+      <h2>Related</h2>
+      <div class="related-grid">
+        <a class="related-link" href="/bulk-qr-code-generator">Bulk QR generator →</a>
+        <a class="related-link" href="/qr-code-generator-for-inventory">QR codes for inventory →</a>
+        <a class="related-link" href="/bulk-vcard-qr-code-generator">Bulk vCard generator →</a>
+        <a class="related-link" href="/qr-code-label-generator">Printable QR labels →</a>
+      </div>
+    </section>
+  </div>
+</Layout>
+
+<style>
+  .gen-page { padding: 3rem 1.75rem 5rem; max-width: 900px; }
+  .gen-head { max-width: 68ch; margin-bottom: 3rem; }
+  .index-no { font-family: var(--mono); font-size: 0.72rem; color: var(--red); margin-bottom: 1rem; letter-spacing: 0.04em; text-transform: uppercase; }
+  .gen-page h1 { font-size: clamp(1.8rem, 3.6vw, 2.5rem); margin: 0 0 1.1rem; letter-spacing: -0.015em; line-height: 1.1; text-wrap: balance; }
+  .intro { color: var(--ink-dim); line-height: 1.6; font-size: 1rem; margin: 0 0 1.7rem; }
+  .cta-row { display: flex; flex-direction: column; align-items: flex-start; gap: 0.8rem; }
+  .cta-price-note { font-size: 0.82rem; color: var(--ink-faint); text-decoration: none; border-bottom: 1px solid var(--line); padding-bottom: 2px; }
+  .cta-price-note:hover { color: var(--red); border-bottom-color: var(--red); }
+
+  .gen-page h2 { font-size: 1.2rem; margin: 0 0 1.4rem; letter-spacing: -0.01em; }
+  .how-section, .usecase-section { margin-bottom: 3rem; }
+  .body-copy { max-width: 68ch; font-size: 0.92rem; color: var(--ink-dim); line-height: 1.65; margin: 0 0 1.1rem; }
+  .body-copy code { font-family: var(--mono); font-size: 0.85em; background: var(--surface); border: 1px solid var(--line); padding: 0.05em 0.35em; }
+
+  .usecase-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.8rem; max-width: 68ch; }
+  .usecase-list li { font-size: 0.9rem; color: var(--ink-dim); line-height: 1.55; padding-left: 1.2rem; position: relative; }
+  .usecase-list li::before { content: "—"; position: absolute; left: 0; color: var(--red); }
+  .usecase-list strong { color: var(--ink); }
+  .usecase-list code { font-family: var(--mono); font-size: 0.85em; background: var(--surface); border: 1px solid var(--line); padding: 0.05em 0.35em; }
+
+  .flow { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.6rem; }
+  .flow-step .n { font-family: var(--mono); font-size: 1.2rem; font-weight: 700; color: var(--red); display: block; margin-bottom: 0.6rem; }
+  .flow-step h3 { margin: 0 0 0.4rem; font-size: 0.92rem; font-weight: 700; }
+  .flow-step p { margin: 0; font-size: 0.8rem; color: var(--ink-dim); line-height: 1.5; }
+
+  .faq-item { border-top: 1px solid var(--line); padding: 0.9rem 0; }
+  .faq-item summary { cursor: pointer; font-size: 0.9rem; font-weight: 600; list-style: none; }
+  .faq-item summary::-webkit-details-marker { display: none; }
+  .faq-item summary::before { content: "+"; display: inline-block; width: 1em; color: var(--red); font-weight: 700; }
+  .faq-item[open] summary::before { content: "–"; }
+  .faq-item p { margin: 0.7rem 0 0 1em; font-size: 0.85rem; color: var(--ink-dim); line-height: 1.6; }
+
+  .related-section { margin-top: 3rem; }
+  .related-grid { display: flex; flex-wrap: wrap; gap: 0.7rem; }
+  .related-link { font-size: 0.85rem; font-weight: 600; color: var(--ink-dim); text-decoration: none; border: 1px solid var(--line); padding: 0.6rem 0.9rem; }
+  .related-link:hover { border-color: var(--red); color: var(--red); }
+
+  @media (max-width: 700px) {
+    .flow { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 460px) {
+    .flow { grid-template-columns: 1fr; }
+  }
+</style>

@@ -4,32 +4,38 @@ import GeneratorShell from "../components/GeneratorShell.astro";
 
 const howTo = [
   "Enter the destination phone number, including the country code (e.g. +1 for the US).",
-  "Add a pre-filled message if you want to guide what people send — an RSVP code, an order keyword, anything.",
-  "Preview and scan-test it yourself before printing or posting.",
-  "Download and place the code on a poster, table tent, or receipt.",
+  "Add a pre-filled message people are meant to send back — a keyword like \"START\" or \"YES\", not open-ended chat.",
+  "Keep the keyword short and exact — this is what makes replies easy to filter later, so avoid anything that invites people to edit it.",
+  "Preview and scan-test it yourself on your own phone before printing or posting — see the note on iOS vs Android below.",
+  "Download and place the code on a poster, table tent, receipt, or event program.",
 ];
 
 const tips = [
-  "Pre-filling a specific keyword (like \"YES\" for an RSVP) makes it easy to filter and count replies later.",
-  "Include the country code in the number — a code generated without one may not work correctly for scanners outside your country.",
-  "This opens the phone's default messaging app, not WhatsApp — for a WhatsApp-specific flow with a pre-filled message, use the dedicated WhatsApp QR generator instead.",
+  "Pre-fill a specific keyword (\"YES\" for an RSVP, \"START\" to join a list, \"READY\" for a pickup notification) so replies are easy to filter and count later, instead of a free-text \"what would you like to say?\" prompt.",
+  "Always include the country code in the number — a code generated without one may fail to route correctly for scanners outside your country, or worse, silently open a thread to the wrong local number.",
+  "SMS pre-fill support isn't identical across phones. iOS reliably opens Messages with the number and text pre-filled; Android is close, but a handful of older or carrier-branded messaging apps drop the pre-filled body. Worth a real scan test on both platforms before a print run.",
+  "This is a genuinely different tool from WhatsApp click-to-chat: SMS works over plain cellular text, needs no app install and no internet connection on the recipient's end, but it also can't carry rich media, read receipts, or a business profile — plain text only.",
+  "For time-sensitive replies (curbside pickup, event check-in), keep the pre-filled message unambiguous and the destination number monitored — a code that opens a thread nobody's watching defeats the purpose.",
 ];
 
 const faq = [
   { q: "Does this text message send automatically?", a: "No — scanning opens the messaging app with the number and message pre-filled. The person still has to tap send." },
   { q: "Can I leave the message blank?", a: "Yes — the code will just open a new text thread to that number with nothing pre-filled." },
-  { q: "Will this work on both iPhone and Android?", a: "Yes, it uses the standard sms: format supported by the default messaging app on both platforms." },
-  { q: "Does this work for WhatsApp instead of regular SMS?", a: "Not directly — this opens the phone's default SMS app. For WhatsApp, use the dedicated WhatsApp QR generator instead — it builds the correct wa.me link for you from a number and an optional pre-filled message." },
-  { q: "Do I need to include the country code?", a: "Yes, it's recommended — a number without one may default to the scanning device's local dialing assumptions and fail to route correctly." },
+  { q: "Will this work on both iPhone and Android?", a: "Mostly, but not identically. Both use the same underlying sms: URI format, and iOS Messages handles the pre-filled number and body reliably. Most Android messaging apps do too, but a minority of manufacturer-specific apps open the thread and drop the pre-typed text. If a campaign depends on an exact opt-in keyword arriving pre-filled, test on a real Android device before relying on it at scale." },
+  { q: "Does this work for WhatsApp instead of regular SMS?", a: "Not directly — this opens the phone's default SMS app, which sends over the cellular network and needs no app install. For WhatsApp, use the dedicated WhatsApp QR generator instead — it builds a wa.me link, which requires WhatsApp to be installed on the scanning phone but supports richer messaging." },
+  { q: "Do I need to include the country code?", a: "Yes, it's recommended — a number without one may default to the scanning device's local dialing assumptions and either fail to route or reach the wrong local number entirely." },
+  { q: "What's this actually useful for beyond casual texting?", a: "Opt-in and response campaigns more than idle chat: event reminders where a reply confirms attendance, \"text START to join\" loyalty or contest sign-ups, curbside pickup codes where a customer sends \"READY\" when they arrive, or a simple RSVP flow printed on an invitation." },
+  { q: "Is a two-way reply guaranteed to reach me?", a: "The scan reliably opens the message pre-filled — what happens after send is normal carrier SMS delivery, not a guaranteed server-side submission. Don't rely on this alone for anything where a missed reply has real consequences." },
+  { q: "Can I use this for a marketing opt-in list?", a: "You can make opt-in easy this way — someone scans, \"START\" is pre-filled, they tap send — but check local SMS marketing regulations (like TCPA in the US) for consent and opt-out requirements. The QR code fills in the message; compliance is still on you." },
 ];
 ---
 <GeneratorPageLayout
   title="SMS QR Code Generator — Pre-Filled Text Message QR, Free | QR Workbench"
-  description="Generate a QR code that opens a pre-filled text message — number and message ready to send. Free, static, generated in your browser."
+  description="Build an sms: QR code for opt-in campaigns and reply-based flows — 'text START to join' sign-ups, event RSVPs, curbside pickup codes. Works over plain cellular SMS, no app required on either end."
   eyebrow="SMS QR Code Generator"
   slug="sms"
   h1="A QR code that pre-fills a text message"
-  intro="Scanning this opens a text message to your number with the message already typed — handy for RSVPs, quick orders, or support requests. They still have to tap send."
+  intro="Scanning this opens a text message to your number with the reply already typed — built for opt-in and response campaigns like 'text START to join,' event RSVPs, or curbside pickup notifications, not open-ended conversation. They still have to tap send, and delivery works over plain cellular SMS with no app or account required on either end."
   howTo={howTo}
   tips={tips}
   bulkNote="Need this for multiple numbers or locations? Generate from CSV →"
@@ -45,6 +51,12 @@ const faq = [
       </label>
     </Fragment>
   </GeneratorShell>
+
+  <section class="deep-dive">
+    <h2>SMS vs. WhatsApp click-to-chat: which pre-fill format to use</h2>
+    <p>Both this tool and the WhatsApp generator produce a code that opens a messaging app with text already typed in, but the mechanics underneath — and what they need from the person scanning — are genuinely different. This one builds a plain <strong>sms:</strong> URI, the same format your phone's default messaging app already understands, which is sent over the cellular network the moment the person taps send. It needs no app install, no WhatsApp account, and no internet connection on their end — just a phone that can send text messages, which is closer to universal than any app-based alternative.</p>
+    <p>The tradeoff is real, though: SMS is plain text only, so there's no read receipt, no rich media, no business profile to confirm who's on the other end, and pre-fill support isn't perfectly uniform across every Android messaging app the way it is on iOS. If your audience skews toward a region or demographic where WhatsApp is the default way people already text, the WhatsApp version may get a higher completion rate — but it also requires WhatsApp to be installed, which SMS doesn't. Pick based on what you can assume your audience already has, not which one feels more modern.</p>
+  </section>
 </GeneratorPageLayout>
 
 <script>
@@ -62,3 +74,11 @@ const faq = [
   [number, message].forEach((el) => el.addEventListener("input", tool.update));
   tool.update();
 </script>
+
+<style>
+  .deep-dive { max-width: 68ch; margin: 0 0 2.6rem; }
+  .deep-dive h2 { font-size: 1.1rem; margin: 0 0 1rem; letter-spacing: -0.01em; }
+  .deep-dive p { font-size: 0.9rem; color: var(--ink-dim); line-height: 1.65; margin: 0 0 1.1rem; }
+  .deep-dive p:last-child { margin-bottom: 0; }
+  .deep-dive strong { color: var(--ink); }
+</style>

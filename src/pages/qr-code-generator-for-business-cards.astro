@@ -1,0 +1,147 @@
+---
+import Layout from "../layouts/Layout.astro";
+import ProPromo from "../components/ProPromo.astro";
+
+const faq = [
+  { q: "Should the QR code link to my contact info, or my website?", a: "For a business card specifically, a vCard code (scan → save as contact) usually beats a link to a website or LinkedIn profile — it saves your name, phone, email and company directly into the other person's phone with one tap, instead of taking them to a page they still have to act on. Use a plain URL code if your goal is traffic to a portfolio, booking page, or landing page instead." },
+  { q: "How big does the QR code need to be on a business card?", a: "At minimum about 0.8 in / 2 cm square for a standard 3.5 × 2 in card, printed with clean edges. Bigger is safer — a small code with a busy background or low print resolution is the most common reason a business-card QR fails to scan. Leave a plain quiet zone (blank margin) around it rather than crowding it against text or your logo." },
+  { q: "Can I put my logo in the middle of the code?", a: "Yes, on the individual vCard generator — upload a logo and error correction is bumped up automatically so the code still scans reliably with part of the pattern covered. Keep the logo modest in size relative to the whole code; a logo that covers too much of the pattern will fail to scan even at a high error-correction level." },
+  { q: "What if I update my phone number or job title later?", a: "A static QR code — which is what a free generator like this makes — has its contents encoded directly into the pattern, so it can't be edited after printing. Updating a detail means generating a new code and reprinting the affected cards. That's a real tradeoff against a paid dynamic-QR service, but it also means the code has no ongoing dependency on that service staying online, which most people printing a one-time card don't need to pay for." },
+  { q: "Do I need a designer to add this to my card?", a: "No — download the QR as an SVG (a crisp vector, not a pixelated image) and drop it into whatever you're already using to design the card: Canva, Illustrator, Google Docs, or a print shop's own template tool." },
+  { q: "I need this for my whole sales team, not just myself.", a: "Use the bulk vCard generator instead of the individual one — upload a spreadsheet of names, titles, phone numbers and emails, and it generates one correctly formatted vCard QR code per person in a single pass." },
+  { q: "Does a QR business card replace NFC (tap-to-share) cards?", a: "For most people, yes, at a fraction of the cost — any phone's default camera reads a QR code with no app, no special hardware, and no per-card manufacturing cost. NFC cards add a nicer tap gesture but require a physical chip embedded per card." },
+];
+
+const appSchema = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  name: "QR Code Generator for Business Cards",
+  description: "Generate a scan-to-save vCard QR code for a business card, with print-size and design guidance, entirely in the browser.",
+  applicationCategory: "UtilitiesApplication",
+  operatingSystem: "Any (runs in the browser)",
+  offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+};
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faq.map((item) => ({
+    "@type": "Question",
+    name: item.q,
+    acceptedAnswer: { "@type": "Answer", text: item.a },
+  })),
+};
+---
+<Layout
+  title="QR Code for Business Cards — Free vCard Generator | QR Workbench"
+  description="Put a scan-to-save contact QR on your business card. Free vCard generator with print-size and design guidance, plus bulk generation for a whole team."
+>
+  <Fragment slot="head">
+    <script type="application/ld+json" set:html={JSON.stringify(appSchema)} />
+    <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+  </Fragment>
+
+  <div class="frame gen-page">
+    <div class="gen-head">
+      <div class="index-no">QR CODES FOR BUSINESS CARDS</div>
+      <h1>A business card that saves itself to their phone</h1>
+      <p class="intro">
+        The point of a QR code on a business card isn't the code — it's what happens after the scan. Done right, someone scans it once and your name, number, email and company are sitting in their contacts, spelled correctly, with nothing retyped. Done wrong, it's a small black square that opens a website nobody asked for. Here's how to get it right, and how to generate one free.
+      </p>
+      <div class="cta-row">
+        <a class="btn btn-accent" href="/vcard-qr-code-generator">Create your card's QR code →</a>
+        <a class="cta-price-note" href="/pricing">Free forever for one card — see bulk pricing for a whole team →</a>
+      </div>
+    </div>
+
+    <section class="usecase-section">
+      <h2>vCard vs. a plain link — which one to use</h2>
+      <p class="body-copy">
+        A <strong>vCard QR code</strong> encodes an actual contact card: name, company, title, phone, email, website, address. Scanning it prompts "Save contact" — no typing, no visiting a page first. This is the right choice for a card whose whole job is getting your information into someone's phone.
+      </p>
+      <p class="body-copy">
+        A <strong>plain URL QR code</strong> is better when the destination matters more than the contact details — a portfolio, a booking calendar, a specific landing page. Some people run both: a vCard code on the front of the card, and a URL code on the back pointing to a portfolio or LinkedIn profile.
+      </p>
+    </section>
+
+    <section class="how-section">
+      <h2>Getting it right for print</h2>
+      <div class="flow">
+        <div class="flow-step"><span class="n">01</span><h3>Fill in only what's safe to share</h3><p>Name and one contact method at minimum. Address and personal cell are genuinely optional.</p></div>
+        <div class="flow-step"><span class="n">02</span><h3>Size it generously</h3><p>At least 0.8in / 2cm square on a standard card, with clean, uncluttered edges around it.</p></div>
+        <div class="flow-step"><span class="n">03</span><h3>Download the SVG</h3><p>A vector file prints crisp at any size — a PNG can look soft or pixelated at small print sizes.</p></div>
+        <div class="flow-step"><span class="n">04</span><h3>Scan-test before you print 500</h3><p>Try it with both an iPhone and an Android phone first, on the actual card stock if you can.</p></div>
+      </div>
+    </section>
+
+    <section class="usecase-section">
+      <h2>For a whole team</h2>
+      <p class="body-copy">
+        Ordering cards for more than one person means the same vCard workflow, repeated per employee — a job for a spreadsheet, not the individual generator. The <a href="/bulk-vcard-qr-code-generator">bulk vCard generator</a> takes a CSV of names, titles, phone numbers and emails and produces one correctly formatted vCard QR code per row, ready to hand to a print shop or lay out on <a href="/qr-code-label-generator">a printable label sheet</a> for conference badges.
+      </p>
+    </section>
+
+    <ProPromo variant="panel" heading="Ordering for a whole team? Here's what scales" />
+
+    <div class="gen-faq">
+      <h2>Questions</h2>
+      {faq.map((item) => (
+        <details class="faq-item">
+          <summary>{item.q}</summary>
+          <p>{item.a}</p>
+        </details>
+      ))}
+    </div>
+
+    <section class="related-section">
+      <h2>Related</h2>
+      <div class="related-grid">
+        <a class="related-link" href="/vcard-qr-code-generator">vCard QR generator →</a>
+        <a class="related-link" href="/bulk-vcard-qr-code-generator">Bulk vCard generator →</a>
+        <a class="related-link" href="/url-qr-code-generator">URL QR generator →</a>
+        <a class="related-link" href="/qr-code-label-generator">Printable QR labels →</a>
+      </div>
+    </section>
+  </div>
+</Layout>
+
+<style>
+  .gen-page { padding: 3rem 1.75rem 5rem; max-width: 900px; }
+  .gen-head { max-width: 68ch; margin-bottom: 3rem; }
+  .index-no { font-family: var(--mono); font-size: 0.72rem; color: var(--red); margin-bottom: 1rem; letter-spacing: 0.04em; text-transform: uppercase; }
+  .gen-page h1 { font-size: clamp(1.8rem, 3.6vw, 2.5rem); margin: 0 0 1.1rem; letter-spacing: -0.015em; line-height: 1.1; text-wrap: balance; }
+  .intro { color: var(--ink-dim); line-height: 1.6; font-size: 1rem; margin: 0 0 1.7rem; }
+  .cta-row { display: flex; flex-direction: column; align-items: flex-start; gap: 0.8rem; }
+  .cta-price-note { font-size: 0.82rem; color: var(--ink-faint); text-decoration: none; border-bottom: 1px solid var(--line); padding-bottom: 2px; }
+  .cta-price-note:hover { color: var(--red); border-bottom-color: var(--red); }
+
+  .gen-page h2 { font-size: 1.2rem; margin: 0 0 1.4rem; letter-spacing: -0.01em; }
+  .how-section, .usecase-section { margin-bottom: 3rem; }
+  .body-copy { max-width: 68ch; font-size: 0.92rem; color: var(--ink-dim); line-height: 1.65; margin: 0 0 1.1rem; }
+  .body-copy strong { color: var(--ink); }
+  .body-copy a { color: var(--red); text-decoration: underline; text-underline-offset: 2px; }
+
+  .flow { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.6rem; }
+  .flow-step .n { font-family: var(--mono); font-size: 1.2rem; font-weight: 700; color: var(--red); display: block; margin-bottom: 0.6rem; }
+  .flow-step h3 { margin: 0 0 0.4rem; font-size: 0.92rem; font-weight: 700; }
+  .flow-step p { margin: 0; font-size: 0.8rem; color: var(--ink-dim); line-height: 1.5; }
+
+  .faq-item { border-top: 1px solid var(--line); padding: 0.9rem 0; }
+  .faq-item summary { cursor: pointer; font-size: 0.9rem; font-weight: 600; list-style: none; }
+  .faq-item summary::-webkit-details-marker { display: none; }
+  .faq-item summary::before { content: "+"; display: inline-block; width: 1em; color: var(--red); font-weight: 700; }
+  .faq-item[open] summary::before { content: "–"; }
+  .faq-item p { margin: 0.7rem 0 0 1em; font-size: 0.85rem; color: var(--ink-dim); line-height: 1.6; }
+
+  .related-section { margin-top: 3rem; }
+  .related-grid { display: flex; flex-wrap: wrap; gap: 0.7rem; }
+  .related-link { font-size: 0.85rem; font-weight: 600; color: var(--ink-dim); text-decoration: none; border: 1px solid var(--line); padding: 0.6rem 0.9rem; }
+  .related-link:hover { border-color: var(--red); color: var(--red); }
+
+  @media (max-width: 700px) {
+    .flow { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 460px) {
+    .flow { grid-template-columns: 1fr; }
+  }
+</style>
+

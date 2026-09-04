@@ -68,11 +68,44 @@ const sampleRows = [
   { sku: "SKU005", product: "White Mug", url: "https://example.com/products/white-mug" },
   { sku: "SKU006", product: "Navy Notebook", url: "https://example.com/products/navy-notebook" },
 ];
+
+// The homepage renders a full 9-item FAQ (below) but previously shipped no
+// structured data at all -- every other content page on the site has
+// FAQPage schema, so this was the single biggest schema gap on the site.
+// WebSite/Organization schema is also new: nothing on the whole site named
+// the business itself for a knowledge-panel/sitelinks-searchbox match.
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faq.map((item) => ({
+    "@type": "Question",
+    name: item.q,
+    acceptedAnswer: { "@type": "Answer", text: item.a },
+  })),
+};
+const websiteSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: "QR Workbench",
+  url: "https://www.qrworkbench.com",
+};
+const organizationSchema = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "QR Workbench",
+  url: "https://www.qrworkbench.com",
+  logo: "https://www.qrworkbench.com/favicon-128.png",
+};
 ---
 <Layout
   title="QR Workbench — Free QR Code Generator for 14 Formats"
   description="Free QR codes for URLs, WiFi, vCards, email and more — generated entirely in your browser. Bulk CSV-to-ZIP generation for hundreds at once, one-time payment."
 >
+  <Fragment slot="head">
+    <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+    <script type="application/ld+json" set:html={JSON.stringify(websiteSchema)} />
+    <script type="application/ld+json" set:html={JSON.stringify(organizationSchema)} />
+  </Fragment>
   <div class="hero">
     <div class="frame hero-grid">
       <div class="hero-text">
@@ -906,7 +939,7 @@ const sampleRows = [
   .demo-map label { display: flex; flex-direction: column; gap: 0.3rem; font-size: 0.82rem; font-weight: 600; color: var(--ink-dim); flex: 1; min-width: 130px; }
   .demo-map select { font: inherit; font-size: 0.82rem; padding: 0.5rem 0.6rem; border: 1px solid var(--line); background: var(--bg); color: var(--ink); }
   .demo-output { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 1.3rem; margin-bottom: 1.3rem; }
-  .demo-item { display: flex; flex-direction: column; align-items: center; gap: 0.5rem; text-align: center; }
+  .demo-item { display: flex; flex-direction: column; align-items: center; gap: 0.5rem; text-align: center; min-width: 0; }
   .demo-item canvas { width: 100%; max-width: 150px; height: auto; border: 1px solid var(--line); background: #fff; cursor: zoom-in; transition: border-color var(--dur-fast) var(--ease-standard); }
   .demo-item canvas:hover, .demo-item canvas:focus-visible { border-color: var(--red); }
   .demo-item strong { font-size: 0.82rem; font-family: var(--mono); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%; }
@@ -942,7 +975,7 @@ const sampleRows = [
   .label-cap { font-family: var(--mono); font-size: 0.66rem; color: var(--ink-dim); max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .label-closeup {
     display: flex; flex-direction: column; align-items: center; gap: 0.9rem; flex: none;
-    border: 1px solid var(--ink); background: var(--surface); padding: 1.6rem; width: 220px;
+    border: 1px solid var(--ink); background: var(--surface); padding: 1.6rem; width: 220px; max-width: 100%;
   }
   .label-qr-big { display: block; width: 130px; height: 130px; flex: none; }
   .label-qr-big canvas { display: block; width: 130px; height: 130px; border: 1px solid var(--line); background: #fff; }
@@ -1002,5 +1035,13 @@ const sampleRows = [
     .privacy-list { grid-template-columns: 1fr; }
     .cred-strip { gap: 1.2rem 2rem; }
     .demo-map { flex-direction: column; }
+  }
+
+  /* Smallest phones: the 2.2rem padding on the embedded mini-generator and
+     the sample demo panel was sized for tablet/desktop and eats a
+     disproportionate share of a ~320-360px viewport. */
+  @media (max-width: 400px) {
+    .mini-gen, .demo-panel, .label-closeup { padding: 1.3rem; }
+    .hero-grid { padding: 2rem 1.25rem; }
   }
 </style>

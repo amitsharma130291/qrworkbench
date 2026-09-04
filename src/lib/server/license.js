@@ -6,7 +6,10 @@ import nodemailer from "nodemailer";
 
 const SITE_URL = "https://www.qrworkbench.com";
 const SITE_NAME = "QR Workbench";
-export const OWNER_EMAIL = "amitsharma00261@gmail.com";
+// Falls back to the original literal so nothing breaks if OWNER_EMAIL isn't
+// set yet -- but set it in .env so this and api/contact.js (the other place
+// that used to hardcode the same address) both read from one source.
+export const OWNER_EMAIL = import.meta.env.OWNER_EMAIL || "amitsharma00261@gmail.com";
 const TIER_LABEL = { batch: "Batch Pass ($7)", pro: "Pro ($39 lifetime)" };
 
 export function buildLicenseKey(tier, paymentId) {

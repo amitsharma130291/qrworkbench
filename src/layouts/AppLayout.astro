@@ -10,6 +10,11 @@ const steps = [
   { id: "preview", n: "04", label: "Preview" },
   { id: "generate", n: "05", label: "Generate" },
 ];
+
+// Backstop for the noindex meta tag below: if it's ever removed without
+// someone also adding a canonical, these app-shell pages (/bulk, /labels)
+// would carry neither signal.
+const canonical = new URL(Astro.url.pathname, Astro.site);
 ---
 <!doctype html>
 <html lang="en">
@@ -19,6 +24,7 @@ const steps = [
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
     <meta name="robots" content="noindex" />
+    <link rel="canonical" href={canonical} />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
     <link rel="icon" type="image/png" sizes="128x128" href="/favicon-128.png" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
@@ -104,7 +110,13 @@ const steps = [
 
   @media (max-width: 900px) {
     .app-shell { flex-direction: column; }
-    .sidebar { position: static; height: auto; flex-direction: row; flex-wrap: wrap; align-items: center; gap: 1rem 1.6rem; }
+    /* .sidebar's desktop flex-basis (240px) sizes its *width* when the shell
+       is a row; once .app-shell switches to a column above, that same
+       flex-basis governs *height* instead and clamps the sidebar into a
+       fixed 240px box (falling back to its own overflow-y: auto and hiding
+       part of the nav) unless it's explicitly reset here alongside
+       height: auto. */
+    .sidebar { flex: 1 1 auto; position: static; height: auto; flex-direction: row; flex-wrap: wrap; align-items: center; gap: 1rem 1.6rem; }
     .sidebar .logo { margin-bottom: 0; }
     .side-group { margin-bottom: 0; }
     .side-group nav { flex-direction: row; flex-wrap: wrap; }

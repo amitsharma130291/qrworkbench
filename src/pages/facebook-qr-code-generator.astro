@@ -3,32 +3,38 @@ import GeneratorPageLayout from "../layouts/GeneratorPageLayout.astro";
 import GeneratorShell from "../components/GeneratorShell.astro";
 
 const howTo = [
-  "Open your Facebook page (or the specific post or event) in a browser and copy the URL from the address bar.",
-  "Paste it into the field below and check the preview.",
-  "Scan it with your own phone once before printing to confirm it lands on the right page.",
-  "Download the SVG for print, or PNG for digital and social use.",
+  "Decide what you're sending people to: your business Page (hours, reviews, directions), a specific Event (RSVPs, date, location), or a Group (community, ongoing discussion) — each has a different URL and a different job.",
+  "For a Page: open it in a browser, click \"About,\" and copy the link shown next to your Page name (or use the address bar URL if you've set a custom username) — this is what belongs on a storefront sign.",
+  "For an Event: open the event itself, click the ⋯ menu, and choose \"Copy Link\" — this is what belongs on a flyer or poster promoting that one date.",
+  "For a Group: open the group and copy the URL from the \"Invite\" panel or the address bar — this is what belongs on materials for an ongoing community, not a one-off promotion.",
+  "Paste whichever link applies into the field below, scan the preview with your own phone to confirm it lands where you meant, then download the SVG for print or PNG for digital use.",
 ];
 
 const tips = [
-  "A plain facebook.com/yourpage URL is more durable than a link to one specific post — posts can get buried or deleted, but your page URL doesn't change.",
-  "Facebook sometimes appends tracking parameters (like ?ref=...) when you copy a link from the mobile app — a cleaner URL from a desktop browser tends to produce a slightly less dense code.",
-  "No login, API key, or Facebook developer account is needed here — this just encodes whatever URL you paste.",
+  "A Page URL is the safest default for anything printed to last — a storefront window sticker or a delivery box — since it doesn't expire the way an Event listing does.",
+  "Event links only make sense while the event is upcoming or recent; don't reuse an old QR code by editing the physical sign for a new date — generate a fresh code instead.",
+  "If your Page has a custom username (facebook.com/yourbusiness instead of a long numeric ID), use that — it's shorter, produces a less dense code, and survives Page edits that a raw ID link might not.",
+  "Facebook mobile app links sometimes carry tracking parameters (like ?ref=... or fbclid=...) — grabbing the URL from a desktop browser or a direct \"Copy Link\" action, rather than a forwarded share, usually gives you the cleanest version.",
+  "Be realistic about what this achieves: organic reach on Facebook Pages is a fraction of what it once was, so treat this as a \"find us\" utility for people already looking for you — hours, directions, reviews — not a way to grow followers from a print run.",
 ];
 
 const faq = [
-  { q: "What link should I use — my page or a specific post?", a: "Either works. Paste your Page URL to send people to your profile, or a specific post/event URL to send them there directly." },
-  { q: "Does this need a Facebook developer account or app?", a: "No. It just encodes whatever Facebook URL you paste — no API, no login." },
-  { q: "Will it still work if I rename my page?", a: "If your Page URL is tied to a custom username and you change that username, the old link stops resolving — reprint with the new URL if that happens. Using your numeric page ID link avoids this, but it's less readable." },
-  { q: "Can I use this for a Facebook group instead of a page?", a: "Yes — paste the group's URL the same way; the tool doesn't distinguish between page, group, post, or event links." },
+  { q: "Should my QR code point to my Page, an Event, or a Group?", a: "Point to your Page for anything long-lived — signage, packaging, receipts. Use an Event link only for materials tied to one date. Use a Group link only if you're promoting an ongoing community, not a single business location." },
+  { q: "Will this help me get more followers or likes?", a: "Not really, and it's worth being honest about that. A QR code gets someone who's already curious to your Page faster; it doesn't replace organic reach, which has dropped substantially on Facebook Pages over the past several years. Think of it as a \"find us\" tool, not a growth channel." },
+  { q: "Does this need a Facebook Business Suite login or developer account?", a: "No. It just encodes whatever public Facebook URL you paste — no API, no Business Suite, no app review." },
+  { q: "What happens if I rename my Page's custom username?", a: "The old facebook.com/oldname link stops resolving. If you're printing something durable — a storefront decal, packaging — plan to regenerate and reprint if you ever change your username." },
+  { q: "Can I link straight to my Page's reviews or directions instead of the main profile?", a: "Facebook doesn't offer a separate public URL for just the Reviews or Location tab — those live inside your main Page URL, so the Page link already gets people there in one more tap." },
+  { q: "I run a multi-location business — one QR code or one per location?", a: "One per location, each pointing to that location's own Page if you manage separate Pages, or the shared Page if one Page covers all locations. A single code reused across different addresses undersells the \"is this the right store\" benefit." },
+  { q: "Can I use this for a Facebook Event flyer I'm printing hundreds of?", a: "Yes — that's one of the more common uses. Just regenerate the code (don't reuse an old file) each time you create a new event, since each Event URL is unique to that listing." },
 ];
 ---
 <GeneratorPageLayout
   title="Facebook QR Code Generator — Link to Your Page, Free | QR Workbench"
-  description="Turn your Facebook page, post or event link into a scannable QR code. Free, static, generated in your browser."
+  description="Generate a QR code that sends customers straight to your Facebook Page, Event, or Group — hours, reviews, directions, or an RSVP in one scan. Built for storefront signage and flyers, not follower growth."
   eyebrow="Facebook QR Code Generator"
   slug="facebook"
   h1="Get scanned straight to your Facebook page"
-  intro="Paste your Facebook page, post, or event link and get a QR code for flyers, storefronts, or packaging — no app or login required to generate it."
+  intro="Facebook still works best as a place people check before they show up somewhere — hours, reviews, directions, whether you're open right now. This generator turns your Page, Event, or Group link into a QR code built for the moment someone's standing in front of your storefront or holding a flyer, not for chasing likes."
   howTo={howTo}
   tips={tips}
   bulkNote="Managing QR codes for multiple locations or pages? Generate a batch from CSV →"
@@ -41,6 +47,12 @@ const faq = [
       </label>
     </Fragment>
   </GeneratorShell>
+
+  <section class="deep-dive">
+    <h2>Page, Event, or Group: which URL to grab</h2>
+    <p>Facebook's three link types look similar but resolve to different experiences, and picking the wrong one is the most common reason a Facebook QR code disappoints. A Page URL (facebook.com/yourbusiness) opens your business's profile — reviews, hours, photos, and a message button all in one place; that's the link a scanner expects on a storefront window or a receipt. An Events URL (facebook.com/events/[id]) opens a single event listing with its date, time, and RSVP button, and stops being useful once that date passes. A Group URL opens a community feed, not a business profile, and works better for recurring meetups than a one-time promotion.</p>
+    <p>To get the clean version of each: for a Page, open your Page, click your Page name to reach the About tab, and copy the link shown directly under your name — this reflects your custom username if you've set one in Page Settings → Username. For an Event, open the event page itself, not the Page that's hosting it, and use the ⋯ menu's "Copy Link" rather than a forwarded share link, which can carry extra tracking parameters. For a Group, the cleanest link comes from the group's "Invite" panel rather than the address bar on some mobile browsers, which occasionally appends session parameters of its own.</p>
+  </section>
 </GeneratorPageLayout>
 
 <script>
@@ -50,3 +62,11 @@ const faq = [
   url.addEventListener("input", tool.update);
   tool.update();
 </script>
+
+<style>
+  .deep-dive { max-width: 68ch; margin: 0 0 2.6rem; }
+  .deep-dive h2 { font-size: 1.1rem; margin: 0 0 1rem; letter-spacing: -0.01em; }
+  .deep-dive p { font-size: 0.9rem; color: var(--ink-dim); line-height: 1.65; margin: 0 0 1.1rem; }
+  .deep-dive p:last-child { margin-bottom: 0; }
+  .deep-dive strong { color: var(--ink); }
+</style>

@@ -4,32 +4,38 @@ import GeneratorShell from "../components/GeneratorShell.astro";
 
 const howTo = [
   "Enter the email address the message should go to.",
-  "Add a subject line if you want the message pre-categorized — handy for routing support or feedback emails.",
-  "Add a short pre-filled message body, or leave it blank for an empty draft.",
-  "Download and place the code wherever people need to reach that inbox — a poster, a receipt, a contact page.",
+  "Add a subject line if you want the message pre-categorized — this is the field that does the real work for routing (see below).",
+  "Add a short pre-filled message body, or leave it blank for an empty draft the visitor writes themselves.",
+  "Keep both fields short if the code will be printed small — a long subject and body make a denser code.",
+  "Download and place the code wherever people need to reach that inbox — a warranty card, a receipt, a support desk, an RSVP insert.",
 ];
 
 const tips = [
-  "Keep the subject and body short — long pre-filled text makes a denser code that's harder to scan from a distance.",
-  "This opens whatever email app is set as default on the scanning device, not necessarily Gmail or Outlook specifically — test on your own phone to see what that looks like.",
-  "Useful for routing: give different QR codes different pre-filled subjects (e.g. \"Support request\" vs \"Sales inquiry\") so replies are already organized.",
+  "Give different QR codes different pre-filled subjects — \"Warranty Registration – Model X200\" on one, \"Support Request – Order #\" on another — so replies land in your inbox already labeled and easy to filter or auto-route with a mail rule.",
+  "This opens whatever app is set as the device's default mail client, not necessarily Gmail or Outlook specifically. If most of your audience is on iPhone, that's usually Apple Mail unless they've changed it — worth knowing before you assume everyone sees a particular app's compose screen.",
+  "Keep the subject and body short. Beyond making the code denser, some mail apps quietly truncate long pre-filled bodies rather than erroring — you won't necessarily know it happened.",
+  "For a body meant to double as a structured form (\"Order #: ___ / Issue: ___\"), use line breaks — most mail apps preserve them, though a few desktop clients collapse them to one line. Test on the platforms your audience actually uses.",
+  "If you need one inbox to receive email from many different pre-filled subjects (say, one per product SKU for warranty cards), generate a batch from CSV rather than rebuilding this form by hand for each one.",
 ];
 
 const faq = [
-  { q: "Does this send the email for me?", a: "No — scanning opens the person's own email app with the to, subject and body already filled in. They still have to hit send." },
+  { q: "Does this send the email for me?", a: "No — scanning opens the person's own email app with the to, subject and body already filled in. They still have to review it and hit send." },
   { q: "Can I leave the subject or body blank?", a: "Yes, both are optional. At minimum you need a destination email address." },
-  { q: "Will this work with Gmail and Outlook apps?", a: "Yes — it uses the standard mailto: format that every mail app on iOS, Android and desktop recognizes." },
-  { q: "Will special characters in my message break the code?", a: "No, they're encoded automatically. Very long messages just make a denser, slightly harder-to-scan code — keep it concise." },
-  { q: "Can I use this to email multiple people at once?", a: "Not directly — this tool encodes one destination address. Some mail apps do accept comma-separated addresses in a mailto: link, but support varies, so test it first." },
+  { q: "Will this work with Gmail and Outlook apps?", a: "Yes — it uses the standard mailto: format that every mail app on iOS, Android and desktop recognizes. What varies is which app opens: it's whatever the scanning device has set as default, which may or may not be the app you're picturing." },
+  { q: "Will special characters in my message break the code?", a: "No — subject and body text are percent-encoded automatically, so punctuation, accents and emoji all survive. Long messages just make a denser code, and some mail apps silently truncate text past a certain length — keep it concise if exact wording matters." },
+  { q: "Can I use this to email multiple people at once?", a: "Not directly — this tool encodes one destination address. Some mail apps accept comma-separated addresses in a mailto: link, but support varies, so test it on your actual audience's devices first." },
+  { q: "What's this useful for beyond \"contact us\"?", a: "Anywhere you want replies pre-sorted before they land in your inbox: warranty cards that route by product line, feedback forms that tag themselves by department, a checkout code with subject \"Sales\" versus a returns-desk code with subject \"Support,\" or RSVP cards where the subject is already \"RSVP: [Event Name].\"" },
+  { q: "Does the QR code itself store my email address anywhere, or is it generated fresh each time?", a: "Neither this tool nor the code stores anything server-side — the mailto: link is built in your browser from what you type, and the QR image is generated locally. Nothing is uploaded or logged." },
+  { q: "Can I pre-fill a body with placeholders the person is meant to fill in themselves, like a template?", a: "Yes, and it's a common pattern for feedback or complaint forms — pre-fill the body with labeled blanks like \"Order #:\\nIssue:\\nPreferred resolution:\" so the visitor's reply arrives already structured, even though they're the one typing the actual content." },
 ];
 ---
 <GeneratorPageLayout
   title="Email QR Code Generator — Pre-Filled mailto: QR, Free | QR Workbench"
-  description="Generate a QR code that opens a pre-filled email — address, subject and body ready to send. Free, static, generated in your browser."
+  description="Build a mailto: QR code that routes replies before they're even sent — different pre-filled subjects for warranty cards, support desks, or RSVP inserts, so responses arrive already sorted. Free, generated in your browser."
   eyebrow="Email QR Code Generator"
   slug="email"
   h1="A QR code that opens a ready-to-send email"
-  intro="Scanning this opens the visitor's email app with your address, subject and message already filled in. Nothing is sent on your behalf — they still choose to hit send."
+  intro="Scanning this opens the visitor's email app with your address, subject and message already filled in. Nothing is sent on your behalf — they still choose to hit send. The subject line is the part worth thinking about: a different pre-filled subject per code is what turns this from a generic \"contact us\" trick into a routing tool."
   howTo={howTo}
   tips={tips}
   bulkNote="Need this for every team member's contact page? Generate from CSV →"
@@ -48,6 +54,12 @@ const faq = [
       </label>
     </Fragment>
   </GeneratorShell>
+
+  <section class="deep-dive">
+    <h2>How mailto: links actually work</h2>
+    <p>A mailto: link is a URI scheme every mail app understands natively — no server, no API, no account required to make one. This tool builds it the same way a web form would: <strong>to</strong> goes straight after the colon, and <strong>subject</strong> and <strong>body</strong> are appended as URL-encoded query parameters, so <code>mailto:hi@example.com?subject=Support%20Request&body=Hi%2C%20I%27d%20like%20to...</code> is exactly what's inside the code once you fill in those fields. Spaces, punctuation, and non-ASCII characters are all encoded automatically, which is why accented names or emoji in a pre-filled body don't break anything.</p>
+    <p>Two mechanics are worth knowing before you rely on this for anything structured. First, the app that opens is whatever the scanning device has set as its <strong>default</strong> mail client — on an iPhone that's usually Apple Mail unless someone changed it, on Android it varies by manufacturer and what's installed, so don't assume every scan lands in Gmail's compose screen even if that's what you use. Second, there's no formally guaranteed length limit in the mailto: spec, but individual mail apps enforce their own practical ceiling, and several truncate a long pre-filled body silently rather than showing an error — so if the exact wording of a template body matters (a structured complaint form, for instance), test the real code on a phone before printing hundreds of them.</p>
+  </section>
 </GeneratorPageLayout>
 
 <script>
@@ -66,3 +78,11 @@ const faq = [
   [to, subject, body].forEach((el) => el.addEventListener("input", tool.update));
   tool.update();
 </script>
+
+<style>
+  .deep-dive { max-width: 68ch; margin: 0 0 2.6rem; }
+  .deep-dive h2 { font-size: 1.1rem; margin: 0 0 1rem; letter-spacing: -0.01em; }
+  .deep-dive p { font-size: 0.9rem; color: var(--ink-dim); line-height: 1.65; margin: 0 0 1.1rem; }
+  .deep-dive p:last-child { margin-bottom: 0; }
+  .deep-dive strong { color: var(--ink); }
+</style>

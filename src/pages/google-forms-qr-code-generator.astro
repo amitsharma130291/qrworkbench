@@ -3,33 +3,38 @@ import GeneratorPageLayout from "../layouts/GeneratorPageLayout.astro";
 import GeneratorShell from "../components/GeneratorShell.astro";
 
 const howTo = [
-  "In Google Forms, click Send, choose the link icon (🔗), and copy the URL.",
-  "Paste it into the field below and check the live preview.",
-  "Scan it yourself to confirm it opens the right form before printing or posting it.",
-  "Download the SVG for print materials, or PNG for a slide or digital sign.",
+  "In Google Forms, click Send, choose the link icon (🔗), and copy the URL — Google also offers a \"Shorten URL\" checkbox in that same dialog; see the note below on which version to use.",
+  "Paste it into the field below and check the live preview render instantly.",
+  "Scan it yourself on the same WiFi or cell signal you'll actually be using — a form that loads instantly on your desk can lag badly on crowded event WiFi or in a warehouse dead zone.",
+  "If the code will be printed small (a table tent, a name badge) or read from a distance (a poster, a kiosk screen), bump the size and error-correction level up before exporting.",
+  "Download the SVG for print — table tents, worksheets, sign-in sheets, posters — or PNG for a slide deck, a kiosk display, or a digital sign.",
 ];
 
 const tips = [
   "If you need pre-filled answers, build a \"pre-fill link\" inside Google Forms first (Send → Get pre-filled link), then paste that longer URL here instead of the plain share link.",
-  "Google's shortened forms.gle links work fine and keep the QR code less dense than the full forms.google.com URL.",
-  "For an in-person event, test the scan on the venue's actual WiFi/cell signal beforehand — a form that loads instantly on your desk can lag on crowded event WiFi.",
+  "Short forms.gle link or full forms.google.com URL — both scan into the same form. Short makes a slightly simpler code; keep the full one if you'll build a pre-fill link from it later.",
+  "For an in-person event, test the scan on the venue's actual WiFi or cell signal beforehand — a form that loads instantly on your desk can lag or time out on crowded event WiFi.",
+  "For a recurring class or weekly kiosk, the same printed code keeps working indefinitely — you only need a new one if you create a brand-new form rather than editing the existing one.",
+  "Running the same form across many tables, rooms, or store locations? Generate a full batch of identical codes at once from the bulk workspace instead of downloading them one at a time.",
 ];
 
 const faq = [
   { q: "Where do I get my form's link?", a: "In Google Forms, click Send, choose the link icon, and copy the URL — paste that in below." },
   { q: "Does this pre-fill any answers?", a: "No, it just opens your form. If you need pre-filled fields, use Google Forms' own \"pre-fill link\" option first, then paste that longer URL here instead." },
-  { q: "Will this work for feedback forms at events or in print?", a: "Yes — that's the most common use. Print it on a table tent, poster, or receipt and people can open the form without typing a URL." },
+  { q: "Should I use the short forms.gle link or the full forms.google.com URL?", a: "Either works. The short link keeps the QR pattern a little simpler; keep the full one if you'll need it for a pre-fill link later." },
+  { q: "Will this work for feedback forms at events, in a classroom, or on a restaurant table?", a: "Yes — that's the most common use. Print it on a table tent, an open-house sign-in sheet, a classroom worksheet, or a restaurant card." },
+  { q: "Does this add any Google Forms features, like tracking or auto-checking people in?", a: "No — it doesn't add any functionality to the form. It only solves the \"nobody wants to type a long URL from a sign\" problem." },
   { q: "Can I track how many people scanned versus how many actually submitted?", a: "This tool doesn't track scans — it just encodes your link. For submission counts, use Google Forms' own built-in response summary." },
-  { q: "Does the QR code stop working if I edit my form later?", a: "No — editing questions inside an existing form doesn't change its URL, so the same QR code keeps pointing to the current version." },
+  { q: "Does the QR code stop working if I edit my form later?", a: "No — editing questions inside an existing form doesn't change its URL, so the same code keeps pointing to the current version." },
 ];
 ---
 <GeneratorPageLayout
   title="Google Forms QR Code Generator — Free, No Sign-Up | QR Workbench"
-  description="Turn a Google Forms link into a scannable QR code — for surveys, RSVPs, feedback forms and event sign-ups. Free, generated in your browser."
+  description="Turn a Google Forms link into a QR code for event check-in sheets, in-store feedback kiosks, classroom worksheets, restaurant table tents, and open-house sign-ins. Free, runs entirely in your browser."
   eyebrow="Google Forms QR Code Generator"
   slug="google-forms"
   h1="Put your Google Form on a poster, table, or receipt"
-  intro="Paste your form's share link and get a QR code people can scan straight into it — no typing a long Google Forms URL on a phone keyboard."
+  intro="Paste your form's share link and get a QR code people can scan straight into it — built for the moment a form only exists as a URL nobody wants to type from a sign. Print it on an event check-in table, an in-store feedback kiosk, a classroom worksheet, a restaurant table tent, or an open-house sign-in sheet, and a phone camera does the typing instead."
   howTo={howTo}
   tips={tips}
   bulkNote="Running the same form across many locations or events? Generate a batch from CSV →"
@@ -42,6 +47,12 @@ const faq = [
       </label>
     </Fragment>
   </GeneratorShell>
+
+    <section class="deep-dive">
+      <h2>What a QR code actually adds to a Google Form</h2>
+      <p>Every use case here comes down to the same physical-world problem: a form that lives on a screen needs to reach someone standing somewhere else, holding a phone, with nothing to type it into. An event's check-in and RSVP table, an in-store feedback kiosk, a classroom worksheet that hands off to a quiz form, a restaurant table-tent card, a real-estate open house sign-in sheet — none of these are Google Forms problems, they're "how does a person get from paper to a URL" problems. It's worth being precise about what the code is doing: it isn't adding any capability to your form. It doesn't check people in or validate anything Google Forms wasn't already going to validate — it's a shortcut around typing a long URL on a phone keyboard, nothing more.</p>
+      <p>The one real decision is short link versus long link. Google's Send dialog offers a <strong>"Shorten URL"</strong> checkbox that swaps the full <code>forms.google.com/.../viewform</code> address for a <code>forms.gle/...</code> redirect. Both scan into the exact same form; the tradeoff is cosmetic, not functional. The short link makes a slightly simpler QR pattern, useful at small print sizes. The full link is worth keeping if you're going to build a Google Forms "pre-fill link" afterward, since that workflow starts from the long URL. Either way, forms.gle is a Google-owned redirect, not a third-party shortener that can go dark.</p>
+    </section>
 </GeneratorPageLayout>
 
 <script>
@@ -51,3 +62,11 @@ const faq = [
   url.addEventListener("input", tool.update);
   tool.update();
 </script>
+
+<style>
+  .deep-dive { max-width: 68ch; margin: 0 0 2.6rem; }
+  .deep-dive h2 { font-size: 1.1rem; margin: 0 0 1rem; letter-spacing: -0.01em; }
+  .deep-dive p { font-size: 0.9rem; color: var(--ink-dim); line-height: 1.65; margin: 0 0 1.1rem; }
+  .deep-dive p:last-child { margin-bottom: 0; }
+  .deep-dive strong { color: var(--ink); }
+</style>

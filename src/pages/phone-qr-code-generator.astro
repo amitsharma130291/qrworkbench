@@ -4,29 +4,37 @@ import GeneratorShell from "../components/GeneratorShell.astro";
 
 const howTo = [
   "Enter the phone number, including the country code with a leading + (e.g. +1 555 123 4567).",
-  "Check the preview, then download the SVG for print or PNG for screens.",
-  "Place it wherever someone would want a one-tap way to call — a van, a menu, a service tag.",
+  "Skip everything else — this is a one-field code on purpose. No name, no company, no fallback URL to fill in.",
+  "Check the preview at the size you'll actually print it, not just on screen — a decal on a van door needs to hold up from a few feet away, not a few inches.",
+  "Download the SVG for vinyl, decals, and anything getting resized (SVG scales without going blurry); grab the PNG for a screen or a quick print job.",
+  "Place it wherever someone would want a one-tap way to call — a van door, a yard sign, a delivery box, a reception desk placard.",
 ];
 
 const tips = [
-  "Always include the country code, even for a local business — it guarantees the number dials correctly regardless of where the scanning phone is set up.",
-  "This is the simplest QR format there is, which also makes it the most forgiving to scan from a distance or at a small size — a good choice for vehicle decals or signage.",
+  "Always include the country code, even for a strictly local business — it guarantees the number dials correctly regardless of where the scanning phone's region settings are configured.",
+  "A tel: link is the leanest QR payload there is — just digits — which makes it the most forgiving format to scan from a distance or at a small size. That matters most on vehicle decals and yard signs, scanned from feet away, sometimes through a car window.",
+  "Resist the urge to swap this for a full vCard code — a contact card adds a \"save contact\" step between the scan and the call. If the goal is \"tap and call right now,\" the tel: link gets there in one step.",
+  "For a work van or trailer, print it at least 1.5–2 inches square and test-scan it from about 6 feet in daylight before you commit to vinyl — that's roughly the distance someone glancing over from a parking spot will be standing.",
+  "If the number has an extension, decide up front whether you actually need it in the code at all — for a direct line meant for one-tap calling, a bare number without an extension is usually the more reliable choice (see the FAQ below on why).",
 ];
 
 const faq = [
   { q: "Does this place the call automatically?", a: "No — scanning opens the phone's dialer with the number entered. The person still has to tap call." },
   { q: "What format should I use for the number?", a: "Include the country code with a leading + (e.g. +1 555 123 4567) so it dials correctly regardless of where the scanner is." },
-  { q: "Can I add an extension?", a: "Some dialers support a comma (,) to represent a pause before dialing an extension, e.g. +15551234567,101 — but support varies by phone, so test it first." },
+  { q: "Can I add an extension?", a: "Support is inconsistent, so it's worth knowing the details rather than guessing. Some dialers accept a comma (,) as a short pause before auto-dialing digits that follow — e.g. +15551234567,101 — while others expect a semicolon (;) for \"wait for input\" instead. Neither is universal, and a few dialers just fail on the combined string. Test the exact code on a couple of phones before printing it anywhere permanent, and for public-facing signage, a bare number without an extension is usually the safer bet." },
   { q: "What's the difference between this and just writing the number as text?", a: "Scanning still requires reading digits either way, but a QR code removes typos entirely — no risk of someone mis-keying a digit from a photo or a glance." },
+  { q: "Why use this instead of a vCard QR code with my full contact info?", a: "A vCard is right when you want someone to save your details for later. This tel: code is for the opposite moment — someone in front of a van or sign who wants to call right now, straight to the dialer, no \"save contact\" step in between." },
+  { q: "How big should the code be on a vehicle decal or yard sign?", a: "Bigger than feels necessary. A rough rule of thumb: a QR code scans reliably from about 10 times its own width, so a code meant to be read from 6 feet away wants to be roughly 7 inches across — not a 2-inch sticker that only looks fine up close. Err large and test outdoors before a full print run." },
+  { q: "Does this work for a landline or only mobile numbers?", a: "Either — the tel: format doesn't distinguish between mobile and landline. It hands the number to whatever the scanning phone treats as its default calling app." },
 ];
 ---
 <GeneratorPageLayout
   title="Phone Number QR Code Generator — Tap to Call, Free | QR Workbench"
-  description="Generate a QR code that opens the dialer with your number ready to call. Free, static, generated in your browser."
+  description="A one-field QR code that opens the dialer with a number pre-entered — built for vehicle decals, yard signs, and service vans where a full contact card would be one tap too many. No app, no vCard, just a call."
   eyebrow="Phone QR Code Generator"
   slug="phone"
   h1="A QR code that's ready to dial"
-  intro="Scanning this opens the phone app with your number already entered — one tap to call. No app, no account, generated entirely in your browser."
+  intro="Scanning this opens the phone app with your number already entered — one tap to call, nothing to save first. It's the leanest QR format on this site, which is exactly why it holds up on signage that gets scanned from a distance: vehicle decals, yard signs, delivery vans, reception desks."
   howTo={howTo}
   tips={tips}
   bulkNote="Need a code per location or extension? Generate from CSV →"
@@ -39,6 +47,12 @@ const faq = [
       </label>
     </Fragment>
   </GeneratorShell>
+
+  <section class="deep-dive">
+    <h2>Why not just use a vCard?</h2>
+    <p>A vCard QR code is the right tool when you want someone to save a full contact — name, company, email, address — for later. It's the wrong tool when the only thing that matters is getting a call started right now. Scanning a vCard ends at a "save contact" prompt, which is an extra decision and an extra tap between the scan and the phone actually ringing. A <strong>tel:</strong> link skips that: it hands the number straight to the dialer, pre-filled, nothing to save, nothing to decide. For a vehicle decal, a yard sign, or a service tag, that one-step difference is the whole point — most people scanning a sign on a moving truck or a lawn sign from the sidewalk aren't going to stop and fill out a contact card first.</p>
+    <p>The tradeoff is that a plain phone code carries no other information — no business name, no website, nothing to fall back on if the person isn't ready to call immediately. That's a deliberate simplicity, not a missing feature: if you also want people to save your details or visit a website, that's what the vCard and URL generators are for. Use this one when the entire goal, start to finish, is "get someone dialing."</p>
+  </section>
 </GeneratorPageLayout>
 
 <script>
@@ -55,3 +69,11 @@ const faq = [
   number.addEventListener("input", tool.update);
   tool.update();
 </script>
+
+<style>
+  .deep-dive { max-width: 68ch; margin: 0 0 2.6rem; }
+  .deep-dive h2 { font-size: 1.1rem; margin: 0 0 1rem; letter-spacing: -0.01em; }
+  .deep-dive p { font-size: 0.9rem; color: var(--ink-dim); line-height: 1.65; margin: 0 0 1.1rem; }
+  .deep-dive p:last-child { margin-bottom: 0; }
+  .deep-dive strong { color: var(--ink); }
+</style>

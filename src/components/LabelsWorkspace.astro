@@ -21,13 +21,13 @@
     <button class="link-btn" id="tb-toggle-key" type="button">Have a license key?</button>
   </div>
   <form id="tb-key-form" class="tb-key-form" hidden>
-    <input id="tb-key-input" type="text" placeholder="License key" autocomplete="off" />
+    <input id="tb-key-input" type="text" placeholder="License key" aria-label="License key" autocomplete="off" />
     <button class="btn" type="submit">Unlock</button>
     <button class="link-btn" id="tb-toggle-recover" type="button">Forgot your key?</button>
     <p id="tb-key-error" class="tb-key-error" hidden></p>
   </form>
   <form id="tb-recover-form" class="tb-key-form" hidden>
-    <input id="tb-recover-email" type="email" placeholder="Email used at checkout" autocomplete="email" />
+    <input id="tb-recover-email" type="email" placeholder="Email used at checkout" aria-label="Email used at checkout" autocomplete="email" />
     <button class="btn" type="submit">Send my key</button>
     <p id="tb-recover-status" class="tb-key-status" hidden></p>
   </form>
@@ -540,10 +540,21 @@
   .field-list select:disabled { color: var(--ink-faint); background: var(--bg); }
   .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; }
 
-  .sheet-preview { max-height: 360px; overflow-y: auto; }
+  /* overflow-x here is the safety net for the min-width:0 fix below -- if a
+     high column count + long captions still add up to more than the panel
+     can fit, this panel scrolls internally instead of silently blowing out
+     the whole page's width (app-body's overflow-x:hidden would otherwise
+     just clip it with no way to reach the rest). */
+  .sheet-preview { max-height: 360px; overflow-y: auto; overflow-x: auto; }
   .empty-note { font-size: 0.8rem; color: var(--ink-faint); margin: 0; }
   .sheet-grid { display: grid; gap: 0.5rem; }
-  .sheet-cell { display: flex; flex-direction: column; align-items: center; gap: 0.3rem; border: 1px solid var(--line); padding: 0.4rem; }
+  /* min-width:0 overrides the grid item's default automatic minimum size,
+     which is otherwise based on its content's min-content width. Without
+     it, .sheet-cell span's white-space:nowrap gives every cell a large
+     intrinsic minimum -- at higher column counts (this tool allows up to
+     10) that forces the grid wider than its container on mobile instead of
+     actually respecting the `1fr` track sizing. */
+  .sheet-cell { display: flex; flex-direction: column; align-items: center; gap: 0.3rem; border: 1px solid var(--line); padding: 0.4rem; min-width: 0; }
   .sheet-cell canvas { width: 100%; height: auto; max-width: 70px; }
   .sheet-cell span { font-size: 0.6rem; color: var(--ink-dim); text-align: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%; }
 
@@ -577,5 +588,12 @@
     .panels { grid-template-columns: 1fr; }
     .panel { border-right: none; }
     .field-row { grid-template-columns: 1fr; }
+  }
+
+  /* Smallest phones: the 1.4rem panel padding starts crowding a
+     ~320-360px viewport. */
+  @media (max-width: 400px) {
+    .panel { padding: 1rem; }
+    .generate-bar { padding: 0.9rem 1rem; }
   }
 </style>

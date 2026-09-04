@@ -11,7 +11,15 @@ export default defineConfig({
   },
   integrations: [
     sitemap({
-      filter: (page) => !page.endsWith("/bulk") && !page.endsWith("/labels") && !page.endsWith("/docs"),
+      // Keep in lockstep with every page that sets `noindex` in its own
+      // Layout/AppLayout call (bulk.astro, labels.astro, docs.astro,
+      // 404.astro) -- a page listed here but noindexed (or vice versa) is
+      // exactly the inconsistency this filter exists to prevent.
+      filter: (page) =>
+        !page.endsWith("/bulk") &&
+        !page.endsWith("/labels") &&
+        !page.endsWith("/docs") &&
+        !page.endsWith("/404"),
     }),
   ],
   adapter: vercel(),

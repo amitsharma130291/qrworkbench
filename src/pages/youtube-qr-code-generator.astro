@@ -3,34 +3,39 @@ import GeneratorPageLayout from "../layouts/GeneratorPageLayout.astro";
 import GeneratorShell from "../components/GeneratorShell.astro";
 
 const howTo = [
-  "Open the YouTube video, channel, or playlist and copy its share link.",
-  "Paste it into the field below and check the preview.",
-  "Scan it yourself to confirm it opens the right video or channel before printing.",
-  "Download the SVG for packaging or print, or PNG for a slide or digital sign.",
+  "Decide video, channel, or playlist: a specific video link is right for \"watch this\" contexts (an unboxing, a how-to, an explainer); a channel link is right for \"more from us\" contexts where you want ongoing discovery rather than one answer.",
+  "For a specific video, open it and copy the share link, or use \"Copy link at current time\" if you want the code to jump straight to a specific moment — useful for skipping an intro on a printed how-to.",
+  "For a channel, go to the channel page and copy its handle URL (youtube.com/@yourchannel) rather than an old-style channel ID link, which is longer and harder to keep track of.",
+  "Paste the link into the field below, check the preview, and scan it with your own phone before printing anything in bulk to confirm it opens exactly where you expect.",
+  "Download the SVG for packaging, signage, or printed materials, or the PNG for a slide or digital display.",
 ];
 
 const tips = [
-  "A channel link (youtube.com/@yourchannel) is more durable for long-lived print material than a single video link, which stops being useful if that video is ever deleted or made private.",
-  "To link to a specific moment instead of the start, use YouTube's \"Copy link at current time\" option when sharing — the timestamp carries through into the QR code.",
-  "youtu.be short links and full youtube.com/watch?v= links both work the same way — pick whichever you already have copied.",
+  "For product packaging, link straight to the specific unboxing or how-to-use video, not your channel homepage — someone scanning a box in their hands wants the answer to \"how does this work,\" not a list of your other videos.",
+  "For print ads or flyers promoting one thing, a demo video link converts better than a channel link, since it matches what the ad already promised rather than asking the viewer to go find it themselves.",
+  "For printed educational material — a museum exhibit placard, an event program, a classroom handout — a short, specific explainer video beats a full-length lecture; check the runtime before you commit it to something printed and unchangeable.",
+  "Use \"Copy link at current time\" when the useful part of a video isn't at the start — a 45-second product demo three minutes into a longer video works far better as a QR destination than the full video from 0:00.",
+  "A channel link is the safer choice for anything meant to stay relevant for years (a storefront sign, a business card); a single video link is better for anything tied to one specific product, event, or lesson that won't change.",
 ];
 
 const faq = [
+  { q: "Should I link to a video or my channel?", a: "Video, if you're answering a specific question — how this product works, what this exhibit is about. Channel, if you want ongoing discovery and the material isn't tied to one specific piece of content." },
   { q: "Does this need a YouTube API key or Google account?", a: "No. It just encodes whatever YouTube link you paste — no API, no login, no channel ownership verification." },
-  { q: "Can I link to a specific timestamp instead of the start of the video?", a: "Yes — copy a timestamped link from YouTube's own share menu (\"Copy link at current time\") and paste that instead of the plain video URL." },
-  { q: "Will it still work if I unlist or delete the video later?", a: "No — like any static QR code, the link is fixed at generation time. If the video becomes unavailable, the code will lead to an error page; you'd need to generate a new code pointing elsewhere." },
-  { q: "Should I link to a video or my channel?", a: "Depends on the shelf life of what you're printing. A single video is better for one-time content (a tutorial, an event recap); a channel link is safer for anything meant to stay useful for years." },
-  { q: "Can I use this for a YouTube Short or Live stream link?", a: "Yes — Shorts, regular videos, live streams, and playlists all use ordinary YouTube URLs, so any of their share links work here the same way." },
+  { q: "Can I link to a specific timestamp instead of the start of the video?", a: "Yes — copy a timestamped link from YouTube's own share menu (\"Copy link at current time\") and paste that instead of the plain video URL. Useful for skipping past an intro on a printed how-to." },
+  { q: "Is this good for product packaging?", a: "Yes — it's one of the strongest uses. Link directly to the unboxing or setup video for that specific product rather than your channel homepage, so the customer lands on the answer immediately." },
+  { q: "What about museum exhibits, event programs, or classroom handouts?", a: "The same logic applies: link to a short, specific explainer video rather than a full lecture or your channel. Check the runtime beforehand, since printed material can't be updated once it's out." },
+  { q: "Will it still work if I unlist or delete the video later?", a: "No — like any static QR code, the destination is fixed at generation time. If the video becomes unavailable, the code leads to an error page; you'd need to generate a new one pointing elsewhere." },
+  { q: "Can I use this for a YouTube Short or a livestream link?", a: "Yes — Shorts, regular videos, premieres, live streams, and playlists all use ordinary YouTube URLs, so any of their share links work here the same way." },
 ];
 
 ---
 <GeneratorPageLayout
   title="YouTube QR Code Generator — Link to a Video or Channel, Free | QR Workbench"
-  description="Turn your YouTube video, channel, or playlist link into a scannable QR code. Free, static, generated in your browser."
+  description="A QR code that answers 'how does this work' at the moment someone's holding the product, standing at the exhibit, or reading the handout — link a specific video or your whole channel."
   eyebrow="YouTube QR Code Generator"
   slug="youtube"
   h1="Get scanned straight to your YouTube"
-  intro="Paste a YouTube video, channel, or playlist link and get a QR code for packaging, posters, or a business card — no typing a long URL on a phone keyboard."
+  intro="A YouTube QR code works best when it's answering a specific question at the moment someone's holding something and wondering how it works — a product box, a museum placard, a handout. This generator encodes a video, channel, or playlist link so you can put \"watch how this works\" exactly where the question comes up, not just \"subscribe to my channel.\""
   howTo={howTo}
   tips={tips}
   bulkNote="Need codes for multiple videos or channels? Generate a batch from CSV →"
@@ -43,6 +48,12 @@ const faq = [
       </label>
     </Fragment>
   </GeneratorShell>
+
+  <section class="deep-dive">
+    <h2>Video link vs. channel link: two different intents</h2>
+    <p>A video URL — youtube.com/watch?v=xxxxxxxx or the shorter youtu.be/xxxxxxxx — points to one piece of content and answers one question: this specific unboxing, this specific tutorial, this specific product demo. A channel URL — youtube.com/@yourchannelhandle — points to your whole library and invites browsing. They're not interchangeable even though both "work": a QR code on product packaging that says "Watch how to set this up" but links to your channel homepage makes the customer hunt for the right video themselves, which is exactly the friction a QR code is supposed to remove.</p>
+    <p>The fix is matching the link to what the printed material is promising. Packaging, print ads, and single-purpose signage should almost always carry a direct video link — grab it from the video's own Share button, and use "Copy link at current time" if the relevant part starts partway through. Anything meant to invite ongoing discovery — a channel-wide poster, a creator's business card, an "about us" section — should carry the channel handle link instead. When in doubt, ask what the person scanning is trying to accomplish in that moment: get one specific answer, or explore more.</p>
+  </section>
 </GeneratorPageLayout>
 
 <script>
@@ -52,3 +63,11 @@ const faq = [
   url.addEventListener("input", tool.update);
   tool.update();
 </script>
+
+<style>
+  .deep-dive { max-width: 68ch; margin: 0 0 2.6rem; }
+  .deep-dive h2 { font-size: 1.1rem; margin: 0 0 1rem; letter-spacing: -0.01em; }
+  .deep-dive p { font-size: 0.9rem; color: var(--ink-dim); line-height: 1.65; margin: 0 0 1.1rem; }
+  .deep-dive p:last-child { margin-bottom: 0; }
+  .deep-dive strong { color: var(--ink); }
+</style>

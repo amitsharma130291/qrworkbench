@@ -3,32 +3,38 @@ import GeneratorPageLayout from "../layouts/GeneratorPageLayout.astro";
 import GeneratorShell from "../components/GeneratorShell.astro";
 
 const howTo = [
-  "Open your LinkedIn profile (or your company page) and copy the URL from the address bar, or use \"Copy link to profile\" from the ⋯ menu.",
-  "Paste it into the field below and check the preview.",
-  "Scan it yourself to confirm it opens the right profile before printing.",
-  "Download the SVG for a badge or resume, or PNG for a digital signature.",
+  "Decide personal profile or company page: a profile link is right for conference badges, name tags, and email signatures; a company page link is right for recruiting materials or anything representing the business rather than one person.",
+  "Get a clean profile URL first — go to Settings & Privacy → \"Edit public profile & URL\" and set it to something like linkedin.com/in/yourname if you haven't already; this avoids the long, randomized default URL.",
+  "Copy the URL from your profile's address bar, or use \"Copy link to profile\" from the ⋯ menu — avoid copying a link forwarded from a search result or a message, which can carry tracking parameters.",
+  "Paste it into the field below and check the preview, then scan with your own phone to confirm before printing anything in bulk.",
+  "Download the SVG for a badge, printed resume, or table tent, or the PNG for a digital email signature or slide.",
 ];
 
 const tips = [
-  "LinkedIn profile URLs can be long and full of random characters by default — set a custom public profile URL in LinkedIn's settings first for a cleaner, less dense QR code.",
-  "For conference badges, a small code in a corner works well since it only needs to be scanned up close, not from across a room.",
-  "A company page link is more durable for long-lived print material than a personal profile link, since it's tied to the business rather than one employee's account.",
+  "Set a custom public profile URL before you generate the code — the default LinkedIn URL is long and full of random characters, which produces a denser, harder-to-scan code than a clean linkedin.com/in/yourname link.",
+  "For conference badges, keep the code small and in a corner — it only needs to be scanned from arm's length during a conversation, not read from across a room.",
+  "If you copy your profile link from a Google search result or a shared message rather than LinkedIn itself, check the URL for a trailing ?trk=... or similar tracking string and strip it before pasting — it still works, but the cleaner link is easier to verify at a glance.",
+  "For email signatures, the PNG version at a modest size (under 100px) reads fine on most email clients without bloating the message; use the SVG only for print.",
+  "A company page link outlasts any one employee's profile for recruiting flyers or trade-show banners — if the person managing the booth changes jobs, the company link still works.",
 ];
 
 const faq = [
-  { q: "Should I use my personal profile or company page?", a: "Either — paste whichever LinkedIn URL you want people scanning to reach." },
-  { q: "Is this good for conference badges or resumes?", a: "Yes, that's a common use — print it small in a corner so people can connect without typing your name into search." },
-  { q: "Can I shorten my LinkedIn URL before generating the code?", a: "Yes — LinkedIn lets you set a custom public profile URL (e.g. linkedin.com/in/yourname) in your account settings, which produces a noticeably cleaner QR code than the default auto-generated one." },
-  { q: "Will this send a connection request automatically?", a: "No — it just opens your profile page. The person still has to choose to connect or follow." },
+  { q: "Personal profile or company page — which should I use?", a: "Personal profile for anything about you specifically — a conference badge, name tag, resume, email signature. Company page for recruiting materials, trade-show banners, or anything representing the business." },
+  { q: "Is this good for conference badges?", a: "Yes, it's one of the most common uses — print it small in a corner of the badge so people can connect after a conversation without typing your name into search later." },
+  { q: "How do I get the short linkedin.com/in/yourname URL instead of the long default one?", a: "Go to Settings & Privacy → Edit public profile & URL, then click the pencil icon next to your profile URL to set a custom one. Do this before generating your QR code for a cleaner result." },
+  { q: "Will scanning this send a connection request automatically?", a: "No — it opens your profile page. The person still chooses to connect, follow, or just view, exactly as if they'd typed your name into LinkedIn's search themselves." },
+  { q: "Is this useful for alumni networking or recruiting events, not just conferences?", a: "Yes — the same badge or name-tag use case applies to alumni mixers, career fairs, and recruiter tables. A recruiter's own profile or company page link works well on a table sign so candidates can connect after the conversation." },
+  { q: "Can I put this in my email signature?", a: "Yes — the PNG works well at a small size in an email signature, though for most email clients a plain text link is just as effective there; the QR code earns its place more on printed materials than in digital signatures." },
+  { q: "Does this need LinkedIn API access or a Recruiter/Sales Navigator account?", a: "No. It just encodes whatever public LinkedIn URL you paste — no API, no Recruiter license, no login required to generate it." },
 ];
 ---
 <GeneratorPageLayout
   title="LinkedIn QR Code Generator — Link to Your Profile, Free | QR Workbench"
-  description="Turn your LinkedIn profile or company page link into a scannable QR code. Free, static, generated in your browser."
+  description="A QR code for the handshake-adjacent moment — conference badges, name tags, and email signatures that turn into a real connection after the event, not a name typed from memory."
   eyebrow="LinkedIn QR Code Generator"
   slug="linkedin"
   h1="Get scanned straight to your LinkedIn"
-  intro="Paste your LinkedIn profile or company page link and get a QR code for badges, resumes, or business cards — connect in one scan."
+  intro="LinkedIn QR codes earn their keep at the exact moment a business card would have: a conference badge, a name tag, the bottom of an email signature. This generator turns your profile or company page link into a code built for that moment — scanned once, connected with after the event, rather than typed in from memory."
   howTo={howTo}
   tips={tips}
   bulkNote="Need codes for a whole team's profiles? Generate a batch from CSV →"
@@ -41,6 +47,12 @@ const faq = [
       </label>
     </Fragment>
   </GeneratorShell>
+
+  <section class="deep-dive">
+    <h2>Getting the clean linkedin.com/in/ link (and why it matters)</h2>
+    <p>LinkedIn assigns every profile a default URL that's long and effectively random — something like linkedin.com/in/john-smith-8a2f91b3 — which encodes into a visibly denser QR code than a custom one. You fix this once, in Settings & Privacy → "Edit public profile & URL," by clicking the pencil icon next to your URL and setting a short custom slug like linkedin.com/in/johnsmith. It's a one-time change that makes every QR code you generate from your profile cleaner from then on.</p>
+    <p>Separately, watch where you copy the link from. Grabbing it directly from your own profile page or the ⋯ menu's "Copy link to profile" gives you the bare URL. Copying it from a Google search result, a shared LinkedIn message, or certain browser extensions can append tracking parameters like ?trk=public_profile_browsemap or a long utm string — these don't break the QR code, but they add unnecessary length and weren't put there by you, so they can carry attribution back to whoever originally shared that link. For anything you're printing under your own name, start from your own profile, not a forwarded link.</p>
+  </section>
 </GeneratorPageLayout>
 
 <script>
@@ -50,3 +62,11 @@ const faq = [
   url.addEventListener("input", tool.update);
   tool.update();
 </script>
+
+<style>
+  .deep-dive { max-width: 68ch; margin: 0 0 2.6rem; }
+  .deep-dive h2 { font-size: 1.1rem; margin: 0 0 1rem; letter-spacing: -0.01em; }
+  .deep-dive p { font-size: 0.9rem; color: var(--ink-dim); line-height: 1.65; margin: 0 0 1.1rem; }
+  .deep-dive p:last-child { margin-bottom: 0; }
+  .deep-dive strong { color: var(--ink); }
+</style>

@@ -3,33 +3,38 @@ import GeneratorPageLayout from "../layouts/GeneratorPageLayout.astro";
 import GeneratorShell from "../components/GeneratorShell.astro";
 
 const howTo = [
-  "Upload your PDF somewhere it can be reached by a public link — Google Drive, Dropbox, or your own website.",
-  "Open the file's share settings and set it to \"anyone with the link can view.\"",
+  "Upload your PDF somewhere with a stable public URL — Google Drive, Dropbox, a CDN, or your own website (see the note below on why \"stable\" matters more than \"convenient\").",
+  "Open the file's share settings and set it to \"anyone with the link can view\" (or the equivalent) — a link that requires a login will fail for every scan except your own.",
   "Copy that link and paste it below.",
-  "Test the code yourself on your phone before printing — confirm it opens the PDF without asking for a login.",
+  "Open the link yourself in a private/incognito browser window on your phone before printing — confirm it opens the actual PDF and not a login or sign-in wall.",
+  "Download the SVG for print — a product label, a menu insert, a spec sheet posted on equipment — or PNG for a digital sign, kiosk, or slide.",
 ];
 
 const tips = [
   "Open the link in an incognito/private browser window first — that's the fastest way to confirm it's actually publicly viewable and not stuck behind a login.",
-  "Google Drive links sometimes force a \"preview\" page instead of opening the PDF directly — if that's not what you want, check the specific share-link format Drive gives you.",
-  "If the PDF changes often (a menu, a price list), update the file at the same link rather than generating a new QR each time — the code keeps working as long as the link itself doesn't change.",
+  "Google Drive links sometimes force a \"preview\" page instead of opening the PDF directly — check the specific share-link format Drive gives you if that's not what you want.",
+  "If the PDF changes often (a menu, a price list, a spec revision), update the file at the same link rather than generating a new QR each time — the code keeps working as long as the link doesn't change.",
+  "For safety data sheets, warranty documents, or anything regulated, host the file somewhere you control — a company site or document CDN — rather than a personal Drive folder someone else could delete or reshare.",
+  "Printing a code for every SKU, manual, or spec sheet in a catalog? The bulk workspace can generate a full batch from a CSV of links in one pass instead of one at a time here.",
 ];
 
 const faq = [
   { q: "Does this upload or host my PDF?", a: "No. This tool encodes a link to a PDF that's already hosted somewhere — Google Drive, Dropbox, your website. We don't store or serve the file itself." },
   { q: "Where do I get a link to my PDF?", a: "Upload it to Google Drive, Dropbox, or your own site, then use its \"share\" or public link — paste that link below." },
-  { q: "Will this work for menus, manuals, or spec sheets?", a: "Yes — that's the most common use. Print the code next to the product or on a table, and scanning opens the PDF directly." },
-  { q: "What if I update the PDF later?", a: "As long as you replace the file at the same link (rather than uploading a new file with a new link), the existing QR code keeps working — no need to reprint." },
+  { q: "Will this work for menus, manuals, spec sheets, or warranty documents?", a: "Yes — that's the most common use. Print the code next to the product, on the equipment, on a table, or on a warranty card." },
+  { q: "What if I update the PDF later?", a: "As long as you replace the file at the same link, rather than uploading a new file with a new link, the existing QR code keeps working — no need to reprint." },
   { q: "Why does scanning ask people to log in?", a: "Your file's sharing permissions are probably set to \"restricted\" rather than \"anyone with the link.\" Check the sharing settings where the PDF is hosted." },
+  { q: "What happens if the hosting link ever changes or the file gets moved?", a: "The printed QR code stops working, the same way any static QR code breaks when its target disappears — it only ever encoded that one URL. Host the file at a URL you control to avoid this." },
+  { q: "Is a random Google Drive share link safe for something like a safety data sheet?", a: "It'll work, but it's the riskiest option for anything you can't afford to break. For SDS documents or warranty packets, host on infrastructure you actually control instead." },
 ];
 ---
 <GeneratorPageLayout
   title="PDF QR Code Generator — Link to a Hosted PDF, Free | QR Workbench"
-  description="Turn a link to your hosted PDF (Google Drive, Dropbox, or your own site) into a scannable QR code. Free, static, generated in your browser."
+  description="Turn a link to a hosted PDF — a menu, product manual, warranty card, spec sheet, or safety data sheet — into a QR code people scan at the point of use. Free, encodes only the link, hosts nothing."
   eyebrow="PDF QR Code Generator"
   slug="pdf"
   h1="A QR code that opens your PDF"
-  intro="Paste a link to a PDF that's already hosted somewhere — Google Drive, Dropbox, or your own website — and get a QR code that opens it. This tool encodes the link only; it doesn't host or store the file."
+  intro="Paste a link to a PDF that's already hosted somewhere — Google Drive, Dropbox, a CDN, or your own website — and get a QR code that opens it directly on a phone. This tool only encodes that link: it doesn't accept a file upload, store a copy, or host anything itself, so the link you paste has to already work on its own before you print the code."
   howTo={howTo}
   tips={tips}
   bulkNote="Need a code per product manual or spec sheet? Generate from CSV →"
@@ -42,6 +47,12 @@ const faq = [
       </label>
     </Fragment>
   </GeneratorShell>
+
+    <section class="deep-dive">
+      <h2>Where a PDF QR code actually earns its keep — and its one real limitation</h2>
+      <p>The common thread across every good use of this generator is a document that needs to reach someone standing at a specific physical point, not someone browsing a website: a product manual bolted to equipment on a factory floor, a restaurant menu printed as a small table card instead of a laminated sheet nobody's reprinted since prices changed, a warranty or registration form tucked in a box, a safety data sheet posted by a chemical storage cabinet where someone needs it fast and one-handed, a real-estate disclosure packet clipped to a lockbox at an open house. In every case, the alternative is someone typing a long URL into a phone standing in front of the thing — or the document not getting read at all.</p>
+      <p>What it doesn't do is host anything. This generator turns a URL you already have into a scannable pattern; the PDF has to already sit somewhere with its own stable public address — a Drive or Dropbox share link, a CDN, or your own site. That has one real consequence: if the hosting link ever changes — moved, deleted, permissions tightened — the printed QR code breaks, the same way any static QR code breaks when its target disappears. There's no fix once it's printed, only prevention: host the PDF at a URL you control and don't intend to reorganize, rather than a personal file-share link that can expire or change permissions without your knowledge.</p>
+    </section>
 </GeneratorPageLayout>
 
 <script>
@@ -51,3 +62,11 @@ const faq = [
   url.addEventListener("input", tool.update);
   tool.update();
 </script>
+
+<style>
+  .deep-dive { max-width: 68ch; margin: 0 0 2.6rem; }
+  .deep-dive h2 { font-size: 1.1rem; margin: 0 0 1rem; letter-spacing: -0.01em; }
+  .deep-dive p { font-size: 0.9rem; color: var(--ink-dim); line-height: 1.65; margin: 0 0 1.1rem; }
+  .deep-dive p:last-child { margin-bottom: 0; }
+  .deep-dive strong { color: var(--ink); }
+</style>

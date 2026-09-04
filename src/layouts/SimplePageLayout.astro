@@ -4,6 +4,8 @@ import Layout from "./Layout.astro";
 const { title, description, eyebrow, h1, intro, updated } = Astro.props;
 ---
 <Layout title={title} description={description}>
+  <slot name="head" slot="head" />
+
   <div class="frame simple-page">
     <div class="page-head">
       <div class="index-no">{eyebrow}</div>

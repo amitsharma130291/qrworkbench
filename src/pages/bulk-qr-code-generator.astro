@@ -1,5 +1,6 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import ProPromo from "../components/ProPromo.astro";
 
 const faq = [
   { q: "What's the difference between bulk and batch QR generation?", a: "Nothing — they're the same workflow under two different names. Both mean generating many QR codes from a list at once instead of making each one by hand." },
@@ -7,7 +8,7 @@ const faq = [
   { q: "Does it work with Excel files, or only CSV?", a: "CSV only, today. Excel export from Google Sheets or Excel itself works fine — just save your file as CSV first. Direct .xlsx support is on the roadmap." },
   { q: "Is my spreadsheet uploaded anywhere?", a: "No. The file is read and processed entirely in your browser tab — it's never sent to a server, ours or anyone else's." },
   { q: "What file formats do I get back?", a: "Each row becomes its own SVG or PNG file, named however you tell it to (like {SKU}.svg), all packed into a single ZIP." },
-  { q: "Can I generate WiFi or vCard codes in bulk, or only links?", a: "Right now, bulk generation encodes whatever text or URL is in your mapped column directly — it doesn't build WiFi or vCard-formatted codes yet. For those, use the individual WiFi or vCard generators for now." },
+  { q: "Can I generate WiFi or vCard codes in bulk, or only links?", a: "All three. Switch \"QR code type\" to WiFi or vCard in step 03 and the column mapping in step 02 updates to match — SSID/password for WiFi, name/company/phone/email/etc. for vCard — so each row becomes a properly formatted WiFi or contact-card code, not just a link. See the dedicated bulk vCard generator for a full walkthrough." },
 ];
 
 const appSchema = {
@@ -17,6 +18,7 @@ const appSchema = {
   description: "Generate hundreds or thousands of QR codes from a CSV, entirely in your browser, and export a ZIP of correctly named files.",
   applicationCategory: "UtilitiesApplication",
   operatingSystem: "Any (runs in the browser)",
+  offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
 };
 const faqSchema = {
   "@context": "https://schema.org",
@@ -46,6 +48,7 @@ const faqSchema = {
       </p>
       <div class="cta-row">
         <a class="btn btn-accent" href="/bulk">Open the bulk workspace →</a>
+        <a class="cta-price-note" href="/pricing">Free for 20 codes, then $7 per batch or $39 lifetime →</a>
       </div>
     </div>
 
@@ -68,6 +71,8 @@ const faqSchema = {
       </ul>
     </section>
 
+    <ProPromo variant="panel" heading="What it costs once you're past 20 codes" />
+
     <div class="gen-faq">
       <h2>Questions</h2>
       {faq.map((item) => (
@@ -77,6 +82,16 @@ const faqSchema = {
         </details>
       ))}
     </div>
+
+    <section class="related-section">
+      <h2>Related</h2>
+      <div class="related-grid">
+        <a class="related-link" href="/bulk-vcard-qr-code-generator">Bulk vCard generator →</a>
+        <a class="related-link" href="/qr-code-generator-for-inventory">QR codes for inventory →</a>
+        <a class="related-link" href="/qr-code-generator-from-csv">QR codes from a CSV →</a>
+        <a class="related-link" href="/qr-code-label-generator">Printable QR labels →</a>
+      </div>
+    </section>
   </div>
 </Layout>
 
@@ -87,7 +102,9 @@ const faqSchema = {
   .gen-page h1 { font-size: clamp(1.8rem, 3.6vw, 2.5rem); margin: 0 0 1.1rem; letter-spacing: -0.015em; line-height: 1.1; text-wrap: balance; }
   .intro { color: var(--ink-dim); line-height: 1.6; font-size: 1rem; margin: 0 0 1.7rem; }
   .intro em { font-style: normal; color: var(--ink); font-weight: 600; }
-  .cta-row { display: flex; }
+  .cta-row { display: flex; flex-direction: column; align-items: flex-start; gap: 0.8rem; }
+  .cta-price-note { font-size: 0.82rem; color: var(--ink-faint); text-decoration: none; border-bottom: 1px solid var(--line); padding-bottom: 2px; }
+  .cta-price-note:hover { color: var(--red); border-bottom-color: var(--red); }
 
   .gen-page h2 { font-size: 1.2rem; margin: 0 0 1.4rem; letter-spacing: -0.01em; }
   .how-section, .usecase-section { margin-bottom: 3rem; }
@@ -109,6 +126,11 @@ const faqSchema = {
   .faq-item summary::before { content: "+"; display: inline-block; width: 1em; color: var(--red); font-weight: 700; }
   .faq-item[open] summary::before { content: "–"; }
   .faq-item p { margin: 0.7rem 0 0 1em; font-size: 0.85rem; color: var(--ink-dim); line-height: 1.6; }
+
+  .related-section { margin-top: 3rem; }
+  .related-grid { display: flex; flex-wrap: wrap; gap: 0.7rem; }
+  .related-link { font-size: 0.85rem; font-weight: 600; color: var(--ink-dim); text-decoration: none; border: 1px solid var(--line); padding: 0.6rem 0.9rem; }
+  .related-link:hover { border-color: var(--red); color: var(--red); }
 
   @media (max-width: 700px) {
     .flow { grid-template-columns: 1fr 1fr; }

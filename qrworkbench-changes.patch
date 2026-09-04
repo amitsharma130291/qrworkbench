@@ -1,0 +1,126 @@
+diff --git a/src/components/Analytics.astro b/src/components/Analytics.astro
+index a984453..aad641e 100644
+--- a/src/components/Analytics.astro
++++ b/src/components/Analytics.astro
+@@ -1,10 +1,18 @@
+ ---
+ const GA_MEASUREMENT_ID = "G-2SFMNJ70K7";
++
++// GA4 is switched off for now so dev/debugging traffic doesn't get counted
++// as real pageviews. Flip this back to `true` before shipping to production.
++const GA_ENABLED = false;
+ ---
+-<script async src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}></script>
+-<script define:vars={{ GA_MEASUREMENT_ID }}>
+-  window.dataLayer = window.dataLayer || [];
+-  window.gtag = function gtag() { dataLayer.push(arguments); };
+-  gtag("js", new Date());
+-  gtag("config", GA_MEASUREMENT_ID);
+-</script>
++{GA_ENABLED && (
++  <Fragment>
++    <script async src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}></script>
++    <script define:vars={{ GA_MEASUREMENT_ID }}>
++      window.dataLayer = window.dataLayer || [];
++      window.gtag = function gtag() { dataLayer.push(arguments); };
++      gtag("js", new Date());
++      gtag("config", GA_MEASUREMENT_ID);
++    </script>
++  </Fragment>
++)}
+diff --git a/src/components/BulkWorkspace.astro b/src/components/BulkWorkspace.astro
+index f31d99a..b62ee9b 100644
+--- a/src/components/BulkWorkspace.astro
++++ b/src/components/BulkWorkspace.astro
+@@ -1170,4 +1170,13 @@
+     .field-row { grid-template-columns: 1fr; }
+     .support-grid { grid-template-columns: 1fr; gap: 2rem; }
+   }
++
++  /* Smallest phones: the 1.4rem panel padding starts crowding a
++     ~320-360px viewport, and the logo-size-select + remove-logo-button row
++     is tight enough at that width to wrap awkwardly mid-word. */
++  @media (max-width: 400px) {
++    .panel { padding: 1rem; }
++    .logo-controls { flex-wrap: wrap; }
++    .generate-bar, .upsell-cta { padding: 0.9rem 1rem; }
++  }
+ </style>
+diff --git a/src/components/GeneratorShell.astro b/src/components/GeneratorShell.astro
+index 25781eb..f4c1fd0 100644
+--- a/src/components/GeneratorShell.astro
++++ b/src/components/GeneratorShell.astro
+@@ -132,4 +132,16 @@ const { filenamePrefix = "qr-code" } = Astro.props;
+     .tool-grid { grid-template-columns: 1fr; }
+     .tool-inputs :global(.field-row) { grid-template-columns: 1fr; }
+   }
++
++  /* Smallest phones (iPhone SE and similar, ~320-380px wide): the fixed
++     1.8rem shell padding plus a permanent 2-column control grid leaves each
++     select only ~90px, cramped enough to matter. Trim padding and let the
++     lower-value controls (foreground/background/size/error-correction) go
++     full width instead of fighting for half a row. */
++  @media (max-width: 400px) {
++    .tool-shell { padding: 1.1rem; }
++    .ctrl-grid { grid-template-columns: 1fr; }
++    .ctrl-check { grid-column: span 1; }
++    .dl-row { flex-direction: column; }
++  }
+ </style>
+diff --git a/src/components/LabelsWorkspace.astro b/src/components/LabelsWorkspace.astro
+index e0b1d4a..467a558 100644
+--- a/src/components/LabelsWorkspace.astro
++++ b/src/components/LabelsWorkspace.astro
+@@ -540,10 +540,21 @@
+   .field-list select:disabled { color: var(--ink-faint); background: var(--bg); }
+   .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; }
+ 
+-  .sheet-preview { max-height: 360px; overflow-y: auto; }
++  /* overflow-x here is the safety net for the min-width:0 fix below -- if a
++     high column count + long captions still add up to more than the panel
++     can fit, this panel scrolls internally instead of silently blowing out
++     the whole page's width (app-body's overflow-x:hidden would otherwise
++     just clip it with no way to reach the rest). */
++  .sheet-preview { max-height: 360px; overflow-y: auto; overflow-x: auto; }
+   .empty-note { font-size: 0.8rem; color: var(--ink-faint); margin: 0; }
+   .sheet-grid { display: grid; gap: 0.5rem; }
+-  .sheet-cell { display: flex; flex-direction: column; align-items: center; gap: 0.3rem; border: 1px solid var(--line); padding: 0.4rem; }
++  /* min-width:0 overrides the grid item's default automatic minimum size,
++     which is otherwise based on its content's min-content width. Without
++     it, .sheet-cell span's white-space:nowrap gives every cell a large
++     intrinsic minimum -- at higher column counts (this tool allows up to
++     10) that forces the grid wider than its container on mobile instead of
++     actually respecting the `1fr` track sizing. */
++  .sheet-cell { display: flex; flex-direction: column; align-items: center; gap: 0.3rem; border: 1px solid var(--line); padding: 0.4rem; min-width: 0; }
+   .sheet-cell canvas { width: 100%; height: auto; max-width: 70px; }
+   .sheet-cell span { font-size: 0.6rem; color: var(--ink-dim); text-align: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%; }
+ 
+@@ -578,4 +589,11 @@
+     .panel { border-right: none; }
+     .field-row { grid-template-columns: 1fr; }
+   }
++
++  /* Smallest phones: the 1.4rem panel padding starts crowding a
++     ~320-360px viewport. */
++  @media (max-width: 400px) {
++    .panel { padding: 1rem; }
++    .generate-bar { padding: 0.9rem 1rem; }
++  }
+ </style>
+diff --git a/src/pages/index.astro b/src/pages/index.astro
+index d301e28..ac5da6b 100644
+--- a/src/pages/index.astro
++++ b/src/pages/index.astro
+@@ -1003,4 +1003,12 @@ const sampleRows = [
+     .cred-strip { gap: 1.2rem 2rem; }
+     .demo-map { flex-direction: column; }
+   }
++
++  /* Smallest phones: the 2.2rem padding on the embedded mini-generator and
++     the sample demo panel was sized for tablet/desktop and eats a
++     disproportionate share of a ~320-360px viewport. */
++  @media (max-width: 400px) {
++    .mini-gen, .demo-panel, .label-closeup { padding: 1.3rem; }
++    .hero-grid { padding: 2rem 1.25rem; }
++  }
+ </style>

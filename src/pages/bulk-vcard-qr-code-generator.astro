@@ -1,0 +1,174 @@
+---
+import Layout from "../layouts/Layout.astro";
+import ProPromo from "../components/ProPromo.astro";
+
+const sampleRows = [
+  { first: "Amit", last: "Sharma", org: "Acme Events", title: "Sales Director", phone: "+1 555 010 2200", email: "amit@acmeevents.com" },
+  { first: "Priya", last: "Nair", org: "Acme Events", title: "Account Manager", phone: "+1 555 010 2201", email: "priya@acmeevents.com" },
+  { first: "Diego", last: "Ramos", org: "Acme Events", title: "Operations Lead", phone: "+1 555 010 2202", email: "diego@acmeevents.com" },
+];
+
+const faq = [
+  { q: "What columns does my spreadsheet need?", a: "Only a first name (or a company name) is required. Last name, company, job title, phone, email, website and address are all optional and simply left out of the contact card if the column is blank or missing." },
+  { q: "Do I need to format the CSV in a special way for vCard mode?", a: "No — any column headers work, since you map each one to the right field yourself (or let it auto-guess). It doesn't need to match any fixed template." },
+  { q: "What contact format does each code produce?", a: "vCard 3.0 — the same format the individual vCard generator uses, and the one with the broadest support across iPhone, Android and desktop scanning apps. Scanning any code from a batch prompts \"Save contact\" with that row's details already filled in." },
+  { q: "Can I generate WiFi codes in bulk the same way?", a: "Yes — switch \"QR code type\" to WiFi instead of vCard, and map an SSID/password column pair per row. Useful for a hotel or office setting up per-room or per-desk WiFi cards from one spreadsheet." },
+  { q: "How many contact cards can one batch produce?", a: "There's no hard cap in the tool — people have run a few thousand rows through it. How far it goes depends on your browser and device, since everything happens locally rather than on a server." },
+  { q: "What do I get back — one file, or one per person?", a: "One SVG or PNG per row, each individually named from whichever column you map as the filename, all packed into a single ZIP download." },
+  { q: "Is my staff or guest list uploaded anywhere?", a: "No. The spreadsheet is parsed, the vCards are built, and the QR codes are rendered entirely in your browser tab — none of it is sent to a server." },
+  { q: "How is this different from the regular bulk QR generator?", a: "Same tool, different mode. The default mode encodes whatever's in your mapped column as a plain link or text. Switching to vCard mode changes the column mapping to contact fields (name, phone, email, etc.) and builds a real, properly formatted contact card per row instead of a link." },
+];
+
+const appSchema = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  name: "Bulk vCard QR Code Generator",
+  description: "Turn a spreadsheet of names, phone numbers and emails into individual vCard QR codes, generated entirely in the browser and exported as a ZIP.",
+  applicationCategory: "UtilitiesApplication",
+  operatingSystem: "Any (runs in the browser)",
+  offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+};
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faq.map((item) => ({
+    "@type": "Question",
+    name: item.q,
+    acceptedAnswer: { "@type": "Answer", text: item.a },
+  })),
+};
+---
+<Layout
+  title="Bulk vCard QR Code Generator — CSV to Contact Cards | QR Workbench"
+  description="Turn a staff or guest list into hundreds of individual vCard QR codes — name, phone, email and company per row, generated entirely in your browser."
+>
+  <Fragment slot="head">
+    <script type="application/ld+json" set:html={JSON.stringify(appSchema)} />
+    <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+  </Fragment>
+
+  <div class="frame gen-page">
+    <div class="gen-head">
+      <div class="index-no">BULK VCARD QR CODE GENERATOR</div>
+      <h1>Turn a staff list into hundreds of contact cards</h1>
+      <p class="intro">
+        Making one digital business card is a two-minute job. Making one per employee, conference speaker, or event guest isn't — not by hand. This mode of the bulk workspace takes a spreadsheet of names and contact details and generates a real, scan-to-save vCard QR code for every row, in one pass.
+      </p>
+      <div class="cta-row">
+        <a class="btn btn-accent" href="/bulk?type=vcard">Open the bulk workspace in vCard mode →</a>
+        <a class="cta-price-note" href="/pricing">First 20 free, then $7 per batch or $39 lifetime →</a>
+      </div>
+    </div>
+
+    <section class="how-section">
+      <h2>How it works</h2>
+      <div class="flow">
+        <div class="flow-step"><span class="n">01</span><h3>Upload your list</h3><p>Names, titles, phone numbers, emails — whatever columns you already have.</p></div>
+        <div class="flow-step"><span class="n">02</span><h3>Switch to vCard mode</h3><p>The column mapping changes to contact fields, and guesses the right column for each one first.</p></div>
+        <div class="flow-step"><span class="n">03</span><h3>Check the preview</h3><p>See exactly what a scan will save, before generating the full batch.</p></div>
+        <div class="flow-step"><span class="n">04</span><h3>Download the ZIP</h3><p>One correctly formatted vCard QR code per person, individually named.</p></div>
+      </div>
+    </section>
+
+    <section class="usecase-section">
+      <h2>What your spreadsheet needs to look like</h2>
+      <p class="body-copy">
+        Any CSV with a header row works — you map your own column names to the right fields, or let the tool guess. A first name (or a company name, for a shared department card) is the only thing that's actually required; everything else is optional. A typical staff-directory sheet looks like this:
+      </p>
+      <div class="table-wrap">
+        <table class="sample-table">
+          <thead><tr><th>First</th><th>Last</th><th>Company</th><th>Title</th><th>Phone</th><th>Email</th></tr></thead>
+          <tbody>
+            {sampleRows.map((r) => (
+              <tr><td>{r.first}</td><td>{r.last}</td><td>{r.org}</td><td>{r.title}</td><td>{r.phone}</td><td>{r.email}</td></tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p class="body-copy">Website and address columns are also supported, mapped the same way, if your sheet has them.</p>
+    </section>
+
+    <section class="usecase-section">
+      <h2>Who this is for</h2>
+      <ul class="usecase-list">
+        <li><strong>Conference and event badges</strong> — a code per attendee or speaker, generated from the registration list you already have, ready to lay out on <a href="/qr-code-label-generator">a printable badge sheet</a>.</li>
+        <li><strong>Staff directories</strong> — every employee gets a personal contact QR for an intranet page, an email signature, or a printed directory.</li>
+        <li><strong>Sales and field teams</strong> — order everyone's <a href="/qr-code-generator-for-business-cards">business card QR codes</a> in one batch instead of generating each rep's individually.</li>
+        <li><strong>Franchise and multi-location businesses</strong> — a consistent, correctly formatted contact card for every location manager or point of contact.</li>
+      </ul>
+    </section>
+
+    <ProPromo variant="panel" heading="From a free test batch to your whole directory" />
+
+    <div class="gen-faq">
+      <h2>Questions</h2>
+      {faq.map((item) => (
+        <details class="faq-item">
+          <summary>{item.q}</summary>
+          <p>{item.a}</p>
+        </details>
+      ))}
+    </div>
+
+    <section class="related-section">
+      <h2>Related</h2>
+      <div class="related-grid">
+        <a class="related-link" href="/vcard-qr-code-generator">Single vCard generator →</a>
+        <a class="related-link" href="/qr-code-generator-for-business-cards">QR for business cards →</a>
+        <a class="related-link" href="/bulk-qr-code-generator">Bulk QR generator →</a>
+        <a class="related-link" href="/qr-code-label-generator">Printable QR labels →</a>
+      </div>
+    </section>
+  </div>
+</Layout>
+
+<style>
+  .gen-page { padding: 3rem 1.75rem 5rem; max-width: 900px; }
+  .gen-head { max-width: 68ch; margin-bottom: 3rem; }
+  .index-no { font-family: var(--mono); font-size: 0.72rem; color: var(--red); margin-bottom: 1rem; letter-spacing: 0.04em; text-transform: uppercase; }
+  .gen-page h1 { font-size: clamp(1.8rem, 3.6vw, 2.5rem); margin: 0 0 1.1rem; letter-spacing: -0.015em; line-height: 1.1; text-wrap: balance; }
+  .intro { color: var(--ink-dim); line-height: 1.6; font-size: 1rem; margin: 0 0 1.7rem; }
+  .cta-row { display: flex; flex-direction: column; align-items: flex-start; gap: 0.8rem; }
+  .cta-price-note { font-size: 0.82rem; color: var(--ink-faint); text-decoration: none; border-bottom: 1px solid var(--line); padding-bottom: 2px; }
+  .cta-price-note:hover { color: var(--red); border-bottom-color: var(--red); }
+
+  .gen-page h2 { font-size: 1.2rem; margin: 0 0 1.4rem; letter-spacing: -0.01em; }
+  .how-section, .usecase-section { margin-bottom: 3rem; }
+  .body-copy { max-width: 68ch; font-size: 0.92rem; color: var(--ink-dim); line-height: 1.65; margin: 0 0 1.1rem; }
+  .body-copy a { color: var(--red); text-decoration: underline; text-underline-offset: 2px; }
+
+  .flow { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.6rem; }
+  .flow-step .n { font-family: var(--mono); font-size: 1.2rem; font-weight: 700; color: var(--red); display: block; margin-bottom: 0.6rem; }
+  .flow-step h3 { margin: 0 0 0.4rem; font-size: 0.92rem; font-weight: 700; }
+  .flow-step p { margin: 0; font-size: 0.8rem; color: var(--ink-dim); line-height: 1.5; }
+
+  .table-wrap { overflow-x: auto; margin: 1.2rem 0 1.4rem; }
+  .sample-table { border-collapse: collapse; width: 100%; font-size: 0.8rem; min-width: 560px; }
+  .sample-table th { text-align: left; font-family: var(--mono); font-size: 0.66rem; text-transform: uppercase; letter-spacing: 0.03em; color: var(--ink-faint); padding: 0.5rem 0.7rem; border-bottom: 2px solid var(--line); white-space: nowrap; }
+  .sample-table td { padding: 0.55rem 0.7rem; color: var(--ink-dim); border-bottom: 1px solid var(--line); white-space: nowrap; }
+
+  .usecase-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.8rem; }
+  .usecase-list li { font-size: 0.9rem; color: var(--ink-dim); line-height: 1.55; padding-left: 1.2rem; position: relative; }
+  .usecase-list li::before { content: "—"; position: absolute; left: 0; color: var(--red); }
+  .usecase-list strong { color: var(--ink); }
+  .usecase-list a { color: var(--red); text-decoration: underline; text-underline-offset: 2px; }
+
+  .faq-item { border-top: 1px solid var(--line); padding: 0.9rem 0; }
+  .faq-item summary { cursor: pointer; font-size: 0.9rem; font-weight: 600; list-style: none; }
+  .faq-item summary::-webkit-details-marker { display: none; }
+  .faq-item summary::before { content: "+"; display: inline-block; width: 1em; color: var(--red); font-weight: 700; }
+  .faq-item[open] summary::before { content: "–"; }
+  .faq-item p { margin: 0.7rem 0 0 1em; font-size: 0.85rem; color: var(--ink-dim); line-height: 1.6; }
+
+  .related-section { margin-top: 3rem; }
+  .related-grid { display: flex; flex-wrap: wrap; gap: 0.7rem; }
+  .related-link { font-size: 0.85rem; font-weight: 600; color: var(--ink-dim); text-decoration: none; border: 1px solid var(--line); padding: 0.6rem 0.9rem; }
+  .related-link:hover { border-color: var(--red); color: var(--red); }
+
+  @media (max-width: 700px) {
+    .flow { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 460px) {
+    .flow { grid-template-columns: 1fr; }
+  }
+</style>

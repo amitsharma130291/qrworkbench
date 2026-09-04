@@ -34,7 +34,11 @@
       <details class="nav-drop">
         <summary>More</summary>
         <div class="drop-panel drop-panel-single">
-          <a href="/labels">Label Generator</a>
+          <a href="/qr-code-label-generator">Label Generator</a>
+          <a href="/bulk-vcard-qr-code-generator">Bulk vCard QR</a>
+          <a href="/qr-code-generator-for-business-cards">QR for Business Cards</a>
+          <a href="/qr-code-generator-for-inventory">QR for Inventory</a>
+          <a href="/qr-code-generator-from-csv">QR from a CSV</a>
           <a href="/docs">Docs</a>
         </div>
       </details>
@@ -79,11 +83,11 @@
   .logo img { display: block; width: 100%; height: auto; }
 
   .primary-nav { display: flex; align-items: center; gap: 1.4rem; font-size: 0.84rem; font-weight: 500; flex: none; }
-  .primary-nav > a { color: var(--ink-dim); text-decoration: none; display: inline-flex; align-items: center; gap: 0.4rem; white-space: nowrap; }
+  .primary-nav > a { color: var(--ink-dim); text-decoration: none; display: inline-flex; align-items: center; gap: 0.4rem; white-space: nowrap; padding: 0.6rem 0.1rem; margin: -0.6rem -0.1rem; }
   .primary-nav > a:hover { color: var(--ink); }
 
   .nav-drop { position: relative; }
-  .nav-drop summary { list-style: none; cursor: pointer; color: var(--ink-dim); display: inline-flex; align-items: center; gap: 0.35rem; white-space: nowrap; }
+  .nav-drop summary { list-style: none; cursor: pointer; color: var(--ink-dim); display: inline-flex; align-items: center; gap: 0.35rem; white-space: nowrap; padding: 0.6rem 0.1rem; margin: -0.6rem -0.1rem; }
   .nav-drop summary::-webkit-details-marker { display: none; }
   .nav-drop summary::after { content: "▾"; font-size: 0.65rem; transition: transform var(--dur-fast) var(--ease-standard); }
   .nav-drop[open] summary::after { transform: rotate(180deg); }
@@ -111,7 +115,7 @@
   @media (max-width: 1060px) {
     .nav-row { flex-wrap: wrap; row-gap: 0.9rem; }
     .primary-nav { order: 3; flex-basis: 100%; flex-wrap: wrap; gap: 1rem 1.4rem; }
-    .drop-panel { position: static; box-shadow: none; border: none; grid-template-columns: 1fr; padding: 0.2rem 0 0 0.8rem; }
+    .drop-panel { position: static; box-shadow: none; border: none; grid-template-columns: 1fr; padding: 0.2rem 0 0 0.8rem; min-width: 0; }
   }
 
   /* Tablet: capped at 220px, preferring 34% (floored at the same 190px

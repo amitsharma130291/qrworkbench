@@ -4,34 +4,38 @@ import GeneratorShell from "../components/GeneratorShell.astro";
 
 const howTo = [
   "Enter the WhatsApp number, including the country code — no leading +, spaces, or dashes needed, the tool strips those automatically.",
-  "Add a pre-filled message if you want to guide what people send — an order, a booking request, anything.",
+  "Add a pre-filled message if you want to guide what people send — a reservation request, an order, a booking inquiry.",
+  "Think about who's actually scanning: this only works if they have WhatsApp installed, so it fits some audiences much better than others (see below).",
   "Preview and scan-test it yourself before printing or posting.",
-  "Download and place the code on a menu, storefront, or business card.",
+  "Download and place the code on a menu, storefront window, business card, or counter signage.",
 ];
 
 const tips = [
-  "This only opens a chat if WhatsApp is installed on the scanning phone — for a fallback that always works, pair it with the phone number printed as plain text too.",
-  "A pre-filled message works the same way here as a WhatsApp \"click to chat\" link — the visitor still has to tap send, nothing goes out automatically.",
-  "This is built on WhatsApp's free wa.me click-to-chat links, not the WhatsApp Business API — no business account, approval, or API key is needed for this to work.",
+  "This only opens a chat if WhatsApp is installed on the scanning phone. Unlike the SMS or phone-call codes on this site, there's no fallback — if you expect scanners without WhatsApp, print the number as plain text nearby too.",
+  "Where WhatsApp click-to-chat earns its keep is largely geographic: it's the default way businesses communicate with customers across India, Latin America, much of Europe, and Southeast Asia. For a US-only audience, adoption is far lower and SMS is often the safer default — don't assume this format performs the same everywhere.",
+  "A pre-filled message works the same way as WhatsApp's own \"click to chat\" share links — the visitor still has to tap send, nothing goes out automatically, and they can edit the text first if they want.",
+  "This is built on WhatsApp's free wa.me click-to-chat links, not the WhatsApp Business API — no business account, Meta approval, or API key is needed for this to work, but you also don't get catalog integration, automated replies, or verified business badges from it.",
+  "For a restaurant or retail counter, a short pre-filled message like \"Table for 2 at 7pm\" or \"I'd like to order the daily special\" turns a generic \"message us\" code into something closer to a one-tap request — worth the extra thirty seconds to write well.",
 ];
 
 const faq = [
   { q: "Does this send the WhatsApp message for me?", a: "No — scanning opens a chat with the number and message pre-filled. The person still has to tap send." },
-  { q: "Do I need a WhatsApp Business account?", a: "No — this uses WhatsApp's free wa.me click-to-chat links, which work with a regular personal or business WhatsApp number. No API key, approval, or business account is required." },
-  { q: "What format should the number be in?", a: "Just the country code and number — like 1 555 123 4567 for a US number. Spaces, dashes, and a leading + are all fine to type; they're stripped out automatically before the code is built." },
-  { q: "What happens if the scanning phone doesn't have WhatsApp installed?", a: "The scan typically leads to a WhatsApp download prompt or a broken link, depending on the device. If you expect scanners without WhatsApp, print the number as plain text nearby as a fallback." },
+  { q: "Do I need a WhatsApp Business account?", a: "No — this uses WhatsApp's free wa.me click-to-chat links, which work with a regular personal or business WhatsApp number. No API key, Meta approval, or verified business account is required." },
+  { q: "What format should the number be in?", a: "Just the country code and number — like 1 555 123 4567 for a US number. Spaces, dashes, and a leading + are all fine to type; they're stripped out automatically before the code is built, since wa.me links require digits only." },
+  { q: "What happens if the scanning phone doesn't have WhatsApp installed?", a: "It typically leads to a download prompt or a broken link, depending on device and browser. This is the main tradeoff versus SMS or phone-call codes, which need nothing installed — if you expect scanners without WhatsApp, print the number nearby as a fallback, or use the SMS generator instead." },
   { q: "Can I leave the message blank?", a: "Yes — the code will just open a new chat with that number, with nothing pre-typed." },
-  { q: "Is this the same as a WhatsApp Business API integration?", a: "No — this is a simple click-to-chat link, the same kind WhatsApp's own \"share\" button generates. It doesn't connect to automated replies, catalogs, or the paid Business API." },
+  { q: "Is this the same as a WhatsApp Business API integration?", a: "No — this is a simple click-to-chat link, the same kind WhatsApp's own \"share\" button generates. It doesn't connect to automated replies, product catalogs, chatbots, or the paid Business API." },
+  { q: "Is this actually useful for a US-based business?", a: "It depends on your customer base. WhatsApp adoption in the US is much lower than in India, Latin America, much of Europe, or Southeast Asia, where it's often the default messaging app entirely. If most customers don't already use WhatsApp, an SMS or phone-call code will likely reach more of them; for an international audience, this format can outperform SMS." },
+  { q: "What kinds of businesses get the most out of this?", a: "Anywhere a quick pre-filled inquiry beats a phone call: restaurants taking reservation or order requests, retail counters fielding product questions, and customer support in markets where WhatsApp is already the primary way people expect to reach a business rather than email or a contact form." },
 ];
-
 ---
 <GeneratorPageLayout
   title="WhatsApp QR Code Generator — Click-to-Chat QR, Free | QR Workbench"
-  description="Generate a QR code that opens a pre-filled WhatsApp chat — number and message ready to send. Free, static, generated in your browser."
+  description="Build a wa.me click-to-chat QR code with a pre-filled message — for restaurant reservations, retail counters, and support in markets where WhatsApp is the primary channel. Requires WhatsApp on the scanning phone; honestly more useful outside the US."
   eyebrow="WhatsApp QR Code Generator"
   slug="whatsapp"
   h1="A QR code that opens a WhatsApp chat"
-  intro="Scanning this opens WhatsApp with a chat to your number already started, message pre-filled if you add one. No business account or API needed — just wa.me's free click-to-chat links."
+  intro="Scanning this opens WhatsApp with a chat to your number already started, message pre-filled if you add one — no business account or API needed, just wa.me's free click-to-chat links. It's a strong fit where WhatsApp is already the default way customers message a business (India, Latin America, much of Europe, Southeast Asia), and a weaker one for a purely US-based audience, since the scanning phone needs WhatsApp installed with no fallback if it isn't."
   howTo={howTo}
   tips={tips}
   bulkNote="Need this for multiple staff numbers or locations? Generate from CSV →"
@@ -47,6 +51,12 @@ const faq = [
       </label>
     </Fragment>
   </GeneratorShell>
+
+  <section class="deep-dive">
+    <h2>How wa.me links work, and the one requirement to be honest about</h2>
+    <p>A wa.me link is a plain URL — <strong>https://wa.me/&lt;digits&gt;</strong> with an optional <strong>?text=</strong> parameter carrying your pre-filled message, URL-encoded the same way any query string is. There's no app SDK, no webhook, and no WhatsApp Business API involved — it's the identical link format WhatsApp's own in-app "share contact" and "click to chat" buttons generate, which is why it works reliably across WhatsApp Web, the mobile apps, and third-party browsers alike, without any registration on your part.</p>
+    <p>The honest tradeoff, and the reason this isn't a drop-in replacement for the SMS or phone-call codes on this site: the person scanning needs WhatsApp installed. SMS and a phone call need nothing beyond a working phone number — they work on every phone, everywhere, out of the box. WhatsApp click-to-chat only works if the scanning device already has the app, which is close to universal in markets like India, Brazil, and much of Europe and Southeast Asia, but far from guaranteed for a US-only audience. If you're not sure which describes your customers, printing the plain number alongside the code as a fallback costs nothing and covers the gap.</p>
+  </section>
 </GeneratorPageLayout>
 
 <script>
@@ -64,3 +74,11 @@ const faq = [
   [number, message].forEach((el) => el.addEventListener("input", tool.update));
   tool.update();
 </script>
+
+<style>
+  .deep-dive { max-width: 68ch; margin: 0 0 2.6rem; }
+  .deep-dive h2 { font-size: 1.1rem; margin: 0 0 1rem; letter-spacing: -0.01em; }
+  .deep-dive p { font-size: 0.9rem; color: var(--ink-dim); line-height: 1.65; margin: 0 0 1.1rem; }
+  .deep-dive p:last-child { margin-bottom: 0; }
+  .deep-dive strong { color: var(--ink); }
+</style>

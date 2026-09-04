@@ -1,13 +1,35 @@
 ---
 import SimplePageLayout from "../layouts/SimplePageLayout.astro";
+
+const faq = [
+  { q: "How long until I get a reply?", a: "There's no support team on staff — messages are read and answered directly, usually within a few business days. This contact form is the one channel; there's no faster escalation path." },
+  { q: "Is this the right place to recover a lost license key?", a: "Not usually — try \"Forgot your key?\" on the pricing page first. It resends your key by email instantly, using the address you paid with, with no waiting on a reply here. Only use this form if that tool genuinely doesn't work for your situation." },
+  { q: "Is this for bug reports, or just general questions?", a: "Both. For a bug report, include the generator or format you were using and roughly what you typed — that's usually enough to reproduce the issue. For a format request or general question, describe the use case, not just a format name." },
+  { q: "Is there a phone number I can call?", a: "No — there's no phone line or live chat. This form is the only way to reach us." },
+  { q: "Can I reach you for a partnership, press, or licensing question?", a: "Yes — use the subject line to say so, and include enough detail (who you are, what you're asking) that a first reply can actually be useful." },
+];
+
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faq.map((item) => ({
+    "@type": "Question",
+    name: item.q,
+    acceptedAnswer: { "@type": "Answer", text: item.a },
+  })),
+};
 ---
 <SimplePageLayout
   title="Contact | QR Workbench"
-  description="Get in touch with QR Workbench -- questions, bug reports, or feedback."
+  description="Get in touch with QR Workbench -- support questions, bug reports, partnership or press inquiries. No phone line; one contact form, answered directly."
   eyebrow="Contact"
   h1="Get in touch"
-  intro="Questions, bug reports, or feedback — send a message and we'll get back to you."
+  intro="Use this form for support questions, bug reports, partnership or press inquiries, and anything else not already covered elsewhere on the site. Trying to recover a lost license key? Check \"Forgot your key?\" on the pricing page first — it resends your key by email instantly, without waiting on a reply here."
 >
+  <Fragment slot="head">
+    <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+  </Fragment>
+
   <form class="contact-form" id="contact-form" novalidate>
     <div class="field-row">
       <label for="cf-name">Name
@@ -38,10 +60,20 @@ import SimplePageLayout from "../layouts/SimplePageLayout.astro";
   </form>
 
   <h2>What to include</h2>
-  <p>For bug reports, the format you were using and roughly what you typed helps the most — that's usually enough to reproduce the issue directly. For a format request, tell us the use case, not just the format name.</p>
+  <p>For bug reports, the generator or format you were using and roughly what you typed helps the most — that's usually enough to reproduce the issue directly. For a format request or feature idea, tell us the use case, not just the format name, so a reply can address what you're actually trying to do. For anything else — partnership, press, licensing — a subject line that says so up front gets you a more useful first reply.</p>
 
   <h2>Response time</h2>
-  <p>QR Workbench doesn't have a support team on staff — messages are read and answered directly. Most messages get a reply within a few business days. Email through this form is the one channel.</p>
+  <p>QR Workbench doesn't have a support team on staff — messages are read and answered directly by the person who built the site. Most messages get a reply within a few business days. This form is the one channel; there's no phone line or live chat.</p>
+
+  <div class="contact-faq">
+    <h2>Questions</h2>
+    {faq.map((item) => (
+      <details class="faq-item">
+        <summary>{item.q}</summary>
+        <p>{item.a}</p>
+      </details>
+    ))}
+  </div>
 </SimplePageLayout>
 
 <style>
@@ -63,6 +95,14 @@ import SimplePageLayout from "../layouts/SimplePageLayout.astro";
   @media (max-width: 560px) {
     .field-row { grid-template-columns: 1fr; }
   }
+
+  .contact-faq { margin: 2.6rem 0 1rem; }
+  .faq-item { border-top: 1px solid var(--line); padding: 0.9rem 0; }
+  .faq-item summary { cursor: pointer; font-size: 0.9rem; font-weight: 600; list-style: none; }
+  .faq-item summary::-webkit-details-marker { display: none; }
+  .faq-item summary::before { content: "+"; display: inline-block; width: 1em; color: var(--red); font-weight: 700; }
+  .faq-item[open] summary::before { content: "–"; }
+  .faq-item p { margin: 0.7rem 0 0 1em; font-size: 0.85rem; color: var(--ink-dim); line-height: 1.6; }
 </style>
 
 <script>

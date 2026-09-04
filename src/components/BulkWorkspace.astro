@@ -27,13 +27,13 @@
     <button class="link-btn" id="tb-change-key" type="button" hidden>Use a different license key</button>
   </div>
   <form id="tb-key-form" class="tb-key-form" hidden>
-    <input id="tb-key-input" type="text" placeholder="License key" autocomplete="off" />
+    <input id="tb-key-input" type="text" placeholder="License key" aria-label="License key" autocomplete="off" />
     <button class="btn" type="submit">Unlock</button>
     <button class="link-btn" id="tb-toggle-recover" type="button">Forgot your key?</button>
     <p id="tb-key-error" class="tb-key-error" hidden></p>
   </form>
   <form id="tb-recover-form" class="tb-key-form" hidden>
-    <input id="tb-recover-email" type="email" placeholder="Email used at checkout" autocomplete="email" />
+    <input id="tb-recover-email" type="email" placeholder="Email used at checkout" aria-label="Email used at checkout" autocomplete="email" />
     <button class="btn" type="submit">Send my key</button>
     <p id="tb-recover-status" class="tb-key-status" hidden></p>
   </form>
@@ -257,6 +257,16 @@
   import JSZip from "jszip";
 
   const FREE_ROW_CAP = 20;
+  // A Batch Pass covers one file up to this many rows (matches the "$7, up
+  // to 5,000 codes" claim on pricing.astro / PricingCards.astro) -- Pro has
+  // no cap at all. Kept as one function so every place that checks "how many
+  // rows can this tier actually generate" stays in sync with what's sold.
+  const BATCH_ROW_CAP = 5000;
+  function effectiveCap() {
+    if (activeTier === "pro") return Infinity;
+    if (activeTier === "batch") return BATCH_ROW_CAP;
+    return FREE_ROW_CAP;
+  }
 
   const el = (id) => document.getElementById(id);
   const dropzone = el("dropzone");
@@ -662,11 +672,13 @@
 
   function updateBottomBar() {
     const n = state.rows.length;
-    const capped = !isUnlocked && n > FREE_ROW_CAP;
+    const cap = effectiveCap();
+    const capped = n > cap;
     if (!n) {
       readyCount.textContent = "Upload a CSV to get started";
     } else if (capped) {
-      readyCount.textContent = `${FREE_ROW_CAP} of ${n.toLocaleString()} QR codes ready — free plan caps batches at ${FREE_ROW_CAP}`;
+      const capReason = activeTier === "batch" ? "this Batch Pass covers a file up to" : "free plan caps batches at";
+      readyCount.textContent = `${cap.toLocaleString()} of ${n.toLocaleString()} QR codes ready — ${capReason} ${cap.toLocaleString()}`;
     } else {
       readyCount.textContent = `${n.toLocaleString()} QR codes ready to generate`;
     }
@@ -675,7 +687,7 @@
     el("chip-ec").textContent = `${cfgEc.value} (${ecLabel[cfgEc.value]})`;
     generateBtn.disabled = n === 0;
     generateBtn.textContent = capped
-      ? `Generate ${FREE_ROW_CAP} of ${n.toLocaleString()} (free limit)`
+      ? `Generate ${cap.toLocaleString()} of ${n.toLocaleString()} (${activeTier === "batch" ? "batch limit" : "free limit"})`
       : n
         ? `Generate ${n.toLocaleString()} QR codes`
         : "Generate QR codes";
@@ -837,8 +849,9 @@
     const used = new Set();
     let written = 0;
 
-    const capped = !isUnlocked && state.rows.length > FREE_ROW_CAP;
-    const rows = capped ? state.rows.slice(0, FREE_ROW_CAP) : state.rows;
+    const cap = effectiveCap();
+    const capped = state.rows.length > cap;
+    const rows = capped ? state.rows.slice(0, cap) : state.rows;
 
     const logo = activeLogo();
     // A logo covering part of the pattern needs a higher error-correction
@@ -883,13 +896,17 @@
     a.remove();
     URL.revokeObjectURL(url);
     genProgress.textContent = capped
-      ? `Done — downloaded ${written.toLocaleString()} of ${state.rows.length.toLocaleString()} (free limit is ${FREE_ROW_CAP}).`
+      ? `Done — downloaded ${written.toLocaleString()} of ${state.rows.length.toLocaleString()} (${activeTier === "batch" ? "batch limit is" : "free limit is"} ${cap.toLocaleString()}).`
       : `Done — downloaded qrgrid-codes.zip (${written.toLocaleString()} files)`;
     generateBtn.disabled = false;
 
     if (capped) {
-      const remaining = state.rows.length - FREE_ROW_CAP;
+      const remaining = state.rows.length - cap;
       upsell.title.textContent = `${remaining.toLocaleString()} more QR code${remaining === 1 ? "" : "s"} waiting`;
+      // Already on a Batch Pass and still over its cap -- another Batch
+      // Pass wouldn't help (it's scoped to one file, and this one is
+      // already claimed), so Pro is the only real next step here.
+      upsell.buyBatch.hidden = activeTier === "batch";
       upsell.root.hidden = false;
     }
   }
@@ -976,22 +993,35 @@
   // they're the only settings that exist on both sides. Foreground/
   // background color and logo have no equivalent here yet, so there's
   // nothing honest to carry forward for those.
+  //
+  // `type` is separate: it's not a handoff from a prior design, just a deep
+  // link so an SEO landing page (e.g. /bulk-vcard-qr-code-generator) can send
+  // someone straight into the right QR-type mode instead of dumping them on
+  // the URL default and making them find the vCard/WiFi option themselves.
   (function applyIncomingSettings() {
     const params = new URLSearchParams(window.location.search);
     const size = params.get("size");
     const ec = params.get("ec");
     const margin = params.get("margin");
-    if (!size && !ec && !margin) return;
+    const type = params.get("type");
 
-    if (size && [...cfgSize.options].some((o) => o.value === size)) cfgSize.value = size;
-    if (ec && [...cfgEc.options].some((o) => o.value === ec)) cfgEc.value = ec;
-    if (margin !== null) cfgQuietZone.checked = margin !== "0";
+    if (type && [...cfgType.options].some((o) => o.value === type)) {
+      cfgType.value = type;
+      cfgType.dispatchEvent(new Event("change"));
+    }
 
-    el("settings-note").hidden = false;
-    updateBottomBar();
+    if (size || ec || margin) {
+      if (size && [...cfgSize.options].some((o) => o.value === size)) cfgSize.value = size;
+      if (ec && [...cfgEc.options].some((o) => o.value === ec)) cfgEc.value = ec;
+      if (margin !== null) cfgQuietZone.checked = margin !== "0";
+      el("settings-note").hidden = false;
+      updateBottomBar();
+    }
+
+    if (!size && !ec && !margin && !type) return;
 
     const url = new URL(window.location.href);
-    ["size", "ec", "margin"].forEach((k) => url.searchParams.delete(k));
+    ["size", "ec", "margin", "type"].forEach((k) => url.searchParams.delete(k));
     window.history.replaceState({}, "", url);
   })();
 
@@ -1169,5 +1199,14 @@
     .panel { border-right: none; }
     .field-row { grid-template-columns: 1fr; }
     .support-grid { grid-template-columns: 1fr; gap: 2rem; }
+  }
+
+  /* Smallest phones: the 1.4rem panel padding starts crowding a
+     ~320-360px viewport, and the logo-size-select + remove-logo-button row
+     is tight enough at that width to wrap awkwardly mid-word. */
+  @media (max-width: 400px) {
+    .panel { padding: 1rem; }
+    .logo-controls { flex-wrap: wrap; }
+    .generate-bar, .upsell-cta { padding: 0.9rem 1rem; }
   }
 </style>

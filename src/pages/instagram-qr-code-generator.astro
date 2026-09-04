@@ -3,32 +3,38 @@ import GeneratorPageLayout from "../layouts/GeneratorPageLayout.astro";
 import GeneratorShell from "../components/GeneratorShell.astro";
 
 const howTo = [
-  "Open your Instagram profile (or the specific post/reel) in a browser and copy the URL — instagram.com/yourusername for a profile.",
-  "Paste it into the field below and check the preview.",
-  "Scan it yourself first to confirm it opens the right profile or post.",
-  "Download the SVG for packaging or print, or PNG for a digital screen or story.",
+  "Decide profile or post: a profile link (instagram.com/yourusername) asks for a follow; a specific post or reel link (instagram.com/p/... or /reel/...) sends people to one piece of content and works better for \"watch this\" than \"follow me.\"",
+  "For a profile link, open your profile in a browser or the app's share sheet and copy the URL — it should read instagram.com/yourusername with nothing appended.",
+  "For a post or reel, open it, tap the ⋯ or paper-plane icon, and choose \"Copy Link\" — this grabs the direct post URL rather than your profile.",
+  "Paste the link into the field below and check the live preview, then scan it with your own phone to confirm it opens where you expect.",
+  "Download the SVG for anything printed — packaging, receipts, in-store signage — or the PNG for a digital screen or story.",
 ];
 
 const tips = [
-  "A profile link (instagram.com/yourusername) is more durable for long-term print materials — a specific post or reel link stops being useful once that content is old or deleted.",
-  "If you're printing on packaging that will be around for a while, prefer the profile link over a time-limited campaign post.",
-  "No Instagram API access or business account is required — this just encodes the public URL you paste.",
+  "On a phone with Instagram installed, scanning opens the profile or post directly inside the app; on a phone without it, the same link opens Instagram's mobile website instead — both work, but the in-app experience is smoother, which is worth knowing if a scan seems to \"look different\" on different phones.",
+  "For retail packaging — an insert card, a sticker on the box, a thank-you note — the profile link outperforms a post link almost every time, since the person is being asked to follow, not to watch one specific thing.",
+  "For a trade-show booth or event, a code on a name tag or table tent gets scanned far more than one buried in a slide deck; keep it big enough to scan from arm's length, not just up close.",
+  "Receipts are an underused placement: the code is already in the customer's hand right after a purchase, which is a better moment to ask for a follow than a social post they'll scroll past.",
+  "A profile link is the safer long-term choice for anything printed in bulk — packaging runs, table signage you'll reuse — since a post or reel link stops being relevant once that content ages out, even though the link itself keeps working.",
 ];
 
 const faq = [
-  { q: "What URL do I use for my Instagram profile?", a: "https://instagram.com/yourusername — visit your profile in a browser and copy the address bar if you're not sure of the exact format." },
-  { q: "Can I link to a specific post or reel instead of my profile?", a: "Yes — paste that post or reel's share link instead of your profile URL." },
-  { q: "What happens if I change my Instagram username later?", a: "The old link stops working, since Instagram profile URLs are tied to your username. Reprint with the new URL if you rename your account." },
-  { q: "Can this link straight to my Instagram DMs?", a: "No — Instagram doesn't support a public link that opens a pre-filled direct message the way email or SMS does. This tool links to profiles and posts only." },
+  { q: "Should I link to my profile or a specific post?", a: "Profile, for almost everything meant to grow your following — packaging, cards, booth signage. Use a post or reel link only when you want someone to see one specific thing right now, like a product demo." },
+  { q: "Does scanning open the Instagram app or a browser?", a: "It opens the app if it's installed on the scanning phone, and Instagram's mobile website if it isn't. You can't control which — it depends on the visitor's phone, not your QR code." },
+  { q: "Where should I actually put an Instagram QR code for a retail product?", a: "Packaging inserts and stickers on the box perform well because the customer is holding the product with nothing else demanding their attention. Receipts work for the same reason. In-store signage near checkout is a reliable third option." },
+  { q: "Can this link open a pre-filled DM or story mention?", a: "No — Instagram doesn't support a public URL that opens a pre-composed direct message or auto-mentions your account in someone's story. This tool links to profiles and posts only." },
+  { q: "What if I change my Instagram username later?", a: "The old instagram.com/oldname link stops resolving. Regenerate and reprint if that's likely — or consider whether you actually need to change your username before you print in bulk." },
+  { q: "Is a business or creator account required for this to work?", a: "No — any public Instagram profile URL works the same way, personal or business. A business account gets you Instagram's own analytics on the traffic, but it's not required for the QR code itself to function." },
+  { q: "Can I use one QR code across multiple pieces of packaging or events?", a: "Yes, as long as it's a profile link and your username doesn't change — that's exactly the kind of durable, reusable code this tool is meant for." },
 ];
 ---
 <GeneratorPageLayout
   title="Instagram QR Code Generator — Link to Your Profile, Free | QR Workbench"
-  description="Turn your Instagram profile or post link into a scannable QR code. Free, static, generated in your browser."
+  description="A QR code built for the follow ask: packaging inserts, receipts, and booth signage that turn a glance into a scan and a scan into a follow — profile or post link, your choice."
   eyebrow="Instagram QR Code Generator"
   slug="instagram"
   h1="Get scanned straight to your Instagram"
-  intro="Paste your Instagram profile or post link and get a QR code for packaging, business cards, or in-store signage — follows in one scan, no typing a handle."
+  intro="Instagram QR codes do one specific job well: turning a passive moment — unboxing a package, walking a trade-show aisle, glancing at a receipt — into a follow. This generator encodes your profile or a specific post/reel link so you can put that ask exactly where people are already looking down at something in their hands."
   howTo={howTo}
   tips={tips}
   bulkNote="Need codes for multiple accounts or campaigns? Generate a batch from CSV →"
@@ -41,6 +47,12 @@ const faq = [
       </label>
     </Fragment>
   </GeneratorShell>
+
+  <section class="deep-dive">
+    <h2>Profile link vs. post link, and what happens when someone scans</h2>
+    <p>instagram.com/yourusername and a post or reel URL like instagram.com/p/Cxxxxx look similar but do different jobs. The profile link is the follow ask — it's what belongs on anything meant to grow your account: packaging inserts, business cards, booth signage, a sticker on a shipped box. A post or reel link is the content ask — it sends someone to one specific photo, video, or reel, which works better when the goal is "watch this demo" or "see this before/after" than "follow me." Mixing them up is the most common mistake: a code that says "Follow us!" but links to a single reel technically works, but it undersells what you're asking for.</p>
+    <p>What happens after the scan depends on what's on the scanning phone. If Instagram is installed, the operating system hands the link to the app and it opens natively — feed, follow button, everything in place. If it isn't installed, the same link opens in a mobile browser showing Instagram's web version, which still works but nudges the visitor to install the app before letting them do much. Neither behavior is something you configure — it's simply how Instagram's universal links work — but it's worth knowing when a scan on one phone "looks different" than on another.</p>
+  </section>
 </GeneratorPageLayout>
 
 <script>
@@ -50,3 +62,11 @@ const faq = [
   url.addEventListener("input", tool.update);
   tool.update();
 </script>
+
+<style>
+  .deep-dive { max-width: 68ch; margin: 0 0 2.6rem; }
+  .deep-dive h2 { font-size: 1.1rem; margin: 0 0 1rem; letter-spacing: -0.01em; }
+  .deep-dive p { font-size: 0.9rem; color: var(--ink-dim); line-height: 1.65; margin: 0 0 1.1rem; }
+  .deep-dive p:last-child { margin-bottom: 0; }
+  .deep-dive strong { color: var(--ink); }
+</style>

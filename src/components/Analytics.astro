@@ -1,9 +1,10 @@
 ---
 const GA_MEASUREMENT_ID = "G-2SFMNJ70K7";
 
-// GA4 is switched off for now so dev/debugging traffic doesn't get counted
-// as real pageviews. Flip this back to `true` before shipping to production.
-const GA_ENABLED = false;
+// GA4 is live — dev/debug traffic should be filtered at the GA4 property
+// level (e.g. an internal-traffic filter) rather than by disabling the tag,
+// now that this is shipping to production.
+const GA_ENABLED = true;
 ---
 {GA_ENABLED && (
   <Fragment>

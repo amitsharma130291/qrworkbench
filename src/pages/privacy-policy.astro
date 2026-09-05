@@ -9,7 +9,7 @@ import SimplePageLayout from "../layouts/SimplePageLayout.astro";
   updated="August 20, 2026"
 >
   <h2>The short version</h2>
-  <p>Every QR generator on this site — the eleven individual formats and the bulk workspace — runs entirely in your browser. Nothing you type into them, upload to them, or generate with them is ever sent to a server. Two features on the site do transmit data — the contact form and the paid checkout — both covered specifically below.</p>
+  <p>Every QR generator on this site — the fourteen individual formats and the bulk workspace — runs entirely in your browser. Nothing you type into them, upload to them, or generate with them is ever sent to a server. Two features on the site do transmit data — the contact form and the paid checkout — both covered specifically below.</p>
 
   <h2>QR generation</h2>
   <p>Whatever you enter into a generator — a URL, a WiFi password, contact details, an uploaded CSV — stays in your browser's memory for as long as the page is open, and is discarded when you close the tab or navigate away. QR Workbench has no server-side component for QR generation and cannot see what you typed, what format you chose, or what you downloaded. This isn't a policy we could quietly reverse — the code that builds a QR code runs entirely client-side, so there's no server-side code path capable of receiving that data even if we wanted it to.</p>
@@ -30,6 +30,9 @@ import SimplePageLayout from "../layouts/SimplePageLayout.astro";
 
   <h2>Cookies and tracking</h2>
   <p>QR Workbench uses Google Analytics (GA4) to understand which pages get traffic — page views, approximate location derived from IP address, device and browser type, and the site that referred you. Google Analytics sets cookies and similar identifiers to do this, and the data it collects is pseudonymous and aggregate. It never includes anything you type into a QR generator or the contact form — both stay entirely outside Google Analytics, for the reason described above: there's no code path connecting them. See <a href="https://policies.google.com/privacy" rel="nofollow">Google's Privacy Policy</a> for how Google itself handles this data. QR Workbench does not use advertising trackers or sell any data to third parties.</p>
+
+  <h2>Advertising</h2>
+  <p>QR Workbench does not currently run any advertising. This section is a standing disclosure in case that changes: third-party vendors, including Google, may in the future use cookies to serve ads on this site based on a user's prior visits here or to other sites. That means Google and its partners could use the DoubleClick cookie (or similar mechanisms) to serve ads based on someone's visit to this site and other sites on the internet. You can opt out of personalized advertising by visiting <a href="https://policies.google.com/technologies/partner-sites" rel="nofollow">Google's page on how it uses data from sites that use its services</a>. If and when QR Workbench actually starts running ads, this page will be updated with the date of that change and any further detail it requires.</p>
 
   <h2>Hosting</h2>
   <p>The site is hosted on Vercel. Like most hosting providers, Vercel's infrastructure may log basic technical request data (IP address, request timing, browser user-agent) as a normal part of serving web traffic — the same baseline logging virtually every website generates by default. QR Workbench does not access or use this data beyond what's needed to keep the site running and diagnose outages.</p>

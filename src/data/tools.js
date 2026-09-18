@@ -1,4 +1,5 @@
 export const TOOLS = [
+  { slug: "text", name: "Text QR", href: "/text-qr-code-generator" },
   { slug: "url", name: "URL QR", href: "/url-qr-code-generator" },
   { slug: "wifi", name: "WiFi QR", href: "/wifi-qr-code-generator" },
   { slug: "vcard", name: "vCard QR", href: "/vcard-qr-code-generator" },
@@ -18,7 +19,8 @@ export const TOOLS = [
 // Hand-picked, not just "next 3 in the list" -- each generator links to the
 // ones a real visitor doing that task is next most likely to need.
 export const RELATED = {
-  url: ["pdf", "google-forms", "youtube"],
+  text: ["url", "wifi", "vcard"],
+  url: ["text", "pdf", "google-forms"],
   wifi: ["vcard", "phone", "url"],
   vcard: ["email", "phone", "whatsapp"],
   email: ["sms", "whatsapp", "vcard"],

@@ -1,12 +1,14 @@
-function parseLine(line) {
-  const out = [];
+export function parseCSV(text) {
+  const records = [];
+  let record = [];
   let cur = "";
   let inQuotes = false;
-  for (let i = 0; i < line.length; i++) {
-    const ch = line[i];
+  text = text.replace(/^\uFEFF/, '');
+  for (let i = 0; i < text.length; i++) {
+    const ch = text[i];
     if (inQuotes) {
       if (ch === '"') {
-        if (line[i + 1] === '"') {
+        if (text[i + 1] === '"') {
           cur += '"';
           i++;
         } else {
@@ -18,26 +20,22 @@ function parseLine(line) {
     } else if (ch === '"') {
       inQuotes = true;
     } else if (ch === ",") {
-      out.push(cur);
+      record.push(cur);
       cur = "";
+    } else if (ch === '\n' || ch === '\r') {
+      record.push(cur); records.push(record); record = []; cur = '';
+      if (ch === '\r' && text[i + 1] === '\n') i++;
     } else {
       cur += ch;
     }
   }
-  out.push(cur);
-  return out.map((s) => s.trim());
-}
-
-export function parseCSV(text) {
-  const lines = text.split(/\r\n|\n/).filter((l) => l.length > 0);
-  if (lines.length === 0) return { headers: [], rows: [] };
-  const headers = parseLine(lines[0]);
-  const rows = lines.slice(1).map((line) => {
-    const cells = parseLine(line);
-    const row = {};
-    headers.forEach((h, i) => (row[h] = cells[i] ?? ""));
-    return row;
-  });
+  if (inQuotes) throw new Error('CSV has an unclosed quoted field. Export it again from your spreadsheet.');
+  record.push(cur); records.push(record);
+  const nonempty = records.filter(row => row.some(value => value !== ''));
+  if (!nonempty.length) return { headers: [], rows: [] };
+  const headers = nonempty[0].map(h => h.trim());
+  if (headers.some(h => !h) || new Set(headers.map(h => h.toLowerCase())).size !== headers.length) throw new Error('Use unique, nonempty column headers.');
+  const rows = nonempty.slice(1).map(cells => Object.fromEntries(headers.map((h, i) => [h, cells[i] ?? ''])));
   return { headers, rows };
 }
 

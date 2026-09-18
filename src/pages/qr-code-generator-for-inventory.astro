@@ -11,21 +11,18 @@ const sampleRows = [
 const faq = [
   { q: "What should each QR code actually link to?", a: "Whatever's most useful when someone scans it standing next to the item: a product page, a spec sheet or manual (PDF), an internal asset record, or even just a plain-text SKU if you're scanning into a separate system rather than opening a link." },
   { q: "Do I need special inventory software to use this?", a: "No — the input is a plain CSV. Export one from whatever you already use (a spreadsheet, Shopify, Airtable, a warehouse system's own export) and upload it directly. Nothing needs to integrate with anything." },
-  { q: "How durable are the printed codes for a warehouse or shop floor?", a: "That's a print-stock and error-correction question, not a QR one. Use the highest error-correction level (H, ~30%) for anything that might get dirty, scratched, or partially obscured, and print on a label material rated for the environment — the code itself degrades gracefully as long as roughly two-thirds of it is still readable." },
+  { q: "How durable are the printed codes for a warehouse or shop floor?", a: "That's a print-stock and error-correction question, not a QR one. Use the highest error-correction level (H, ~30%) for anything that might get dirty, scratched, or partially obscured, and print on a label material rated for the environment — error correction can recover some damaged codewords, but no visible percentage of damage guarantees a successful scan. Test the final label at the intended size and on the actual material." },
   { q: "Can I regenerate just the codes that changed, not the whole batch?", a: "Yes — filter your CSV down to just the changed rows before uploading (in the spreadsheet you already have it in) and generate that smaller batch on its own. Filenames stay consistent as long as you keep using the same column for filenames." },
   { q: "What about codes for individual products vs. whole categories or locations?", a: "The same workflow handles both — it's just what's in your spreadsheet. A row can represent a SKU, a shelf, a room, a piece of equipment, or a delivery pallet; the tool doesn't care what the thing is, only that each row gets its own code and filename." },
-  { q: "Can I print these directly onto labels, not just get image files?", a: "Yes — export as individual SVG/PNG files for use in your own label software, or use the printable label-sheet mode to get a laid-out, captioned PDF sized for real label stock, without a separate design step." },
+  { q: "Can I print these directly onto labels, not just get image files?", a: "Yes — export as individual SVG/PNG files for use in your own label software, or use the printable label-sheet mode to get a laid-out, captioned PDF sized for real label stock, without a separate design step. PDF export requires Pro; the layout preview is free." },
   { q: "Is our inventory data uploaded anywhere?", a: "No. The CSV is read, the QR codes are generated, and the ZIP is built entirely in your browser tab — none of it touches a server, which matters if your inventory sheet has internal SKUs, locations, or supplier data you'd rather not put through a third-party service." },
 ];
 
 const appSchema = {
   "@context": "https://schema.org",
-  "@type": "SoftwareApplication",
+  "@type": "WebPage",
   name: "QR Code Generator for Inventory",
   description: "Generate a named QR code per SKU or asset from a spreadsheet, exported as individual files or a printable label sheet, entirely in the browser.",
-  applicationCategory: "UtilitiesApplication",
-  operatingSystem: "Any (runs in the browser)",
-  offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
 };
 const faqSchema = {
   "@context": "https://schema.org",
@@ -116,6 +113,7 @@ const faqSchema = {
         <a class="related-link" href="/url-qr-code-generator">URL QR generator →</a>
       </div>
     </section>
+<section class="workflow-links" style="margin:2rem 0"><h2>Next steps for this workflow</h2><ul><li><a href="/qr-code-generator-with-text">Add a readable asset ID to one code</a></li><li><a href="/text-qr-code-generator">Store an offline identifier</a></li><li><a href="/qr-code-generator-from-excel">Import your asset workbook</a></li></ul></section>
   </div>
 </Layout>
 

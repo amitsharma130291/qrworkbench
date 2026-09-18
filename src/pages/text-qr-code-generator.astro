@@ -1,0 +1,21 @@
+---
+import GeneratorPageLayout from '../layouts/GeneratorPageLayout.astro';
+import GeneratorShell from '../components/GeneratorShell.astro';
+const howTo = ['Enter the exact text you want a scanner to display, including line breaks.','Check the live preview. Longer messages create denser patterns, so keep printed codes large enough.','Scan the preview and compare the decoded wording with your input.','Download PNG for an image workflow or SVG for print artwork.'];
+const tips = ['Text is encoded inside the QR pattern and can be read without fetching a webpage. The scanner app controls how it displays that text.','Avoid passwords, personal records, or other secrets on publicly visible codes. Anyone who scans them can read their contents.','A text QR is useful for short instructions, equipment IDs, reference numbers, or an offline message. Use a website QR for content that needs updating.'];
+const faq = [{q:'Is a text QR the same as a QR with a caption?',a:'No. A text QR stores your message inside the pattern. A caption is visible text printed outside the pattern and is not automatically part of the encoded message.'},{q:'Does it need an internet connection?',a:'Decoding plain text does not require fetching a website. You still need a camera or scanner app capable of reading QR codes.'},{q:'Can I edit the message after printing?',a:'No. The text is stored directly in the QR pattern. Generate and print a new code when the message changes.'},{q:'How much text should I use?',a:'Keep it short enough to scan at the intended print size. QR capacity depends on character encoding and error correction; the preview reports an error if your message cannot fit.'}];
+---
+<GeneratorPageLayout slug="text" eyebrow="Text QR Code Generator" h1="Text QR Code Generator"
+ title="Text QR Code Generator — Free PNG & SVG | QR Workbench"
+ description="Encode a plain-text message, instructions, or an identifier in a QR code. Preserve line breaks, preview locally, and download free PNG or SVG files."
+ intro="Store a short message directly in a QR code. Type instructions, an equipment ID, or an offline note; the scanner reads the text from the pattern without visiting a website."
+ howTo={howTo} tips={tips} faq={faq} bulkNote="Have a spreadsheet of different messages or IDs? Make one text QR per row in the bulk workspace." bulkHref="/qr-code-generator-from-csv">
+ <GeneratorShell filenamePrefix="text-qr-code"><Fragment slot="fields"><label for="f-text">Message to encode<textarea id="f-text" rows="6" placeholder="Equipment: PUMP-017&#10;Inspect seal before use."></textarea></label><p>Line breaks and spaces are preserved in the encoded message.</p></Fragment></GeneratorShell>
+ <section><h2>Encoded text, a website link, or a visible caption?</h2><p>For a message that must travel with the code, use this tool. For a manual or instructions you expect to revise, use a stable link in the <a href="/url-qr-code-generator">URL generator</a>. To show a readable label underneath either kind of code, use the <a href="/qr-code-generator-with-text">QR generator with text captions</a>.</p><p>For asset labels, store an ID in the pattern and put the same ID beneath it so staff can identify the item even when a camera is unavailable. The <a href="/qr-code-generator-for-inventory">inventory workflow</a> explains that choice, while <a href="/qr-code-label-generator">Pro label sheets</a> arrange rows and captions for printing.</p></section>
+</GeneratorPageLayout>
+<script>
+ import { initGeneratorTool } from '../lib/generatorUI.js';
+ const input = document.getElementById('f-text');
+ const tool = initGeneratorTool({getText: () => input.value, filenamePrefix:'text-qr-code'});
+ input.addEventListener('input',tool.update); tool.update();
+</script>

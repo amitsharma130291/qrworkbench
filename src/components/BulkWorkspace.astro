@@ -44,13 +44,14 @@
 <div class="panels">
   <section id="upload" class="panel">
     <h2><span class="pn">01</span>Upload file</h2>
-    <div id="dropzone" class="dropzone" tabindex="0" role="button" aria-label="Upload a CSV file">
+    <div id="dropzone" class="dropzone" tabindex="0" role="button" aria-label="Upload a CSV or Excel file">
       <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="var(--ink-faint)" stroke-width="1.4"><path d="M12 3v12M7 10l5-5 5 5" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 16v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      <p><strong>Drop a CSV file here</strong><br />or click to browse</p>
+      <p><strong>Drop a CSV or Excel file here</strong><br />or click to browse</p>
       <span class="hint">Supports CSV · header row required</span>
     </div>
     <button id="sample-csv" class="sample-link" type="button">↓ Download a 75-row sample CSV to try it</button>
-    <input id="file-input" type="file" accept=".csv,text/csv" hidden />
+    <input id="file-input" type="file" accept=".csv,.xlsx,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" hidden />
+    <label id="worksheet-label" hidden>Worksheet<select id="worksheet"></select></label>
     <div id="file-info" class="file-info" hidden>
       <div class="file-info-icon">✓</div>
       <div class="file-info-text">
@@ -63,6 +64,7 @@
 
   <section id="map" class="panel">
     <h2><span class="pn">02</span>Map columns</h2>
+    <p id="url-validation" class="error-banner" role="status" hidden></p>
     <div class="field-list" id="map-fields">
       <div class="map-group" data-type="url">
         <label>QR data <em>(required)</em><select id="map-qrdata" disabled></select></label>
@@ -93,6 +95,7 @@
     <div class="field-list">
       <label>QR code type<select id="cfg-type">
         <option value="url" selected>URL / plain text</option>
+        <option value="web">Website URLs (validate http/https)</option>
         <option value="wifi">WiFi</option>
         <option value="vcard">vCard</option>
       </select></label>
@@ -142,7 +145,7 @@
           </select></label>
           <button id="cfg-logo-remove" class="btn" type="button">Remove logo</button>
         </div>
-        <p class="logo-note" id="cfg-logo-note" hidden>Logo added — error correction bumped to H so every code still scans reliably.</p>
+        <p class="logo-note" id="cfg-logo-note" hidden>Logo added — error correction bumped to H to help tolerate the overlay. Scan-test representative codes before printing.</p>
         <p class="logo-note" id="cfg-logo-locked">Unlock Pro to add a logo to every code in this batch.</p>
       </div>
     </div>
@@ -151,15 +154,15 @@
   <section id="preview" class="panel">
     <h2><span class="pn">04</span>Preview <span id="preview-count" class="preview-count"></span></h2>
     <div id="preview-list" class="preview-list">
-      <p class="empty-note">Upload a CSV to see a live preview here.</p>
+      <p class="empty-note">Upload a spreadsheet to see a live preview here.</p>
     </div>
     <button id="preview-toggle" class="btn preview-toggle" type="button" hidden>View all rows</button>
   </section>
 </div>
 
-<div class="generate-bar">
+<div id="generate" class="generate-bar">
   <div class="gb-left">
-    <strong id="ready-count">Upload a CSV to get started</strong>
+    <strong id="ready-count">Upload a spreadsheet to get started</strong>
     <div class="chips">
       <span id="chip-format">SVG</span>
       <span id="chip-size">1000×1000</span>
@@ -223,7 +226,7 @@
   </details>
   <details class="faq-item">
     <summary>How many rows can this actually handle?</summary>
-    <p>There's no hard limit built into the tool. Since it all runs in your browser tab rather than on a server, very large batches are limited by your device's memory, not by us — a few thousand rows runs comfortably on a typical laptop.</p>
+    <p>Files must be under 20 MB. Free export covers up to 20 codes per batch; a $7 Batch Pass covers one file and worksheet up to 5,000 codes. Pro supports unlimited batches, with practical job size limited by your browser and device memory.</p>
   </details>
   <details class="faq-item">
     <summary>My product names have commas in them — will that break the mapping?</summary>
@@ -235,13 +238,14 @@
   </details>
   <details class="faq-item">
     <summary>Can I add a logo to every code in a batch?</summary>
-    <p>Yes, on Pro — upload a logo in step 03 and it's overlaid on every code in the batch, the same way the individual generators do it. Error correction is bumped to H automatically so the codes still scan reliably with a logo covering part of the pattern.</p>
+    <p>Yes, on Pro — upload a logo in step 03 and it is overlaid on every code in the batch. Error correction is increased to H to help tolerate the overlay. Keep the logo small and scan-test the finished files before printing.</p>
   </details>
 </div>
 
 <script>
   import { renderQR, qrToSVGString, qrToPNGBlob } from "../lib/qr.js";
-  import { parseCSV, guessColumn, buildFilename } from "../lib/csv.js";
+  import { readSpreadsheet, sheetRows, populateColumns, isWebURL } from "../lib/spreadsheet.js";
+  import { guessColumn, buildFilename } from "../lib/csv.js";
   import { buildWifiPayload, buildVCardPayload } from "../lib/formats.js";
   import {
     newJobId,
@@ -271,6 +275,11 @@
   const el = (id) => document.getElementById(id);
   const dropzone = el("dropzone");
   const fileInput = el("file-input");
+  const worksheet = el("worksheet");
+  let importedSheets = [];
+  let importedFile = null;
+  let importVersion = 0;
+  let sheetVersion = 0;
   const fileInfo = el("file-info");
   const errorBanner = el("error-banner");
 
@@ -540,18 +549,45 @@
 
   async function handleFile(file) {
     clearError();
-    if (!/\.csv$/i.test(file.name)) {
-      showError(`"${file.name}" isn't a CSV file. Export your spreadsheet as CSV and try again.`);
+    const version = ++importVersion;
+    ++sheetVersion;
+    state = { headers: [], rows: [] };
+    jobId = null;
+    fileInfo.hidden = true;
+    renderPreview(); updateBottomBar();
+    try {
+      const sheets = await readSpreadsheet(file);
+      if (version !== importVersion) return;
+      importedSheets = sheets;
+      importedFile = file;
+      worksheet.replaceChildren(...sheets.map((sheet, i) => new Option(sheet.name, String(i))));
+      const resume = loadResumeState();
+      if (resume?.filename === file.name && sheets[Number(resume.worksheet)]) worksheet.value = resume.worksheet;
+      el("worksheet-label").hidden = sheets.length < 2;
+      await applySheet();
+    } catch (error) { showError(error.message || 'Could not read this spreadsheet. Save it as CSV or .xlsx and try again.'); }
+  }
+
+  worksheet.addEventListener('change', () => applySheet().catch(error => showError(error.message)));
+
+  async function applySheet() {
+    clearError();
+    const version = ++sheetVersion;
+    const selected = worksheet.value;
+    const file = importedFile;
+    state = { headers: [], rows: [] };
+    jobId = null;
+    fileInfo.hidden = true;
+    renderPreview(); updateBottomBar();
+    const { headers, rows } = sheetRows(importedSheets[Number(selected)]);
+    if (!headers.length || !rows.length) {
+      showError('This worksheet needs a header row and at least one data row.');
       return;
     }
-    const text = await file.text();
-    const { headers, rows } = parseCSV(text);
-    if (headers.length === 0 || rows.length === 0) {
-      showError("That CSV looks empty, or has no header row.");
-      return;
-    }
+    const nextJobId = await jobIdFromFile(/\.xlsx$/i.test(file.name) ? new File([await file.arrayBuffer(), selected], file.name) : file);
+    if (version !== sheetVersion) return;
     state = { headers, rows };
-    jobId = await jobIdFromFile(file);
+    jobId = nextJobId;
 
     fileInfo.hidden = false;
     el("file-name").textContent = file.name;
@@ -591,9 +627,7 @@
 
     for (const [key, sel] of Object.entries(mapSelects)) {
       const guess = guesses[key];
-      const noneOption = OPTIONAL_MAP_KEYS.includes(key) ? `<option value="">None</option>` : "";
-      sel.innerHTML = noneOption + headers.map((h) => `<option ${h === guess ? "selected" : ""}>${h}</option>`).join("");
-      sel.disabled = false;
+      populateColumns(sel, headers, guess, OPTIONAL_MAP_KEYS.includes(key));
     }
     cfgPattern.value = `{${fileGuess}}`;
     updateMapVisibility();
@@ -604,7 +638,7 @@
   // doesn't lose whatever was already mapped.
   function updateMapVisibility() {
     document.querySelectorAll(".map-group").forEach((g) => {
-      g.hidden = g.dataset.type !== cfgType.value;
+      g.hidden = g.dataset.type !== (cfgType.value === "web" ? "url" : cfgType.value);
     });
     cfgWifiExtra.hidden = cfgType.value !== "wifi";
   }
@@ -639,7 +673,8 @@
         address: mapping.vcardAddress ? row[mapping.vcardAddress] || "" : "",
       });
     }
-    return row[mapping.qrData] || "";
+    const value = row[mapping.qrData] || "";
+    return cfgType.value === 'web' && !isWebURL(value) ? '' : value;
   }
 
   function renderPreview() {
@@ -655,11 +690,15 @@
       item.appendChild(canvas);
       const text = document.createElement("div");
       const parts = [mapping.caption && row[mapping.caption], mapping.price && row[mapping.price]].filter(Boolean);
-      text.innerHTML = `<strong>${buildFilename(cfgPattern.value || "{" + mapping.filename + "}", row, state.headers)}</strong><span>${parts.join(" · ") || "&nbsp;"}</span>`;
+      const name = document.createElement('strong');
+      name.textContent = buildFilename(cfgPattern.value || "{" + mapping.filename + "}", row, state.headers);
+      const caption = document.createElement('span');
+      caption.textContent = parts.join(' · ');
+      text.append(name, caption);
       item.appendChild(text);
       previewList.appendChild(item);
       const value = buildQRValue(mapping, row);
-      if (value) renderQR(canvas, value, { width: 200, margin: 1, logo: activeLogo() });
+      if (value) renderQR(canvas, value, { width: 200, margin: 4, logo: activeLogo() }).catch(() => { caption.textContent = 'Content is too long for a QR code.'; });
     });
     previewCount.textContent = state.rows.length
       ? previewExpanded
@@ -672,10 +711,14 @@
 
   function updateBottomBar() {
     const n = state.rows.length;
+    const invalid = cfgType.value === 'web' ? state.rows.filter(row => !isWebURL(row[currentMapping().qrData])).length : 0;
+    const validation = el('url-validation');
+    validation.hidden = invalid === 0;
+    validation.textContent = invalid ? `${invalid} row(s) have a missing or invalid http/https URL and will be skipped. This checks URL syntax, not whether a destination is online.` : '';
     const cap = effectiveCap();
     const capped = n > cap;
     if (!n) {
-      readyCount.textContent = "Upload a CSV to get started";
+      readyCount.textContent = "Upload a spreadsheet to get started";
     } else if (capped) {
       const capReason = activeTier === "batch" ? "this Batch Pass covers a file up to" : "free plan caps batches at";
       readyCount.textContent = `${cap.toLocaleString()} of ${n.toLocaleString()} QR codes ready — ${capReason} ${cap.toLocaleString()}`;
@@ -685,7 +728,7 @@
     el("chip-format").textContent = format.toUpperCase();
     el("chip-size").textContent = `${cfgSize.value}×${cfgSize.value}`;
     el("chip-ec").textContent = `${cfgEc.value} (${ecLabel[cfgEc.value]})`;
-    generateBtn.disabled = n === 0;
+    generateBtn.disabled = n === 0 || (cfgType.value === 'web' && invalid === n);
     generateBtn.textContent = capped
       ? `Generate ${cap.toLocaleString()} of ${n.toLocaleString()} (${activeTier === "batch" ? "batch limit" : "free limit"})`
       : n
@@ -911,7 +954,9 @@
     }
   }
 
-  generateBtn.addEventListener("click", runGenerateAll);
+  generateBtn.addEventListener("click", () => runGenerateAll().catch(error => {
+    showError(error.message || 'This batch could not be generated. Check the source data.');
+  }).finally(() => updateBottomBar()));
 
   upsell.buyBatch.addEventListener("click", async () => {
     upsell.buyBatch.disabled = true;
@@ -948,7 +993,7 @@
     try {
       sessionStorage.setItem(
         RESUME_KEY,
-        JSON.stringify({ jobId, mapping: currentMapping(), format, size: cfgSize.value, ec: cfgEc.value, quietZone: cfgQuietZone.checked, pattern: cfgPattern.value })
+        JSON.stringify({ jobId, filename: importedFile?.name, worksheet: worksheet.value, type: cfgType.value, security: cfgWifiSecurity.value, hidden: cfgWifiHidden.checked, mapping: currentMapping(), format, size: cfgSize.value, ec: cfgEc.value, quietZone: cfgQuietZone.checked, pattern: cfgPattern.value })
       );
     } catch {
       /* sessionStorage unavailable (private mode, etc.) -- resume just won't fire, no harder failure than that */
@@ -969,6 +1014,13 @@
     const resume = loadResumeState();
     if (!resume || resume.jobId !== jobId) return;
     clearResumeState();
+    if (resume.type) cfgType.value = resume.type;
+    if (resume.security) cfgWifiSecurity.value = resume.security;
+    cfgWifiHidden.checked = Boolean(resume.hidden);
+    for (const [key, select] of Object.entries(mapSelects)) {
+      if (resume.mapping[key] !== undefined) select.value = resume.mapping[key];
+    }
+    updateMapVisibility();
 
     if (mapSelects.qrData.querySelector(`option[value="${CSS.escape(resume.mapping.qrData)}"]`)) mapSelects.qrData.value = resume.mapping.qrData;
     if (mapSelects.filename.querySelector(`option[value="${CSS.escape(resume.mapping.filename)}"]`)) mapSelects.filename.value = resume.mapping.filename;

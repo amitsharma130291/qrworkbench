@@ -13,7 +13,7 @@ const faq = [
   { q: "Do I need to format the CSV in a special way for vCard mode?", a: "No — any column headers work, since you map each one to the right field yourself (or let it auto-guess). It doesn't need to match any fixed template." },
   { q: "What contact format does each code produce?", a: "vCard 3.0 — the same format the individual vCard generator uses, and the one with the broadest support across iPhone, Android and desktop scanning apps. Scanning any code from a batch prompts \"Save contact\" with that row's details already filled in." },
   { q: "Can I generate WiFi codes in bulk the same way?", a: "Yes — switch \"QR code type\" to WiFi instead of vCard, and map an SSID/password column pair per row. Useful for a hotel or office setting up per-room or per-desk WiFi cards from one spreadsheet." },
-  { q: "How many contact cards can one batch produce?", a: "There's no hard cap in the tool — people have run a few thousand rows through it. How far it goes depends on your browser and device, since everything happens locally rather than on a server." },
+  { q: "How many contact cards can one batch produce?", a: "The free plan exports up to 20 codes per batch. A $7 Batch Pass covers one file and worksheet up to 5,000 codes; $39 lifetime Pro supports unlimited batches. Import files must be under 20 MB, and practical job size depends on browser memory." },
   { q: "What do I get back — one file, or one per person?", a: "One SVG or PNG per row, each individually named from whichever column you map as the filename, all packed into a single ZIP download." },
   { q: "Is my staff or guest list uploaded anywhere?", a: "No. The spreadsheet is parsed, the vCards are built, and the QR codes are rendered entirely in your browser tab — none of it is sent to a server." },
   { q: "How is this different from the regular bulk QR generator?", a: "Same tool, different mode. The default mode encodes whatever's in your mapped column as a plain link or text. Switching to vCard mode changes the column mapping to contact fields (name, phone, email, etc.) and builds a real, properly formatted contact card per row instead of a link." },
@@ -119,6 +119,7 @@ const faqSchema = {
         <a class="related-link" href="/qr-code-label-generator">Printable QR labels →</a>
       </div>
     </section>
+<section class="workflow-links" style="margin:2rem 0"><h2>Next steps for this workflow</h2><ul><li><a href="/qr-code-generator-from-excel">Import staff contacts from Excel</a></li><li><a href="/bulk-wifi-qr-code-generator">Make guest WiFi cards</a></li></ul></section>
   </div>
 </Layout>
 

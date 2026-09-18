@@ -4,6 +4,7 @@ import ToolIcon from "../components/ToolIcon.astro";
 import PricingCards from "../components/PricingCards.astro";
 
 const tools = [
+  { icon: "text", name: "Text", desc: "Offline messages and identifiers.", href: "/text-qr-code-generator" },
   { icon: "url", name: "URL", desc: "Any link, encoded directly.", href: "/url-qr-code-generator" },
   { icon: "wifi", name: "WiFi", desc: "SSID, password, security type.", href: "/wifi-qr-code-generator" },
   { icon: "vcard", name: "vCard", desc: "Name, phone, company, email.", href: "/vcard-qr-code-generator" },
@@ -38,7 +39,7 @@ const taskRows = [
 
 const tierRows = [
   { label: "Generate one QR code", free: true, batch: true, pro: true },
-  { label: "Import a spreadsheet, any size", free: true, batch: true, pro: true },
+  { label: "Import CSV or Excel (up to 20 MB)", free: true, batch: true, pro: true },
   { label: "Map filename, caption & content columns", free: true, batch: true, pro: true },
   { label: "WiFi & vCard-formatted bulk codes", free: true, batch: true, pro: true },
   { label: "SVG + PNG production files", free: true, batch: true, pro: true },
@@ -98,7 +99,7 @@ const organizationSchema = {
 };
 ---
 <Layout
-  title="QR Workbench — Free QR Code Generator for 14 Formats"
+  title="QR Workbench — Free QR Code Generator & Bulk Production Tools"
   description="Free QR codes for URLs, WiFi, vCards, email and more — generated entirely in your browser. Bulk CSV-to-ZIP generation for hundreds at once, one-time payment."
 >
   <Fragment slot="head">
@@ -358,6 +359,10 @@ const organizationSchema = {
       </div>
     </section>
 
+    <section aria-labelledby="production-tools" style="padding:1.5rem 1.75rem">
+      <h2 id="production-tools">Choose a production workflow</h2>
+      <p><a href="/bulk-url-qr-code-generator">Batch website links</a> · <a href="/bulk-wifi-qr-code-generator">Guest WiFi cards</a> · <a href="/qr-code-generator-from-excel">Excel workbook import</a> · <a href="/qr-code-generator-with-text">QR images with captions</a></p>
+    </section>
     <section id="tools" class="grid-row">
       <div class="row-label">
         <div class="idx">I — 08</div>

@@ -6,7 +6,10 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
-    "preview": "astro preview"
+    "preview": "astro preview",
+    "test": "node --test tests/data.test.js",
+    "test:browser": "playwright test",
+    "audit:seo": "python scripts/seo-audit.py"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.3",
@@ -17,9 +20,12 @@
     "jszip": "^3.10.1",
     "nodemailer": "^9.0.5",
     "qrcode": "^1.5.4",
+    "read-excel-file": "^9.3.10",
     "standardwebhooks": "^1.0.0"
   },
   "devDependencies": {
+    "@playwright/test": "^1.63.0",
+    "jsqr": "^1.4.0",
     "sharp": "^0.35.3"
   }
 }

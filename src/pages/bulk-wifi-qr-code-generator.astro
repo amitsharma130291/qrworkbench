@@ -1,0 +1,27 @@
+---
+import WorkflowPageLayout from '../layouts/WorkflowPageLayout.astro';
+const faq = [
+  {q:'Can each network have a different password?',a:'Yes. Map the password column so each row encodes its own password. Security and hidden-network settings apply to the whole batch; split networks into separate files if those settings differ.'},
+  {q:'Are WiFi passwords sent to QR Workbench?',a:'No. Spreadsheet reading, WiFi payload creation, and ZIP generation happen in your browser. Anyone who can scan a printed WiFi code can recover its credentials, so distribute guest-network codes only where intended.'},
+  {q:'What happens when a password changes?',a:'Generate and print a replacement code. A static WiFi QR stores the original network name and password; it cannot update an existing printout.'},
+  {q:'What is free and what needs Pro?',a:'Export up to 20 codes per batch free. A $7 Batch Pass covers one file up to 5,000 codes. $39 lifetime Pro covers unlimited batches, batch logos, and PDF label-sheet export. Practical job size depends on your device.'}
+];
+const related = [
+  {name:'One WiFi QR code',href:'/wifi-qr-code-generator'}, {name:'Excel spreadsheet import',href:'/qr-code-generator-from-excel'},
+  {name:'Printable QR labels',href:'/qr-code-label-generator'}, {name:'Bulk website links',href:'/bulk-url-qr-code-generator'},
+  {name:'Compare Batch Pass and Pro',href:'/pricing'}
+];
+---
+<WorkflowPageLayout name="Bulk WiFi QR Code Generator" title="Bulk WiFi QR Code Generator — CSV & Excel | QR Workbench"
+ description="Make a WiFi QR code per network from CSV or Excel. Map SSIDs and passwords, preview locally, and download named files. First 20 codes per batch free."
+ intro="Produce guest-network QR cards for rooms, rental properties, or office locations from one spreadsheet. Each row becomes a WiFi connection code with its own network name and password, rather than a link to a setup page."
+ action="/bulk?type=wifi" actionLabel="Start a WiFi batch free" faq={faq} related={related}>
+ <section><h2>Prepare a network list</h2><p>Use a unique room or location ID for the filename, the exact SSID as broadcast by the router, and the current guest password. Capitalization and spaces matter. Store passwords as text in Excel to preserve leading zeroes.</p>
+ <pre>Location,SSID,Password
+Room-101,Guest-101,guest-example-101
+Room-102,Guest-102,guest-example-102</pre>
+ <p><a href="/templates/bulk-wifi.csv" download>Download the WiFi CSV template</a>. The sample credentials are placeholders, not real network settings.</p></section>
+ <section><h2>Map, test, then export</h2><ol><li>Open WiFi mode and upload CSV or .xlsx. Select the correct worksheet for Excel.</li><li>Map SSID, password, and filename. Select WPA/WPA2, WEP, or open-network security for the batch.</li><li>Check hidden-network status. For an open network, the password is omitted from the payload.</li><li>Scan a sample on a phone near the actual router. Confirm that it joins the intended guest network.</li><li>Export individually named SVG or PNG files in a ZIP. Keep the room ID beside each code during placement.</li></ol></section>
+ <section><h2>Printing WiFi cards for a property</h2><p>Use SVG when placing codes in an existing room-card design. Leave the blank border intact and add a visible location name so staff can spot misplaced cards. The <a href="/qr-code-generator-with-text">captioned QR tool</a> handles one card with a visible label.</p><p>For batch WiFi print sheets, create a column containing each complete WiFi payload before using the <a href="/qr-code-label-generator">Pro label workspace</a>; it encodes the selected content column directly and does not build WiFi credentials from separate fields. Test the finished printed sheet before distributing cards.</p></section>
+ <section><h2>Shared WiFi versus room-specific networks</h2><p>If all guests use one SSID and password, generate <a href="/wifi-qr-code-generator">one WiFi QR</a> and reuse it across cards. Bulk generation is useful when credentials differ between properties or rooms. Keep staff and guest access separate, and replace physical cards whenever guest credentials change.</p></section>
+</WorkflowPageLayout>

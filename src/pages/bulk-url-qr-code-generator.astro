@@ -1,0 +1,21 @@
+---
+import WorkflowPageLayout from '../layouts/WorkflowPageLayout.astro';
+const faq = [
+ {q:'Does the tool check whether each page is online?',a:'It checks that the mapped value is a complete http or https URL. It does not fetch destinations or verify availability, permissions, or page content. Open representative links and scan-test your files before printing.'},
+ {q:'Can I keep tracking parameters?',a:'Yes. The mapped URL is encoded directly, including query parameters and fragments. Use tracking parameters you need, but avoid encoding temporary session or signed URLs in durable prints.'},
+ {q:'Can I change a destination after export?',a:'The QR pattern cannot be edited. You can update content at a stable URL you control, but changing the encoded URL requires generating a replacement QR code.'},
+ {q:'How much does a large URL batch cost?',a:'Up to 20 codes per batch are free. A $7 Batch Pass covers one file up to 5,000 codes. $39 lifetime Pro includes unlimited batches, logos on batch codes, and printable PDF sheets. Larger jobs depend on browser memory.'}
+];
+const related = [{name:'Single URL generator',href:'/url-qr-code-generator'},{name:'CSV mapping guide',href:'/qr-code-generator-from-csv'},{name:'Excel import',href:'/qr-code-generator-from-excel'},{name:'Inventory tags',href:'/qr-code-generator-for-inventory'},{name:'Bulk WiFi networks',href:'/bulk-wifi-qr-code-generator'},{name:'Pro label sheets',href:'/qr-code-label-generator'}];
+---
+<WorkflowPageLayout name="Bulk URL QR Code Generator" title="Bulk URL QR Code Generator — Named ZIP Files | QR Workbench"
+ description="Convert a list of website links into named QR files. Import CSV or Excel, flag invalid URL syntax, and export SVG or PNG in a ZIP. First 20 per batch free."
+ intro="Turn product links, branch pages, manuals, or campaign destinations into one QR file per row. Website mode flags values without a valid http or https address so spreadsheet mistakes are visible before export."
+ action="/bulk?type=web" actionLabel="Upload a URL list" related={related} faq={faq}>
+ <section><h2>A URL list with filenames you can trace</h2><pre>ID,Name,URL
+product-101,Product care guide,https://example.com/products/101/care
+product-102,Assembly instructions,https://example.com/products/102/assembly</pre><p><a href="/templates/bulk-url.csv" download>Download the URL CSV template</a>. Map URL to QR data and ID to filename. The exported product-101.svg can then be matched to the same spreadsheet row. Avoid using the whole web address as a filename.</p></section>
+ <section><h2>Website validation before a production run</h2><p>Website mode accepts complete http:// or https:// links. Missing schemes, blank cells, and other protocols are skipped and counted in a warning. This is a syntax check: a correctly written address can still return an error or require login.</p><ol><li>Upload your spreadsheet and choose the worksheet if needed.</li><li>Map URL and filename columns; select SVG for print artwork or PNG for image workflows.</li><li>Resolve warnings in your source file and re-upload. Check URLs with spaces, old domain names, and temporary access tokens.</li><li>Scan samples from the start, middle, and end of the list. For high-value print runs, check every destination.</li><li>Download the ZIP and keep the source spreadsheet as your placement reference.</li></ol></section>
+ <section><h2>When to use general bulk mode</h2><p>This page starts the workspace in website-validation mode. The <a href="/bulk-qr-code-generator">general bulk QR generator</a> also encodes plain text, identifiers, WiFi credentials, and vCards. Use <a href="/text-qr-code-generator">text QR generation</a> for data that should display as text rather than open a website.</p></section>
+ <section><h2>Links in artwork or links on label sheets</h2><p>Use the ZIP when a designer will place codes into packaging, brochures, or an existing template. Use <a href="/qr-code-label-generator">Pro PDF label sheets</a> when the list needs a regular grid with readable product names. Caption mapping in the bulk ZIP preview does not add captions to its individual images; use the <a href="/qr-code-generator-with-text">captioned generator</a> for one combined QR-and-text image.</p></section>
+</WorkflowPageLayout>

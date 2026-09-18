@@ -1,0 +1,28 @@
+---
+import WorkflowPageLayout from '../layouts/WorkflowPageLayout.astro';
+import GeneratorShell from '../components/GeneratorShell.astro';
+const faq = [{q:'Does the visible caption change what the QR code encodes?',a:'No. Only the QR content field is encoded. The caption is printed underneath the pattern in the exported PNG or SVG, so it is readable without scanning.'},{q:'Can I add a caption to a WiFi or vCard code?',a:'This tool accepts the complete payload as QR content. For a WiFi network, build the WiFi payload first; entering an SSID alone encodes plain text rather than connection credentials. Use the dedicated WiFi or vCard tool if you need structured fields.'},{q:'Are captioned downloads free?',a:'Yes, single captioned PNG and SVG downloads are free. For many captions from a spreadsheet, PDF label-sheet export is included with $39 lifetime Pro. A $7 Batch Pass provides bulk ZIP export but does not include PDF label sheets.'},{q:'How should I size the caption?',a:'Keep it brief and readable at the final print size. The tool wraps longer captions and keeps them outside the QR quiet zone. Test the actual printed result for both scanning and legibility.'}];
+const related = [{name:'Encode plain text inside a QR',href:'/text-qr-code-generator'},{name:'Website QR generator',href:'/url-qr-code-generator'},{name:'WiFi connection generator',href:'/wifi-qr-code-generator'},{name:'Print captioned label sheets',href:'/qr-code-label-generator'},{name:'Import Excel rows',href:'/qr-code-generator-from-excel'},{name:'Lifetime Pro pricing',href:'/pricing'}];
+---
+<WorkflowPageLayout name="QR Code Generator with Text" title="QR Code Generator with Text — Captioned PNG & SVG"
+ description="Add a readable caption below a QR code and download both together as PNG or SVG. Preview caption size and wrapping. Single downloads are free."
+ intro="Add a visible name, instruction, or asset ID below your QR code. The caption and QR pattern download together, with the label kept outside the blank scanning border."
+ faq={faq} related={related}>
+ <GeneratorShell filenamePrefix="captioned-qr"><Fragment slot="fields">
+  <label for="f-content">QR content<input id="f-content" type="text" placeholder="https://example.com/manual" /></label>
+  <label for="f-caption">Visible caption<textarea id="f-caption" rows="2" maxlength="160" placeholder="Scan for the assembly guide"></textarea></label>
+  <label for="f-caption-size">Caption size<select id="f-caption-size"><option value="0.028">Small</option><option value="0.035" selected>Medium</option><option value="0.045">Large</option></select></label>
+  <p>The caption is visible on the image; it is separate from the information inside the QR code.</p>
+ </Fragment></GeneratorShell>
+ <section><h2>Create a label that explains the scan</h2><ol><li>Enter the URL, identifier, or complete payload you want encoded.</li><li>Add a short caption such as “Scan for care instructions” or “Asset PUMP-017.”</li><li>Choose caption size and review the combined preview.</li><li>Download PNG or SVG. Scan-test the finished image and a printed sample.</li></ol><p>Keep the caption accurate: a code labeled “Save contact” should contain a contact payload, while a code labeled “Open manual” should contain the manual URL. A visible call to action helps people decide whether to scan.</p></section>
+ <section><h2>A caption is different from encoded text</h2><p>Typing “Room 101” as the caption does not change a website code into a room identifier. To store a message inside the pattern, use the <a href="/text-qr-code-generator">plain-text QR tool</a>. To make a guest connection card, use the <a href="/wifi-qr-code-generator">WiFi generator</a> for the correctly formatted payload.</p></section>
+ <section><h2>Hundreds of captions from a spreadsheet</h2><p>For repeated asset tags, shelf cards, or product labels, use the <a href="/qr-code-label-generator">Pro label workspace</a>. Map a content column and a caption column from CSV or Excel, set the A4 or Letter grid, and preview before buying. PDF export requires $39 lifetime Pro. The <a href="/bulk-url-qr-code-generator">bulk URL ZIP</a> is better when you need separate QR files to place in an existing design.</p></section>
+</WorkflowPageLayout>
+<script>
+ import { initGeneratorTool } from '../lib/generatorUI.js';
+ const content = document.getElementById('f-content');
+ const caption = document.getElementById('f-caption');
+ const size = document.getElementById('f-caption-size');
+ const tool = initGeneratorTool({getText:()=>content.value, getCaption:()=>caption.value, getCaptionSize:()=>Number(size.value),filenamePrefix:'captioned-qr'});
+ [content,caption,size].forEach(input=>input.addEventListener('input',tool.update)); tool.update();
+</script>

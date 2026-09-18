@@ -6,21 +6,18 @@ const faq = [
   { q: "Does the delimiter have to be a comma?", a: "Yes — the parser reads comma-separated values. If your file uses semicolons (common in some regional Excel exports) or tabs, re-save it with commas as the delimiter before uploading, or open it in Google Sheets and export a fresh CSV from there." },
   { q: "What if a value itself contains a comma, like \"123 Main St, Suite 4\"?", a: "Wrap that field in double quotes in the CSV — \"123 Main St, Suite 4\" — and the comma inside it won't be treated as a column break. Any normal spreadsheet program does this automatically when you save as CSV; it only becomes a problem with a hand-edited file." },
   { q: "Does the first row have to be headers?", a: "Yes — row one is always read as column names, not data. Every row after it is treated as one QR code. A file with no header row will have its first real row silently used as headers and skipped as data, so always include one." },
-  { q: "My export is .xlsx, not .csv — does that work?", a: "Not directly. Open it in Excel or Google Sheets and use \"Save As\" / \"Download\" → CSV first. This is the single most common reason a file fails to upload — an .xlsx renamed to .csv isn't actually a CSV." },
+  { q: "My export is .xlsx, not .csv — does that work?", a: "Yes. The workspace accepts .xlsx directly and lets you select a worksheet. You can also export as CSV; renaming the file extension does not convert its contents." },
   { q: "What happens to a row that's missing a value?", a: "If the column you mapped as the QR content is blank for that row, that row is skipped automatically rather than producing a broken or empty code. Every other mapped column is optional and simply omitted if blank." },
   { q: "Can two rows produce the same filename?", a: "If your filename pattern would collide — two rows both mapping to \"blue-shirt\", say — a number is appended automatically (blue-shirt-1, blue-shirt-2) so nothing silently overwrites another file in the ZIP." },
   { q: "Does column order matter?", a: "No — you map each column to its purpose (QR content, filename, caption, etc.) by name after uploading, regardless of what order they're in or what they're called in your original file." },
-  { q: "How large a CSV can this actually handle?", a: "There's no hard row limit built into the tool — people have run a few thousand rows through it. Practical limits come from your browser and device's own memory, not the software, so a very large file (tens of thousands of rows) is worth testing in a smaller batch first." },
+  { q: "How large a CSV can this actually handle?", a: "Import files up to 20 MB. The free plan exports up to 20 codes per batch, a $7 Batch Pass covers one file up to 5,000, and $39 lifetime Pro supports unlimited batches. Practical job size depends on browser memory." },
 ];
 
 const appSchema = {
   "@context": "https://schema.org",
-  "@type": "SoftwareApplication",
+  "@type": "WebPage",
   name: "QR Code Generator from CSV",
   description: "Turn a CSV spreadsheet into named QR codes, entirely in the browser, with column mapping and a printable label option.",
-  applicationCategory: "UtilitiesApplication",
-  operatingSystem: "Any (runs in the browser)",
-  offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
 };
 const faqSchema = {
   "@context": "https://schema.org",
@@ -60,7 +57,7 @@ const faqSchema = {
         <li><strong>Comma-separated, not semicolon or tab.</strong> Some regional Excel installs default to semicolons — check by opening the file in a plain text editor if you're not sure.</li>
         <li><strong>A header row is required.</strong> Row one becomes your column names; every row after it becomes one QR code.</li>
         <li><strong>Quote fields that contain a comma.</strong> <code>"123 Main St, Suite 4"</code> — the quotes keep that comma from being read as a new column. Any spreadsheet program does this for you automatically on save.</li>
-        <li><strong>.csv, not .xlsx.</strong> An Excel or Google Sheets file has to be exported or "Saved As" CSV first — renaming the extension doesn't convert the file.</li>
+        <li><strong>Use a real CSV export.</strong> Save or export comma-separated values from your spreadsheet; renaming the extension does not convert a workbook. For native .xlsx files, use the <a href="/qr-code-generator-from-excel">Excel import workflow</a>.</li>
         <li><strong>Column order doesn't matter.</strong> You map each column to its purpose by name after uploading, whatever order they're in.</li>
       </ul>
     </section>
@@ -106,6 +103,7 @@ const faqSchema = {
         <a class="related-link" href="/qr-code-label-generator">Printable QR labels →</a>
       </div>
     </section>
+<section class="workflow-links" style="margin:2rem 0"><h2>Next steps for this workflow</h2><ul><li><a href="/qr-code-generator-from-excel">Import .xlsx instead of CSV</a></li><li><a href="/bulk-url-qr-code-generator">Validate website links in bulk</a></li><li><a href="/text-qr-code-generator">Generate a single text QR</a></li></ul></section>
   </div>
 </Layout>
 

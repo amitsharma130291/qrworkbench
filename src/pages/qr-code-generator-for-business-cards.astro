@@ -5,7 +5,7 @@ import ProPromo from "../components/ProPromo.astro";
 const faq = [
   { q: "Should the QR code link to my contact info, or my website?", a: "For a business card specifically, a vCard code (scan → save as contact) usually beats a link to a website or LinkedIn profile — it saves your name, phone, email and company directly into the other person's phone with one tap, instead of taking them to a page they still have to act on. Use a plain URL code if your goal is traffic to a portfolio, booking page, or landing page instead." },
   { q: "How big does the QR code need to be on a business card?", a: "At minimum about 0.8 in / 2 cm square for a standard 3.5 × 2 in card, printed with clean edges. Bigger is safer — a small code with a busy background or low print resolution is the most common reason a business-card QR fails to scan. Leave a plain quiet zone (blank margin) around it rather than crowding it against text or your logo." },
-  { q: "Can I put my logo in the middle of the code?", a: "Yes, on the individual vCard generator — upload a logo and error correction is bumped up automatically so the code still scans reliably with part of the pattern covered. Keep the logo modest in size relative to the whole code; a logo that covers too much of the pattern will fail to scan even at a high error-correction level." },
+  { q: "Can I put my logo in the middle of the code?", a: "Yes, on the individual vCard generator — upload a logo and error correction is increased to help tolerate the overlay. Keep the logo modest in size relative to the whole code, and scan-test the finished file and a printed sample. A large overlay can prevent scanning even with high error correction." },
   { q: "What if I update my phone number or job title later?", a: "A static QR code — which is what a free generator like this makes — has its contents encoded directly into the pattern, so it can't be edited after printing. Updating a detail means generating a new code and reprinting the affected cards. That's a real tradeoff against a paid dynamic-QR service, but it also means the code has no ongoing dependency on that service staying online, which most people printing a one-time card don't need to pay for." },
   { q: "Do I need a designer to add this to my card?", a: "No — download the QR as an SVG (a crisp vector, not a pixelated image) and drop it into whatever you're already using to design the card: Canva, Illustrator, Google Docs, or a print shop's own template tool." },
   { q: "I need this for my whole sales team, not just myself.", a: "Use the bulk vCard generator instead of the individual one — upload a spreadsheet of names, titles, phone numbers and emails, and it generates one correctly formatted vCard QR code per person in a single pass." },
@@ -14,12 +14,9 @@ const faq = [
 
 const appSchema = {
   "@context": "https://schema.org",
-  "@type": "SoftwareApplication",
+  "@type": "WebPage",
   name: "QR Code Generator for Business Cards",
   description: "Generate a scan-to-save vCard QR code for a business card, with print-size and design guidance, entirely in the browser.",
-  applicationCategory: "UtilitiesApplication",
-  operatingSystem: "Any (runs in the browser)",
-  offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
 };
 const faqSchema = {
   "@context": "https://schema.org",

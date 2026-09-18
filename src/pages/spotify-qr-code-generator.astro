@@ -12,21 +12,21 @@ const howTo = [
 const tips = [
   "This is a standard QR code, not a Spotify Code (the barcode-style pattern Spotify's own app generates) — the difference matters: a Spotify Code only scans inside the Spotify app itself, while this scans with any phone camera and opens Spotify (or a browser) from there.",
   "A playlist or artist link is more durable for long-lived print material than a single track or episode link, since individual tracks occasionally get pulled for licensing reasons.",
-  "Spotify links open the Spotify app if it's installed, or open.spotify.com in a browser if it isn't — either way, no account is required just to listen to a public track or playlist.",
+  "Spotify links open the Spotify app if it's installed, or open.spotify.com in a browser if it isn't — playback and sign-in requirements depend on the listener’s region, device, and Spotify account.",
 ];
 
 const faq = [
   { q: "Is this the same as a Spotify Code?", a: "No. A Spotify Code is the barcode-style pattern generated inside Spotify's own app, and it only scans using Spotify's in-app scanner. This tool makes a standard QR code instead, which any phone's regular camera can scan." },
   { q: "Do I need a Spotify API key or developer account?", a: "No. It just encodes whatever Spotify link you paste — no API, no login, no artist verification." },
   { q: "Can I link to a whole album or playlist instead of one track?", a: "Yes — copy the share link for whichever one you want; tracks, albums, playlists, artist profiles, and podcast episodes all use the same kind of Spotify link." },
-  { q: "Will this work for someone without Spotify Premium?", a: "Public tracks and playlists are listenable on Spotify's free tier, so yes — the code just opens the link, it doesn't require Premium on the listener's end." },
+  { q: "Will this work for someone without Spotify Premium?", a: "The code opens the Spotify link without checking Premium status. Playback availability depends on Spotify’s current free-tier rules, the region, and the listener’s account." },
   { q: "What if I don't have the Spotify app installed?", a: "The link opens open.spotify.com in a browser instead, and plays a preview or prompts you to open the app — it still works either way." },
 ];
 
 ---
 <GeneratorPageLayout
   title="Spotify QR Code Generator — Link to a Track or Playlist, Free | QR Workbench"
-  description="Turn a Spotify track, album, playlist, or podcast link into a scannable QR code — not a Spotify Code, a standard code any camera can scan. Free, generated in your browser."
+  description="Create a standard QR for a Spotify track, album, playlist, or podcast. Preview locally and download free PNG or SVG for flyers, artwork, and packaging."
   eyebrow="Spotify QR Code Generator"
   slug="spotify"
   h1="Get scanned straight to a Spotify track or playlist"

@@ -38,12 +38,13 @@
 <div class="panels">
   <section id="upload" class="panel">
     <h2><span class="pn">01</span>Upload file</h2>
-    <div id="dropzone" class="dropzone" tabindex="0" role="button" aria-label="Upload a CSV file">
+    <div id="dropzone" class="dropzone" tabindex="0" role="button" aria-label="Upload a CSV or Excel file">
       <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="var(--ink-faint)" stroke-width="1.4"><path d="M12 3v12M7 10l5-5 5 5" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 16v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      <p><strong>Drop a CSV file here</strong><br />or click to browse</p>
+      <p><strong>Drop a CSV or Excel file here</strong><br />or click to browse</p>
       <span class="hint">Supports CSV · header row required</span>
     </div>
-    <input id="file-input" type="file" accept=".csv,text/csv" hidden />
+    <input id="file-input" type="file" accept=".csv,.xlsx,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" hidden />
+    <label id="worksheet-label" hidden>Worksheet<select id="worksheet"></select></label>
     <div id="file-info" class="file-info" hidden>
       <div class="file-info-icon">✓</div>
       <div class="file-info-text">
@@ -89,14 +90,14 @@
   <section id="preview" class="panel">
     <h2><span class="pn">04</span>Preview <span id="preview-count" class="preview-count"></span></h2>
     <div id="sheet-preview" class="sheet-preview">
-      <p class="empty-note">Upload a CSV to see a live layout preview here.</p>
+      <p class="empty-note">Upload a spreadsheet to see a live layout preview here.</p>
     </div>
   </section>
 </div>
 
 <div class="generate-bar" id="generate">
   <div class="gb-left">
-    <strong id="ready-count">Upload a CSV to get started</strong>
+    <strong id="ready-count">Upload a spreadsheet to get started</strong>
     <div class="chips">
       <span id="chip-page">Letter</span>
       <span id="chip-grid">3 × 8 per page</span>
@@ -133,7 +134,8 @@
 
 <script>
   import { renderQR } from "../lib/qr.js";
-  import { parseCSV, guessColumn } from "../lib/csv.js";
+  import { readSpreadsheet, sheetRows, populateColumns, isWebURL } from "../lib/spreadsheet.js";
+  import { guessColumn } from "../lib/csv.js";
   import {
     newJobId,
     startCheckout,
@@ -148,6 +150,10 @@
   const el = (id) => document.getElementById(id);
   const dropzone = el("dropzone");
   const fileInput = el("file-input");
+  const worksheet = el("worksheet");
+  let importedSheets = [];
+  let importedFile = null;
+  let importVersion = 0;
   const fileInfo = el("file-info");
   const errorBanner = el("error-banner");
 
@@ -293,14 +299,32 @@
 
   async function handleFile(file) {
     clearError();
-    if (!/\.csv$/i.test(file.name)) {
-      showError(`"${file.name}" isn't a CSV file. Export your spreadsheet as CSV and try again.`);
-      return;
-    }
-    const text = await file.text();
-    const { headers, rows } = parseCSV(text);
-    if (headers.length === 0 || rows.length === 0) {
-      showError("That CSV looks empty, or has no header row.");
+    const version = ++importVersion;
+    state = { headers: [], rows: [] };
+    fileInfo.hidden = true;
+    renderSheetPreview(); updateBottomBar();
+    try {
+      const sheets = await readSpreadsheet(file);
+      if (version !== importVersion) return;
+      importedSheets = sheets;
+      importedFile = file;
+      worksheet.replaceChildren(...sheets.map((sheet, i) => new Option(sheet.name, String(i))));
+      el("worksheet-label").hidden = sheets.length < 2;
+      await applySheet();
+    } catch (error) { showError(error.message || 'Could not read this spreadsheet. Save it as CSV or .xlsx and try again.'); }
+  }
+
+  worksheet.addEventListener('change', () => applySheet().catch(error => showError(error.message)));
+
+  async function applySheet() {
+    clearError();
+    const file = importedFile;
+    state = { headers: [], rows: [] };
+    fileInfo.hidden = true;
+    renderSheetPreview(); updateBottomBar();
+    const { headers, rows } = sheetRows(importedSheets[Number(worksheet.value)]);
+    if (!headers.length || !rows.length) {
+      showError('This worksheet needs a header row and at least one data row.');
       return;
     }
     state = { headers, rows };
@@ -322,9 +346,8 @@
     const { headers } = state;
     const qrGuess = guessColumn(headers, ["url", "link", "website"], headers[0]);
     const capGuess = guessColumn(headers, ["name", "product", "sku", "title", "caption", "label"]);
-    mapSelects.qrData.innerHTML = headers.map((h) => `<option ${h === qrGuess ? "selected" : ""}>${h}</option>`).join("");
-    mapSelects.caption.innerHTML = `<option value="">None</option>` + headers.map((h) => `<option ${h === capGuess ? "selected" : ""}>${h}</option>`).join("");
-    Object.values(mapSelects).forEach((s) => (s.disabled = false));
+    populateColumns(mapSelects.qrData, headers, qrGuess);
+    populateColumns(mapSelects.caption, headers, capGuess, true);
   }
 
   function currentMapping() {
@@ -349,7 +372,7 @@
     const n = state.rows.length;
     sheetPreview.innerHTML = "";
     if (!n) {
-      sheetPreview.innerHTML = `<p class="empty-note">Upload a CSV to see a live layout preview here.</p>`;
+      sheetPreview.innerHTML = `<p class="empty-note">Upload a spreadsheet to see a live layout preview here.</p>`;
       previewCount.textContent = "";
       return;
     }
@@ -372,7 +395,7 @@
       }
       grid.appendChild(cell);
       const value = row[mapping.qrData] || "";
-      if (value) renderQR(canvas, value, { width: 120, margin: 1 });
+      if (value) renderQR(canvas, value, { width: 120, margin: 4 }).catch(() => showError('A row contains more content than a QR code can hold. Shorten that value.'));
     });
     sheetPreview.appendChild(grid);
     const pages = Math.ceil(n / perPage);
@@ -382,7 +405,7 @@
   function updateBottomBar() {
     const n = state.rows.length;
     const { cols, rows, perPage } = gridConfig();
-    readyCount.textContent = n ? `${n.toLocaleString()} labels ready to lay out` : "Upload a CSV to get started";
+    readyCount.textContent = n ? `${n.toLocaleString()} labels ready to lay out` : "Upload a spreadsheet to get started";
     el("chip-page").textContent = cfgPage.value === "a4" ? "A4" : "Letter";
     el("chip-grid").textContent = `${cols} × ${rows} per page`;
     el("chip-pages").textContent = n ? `${Math.ceil(n / perPage).toLocaleString()} page${Math.ceil(n / perPage) === 1 ? "" : "s"}` : "—";

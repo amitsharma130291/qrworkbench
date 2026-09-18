@@ -5,7 +5,11 @@ import Layout from "../layouts/Layout.astro";
   <div class="frame stub">
     <div class="index-no">F — DOCS</div>
     <h1>Documentation</h1>
-    <p>Format-by-format guides and a CSV column reference are coming soon. In the meantime, the <a href="/bulk-qr-code-generator">bulk workspace</a> already guesses your column mapping automatically when you upload a CSV.</p>
+    <section><h2>Choose your input format</h2><p>Upload CSV or an unprotected .xlsx workbook under 20 MB. Start with one unique header per column and one record per row. For Excel, choose a worksheet after import. Follow the <a href="/qr-code-generator-from-csv">CSV formatting reference</a> or the <a href="/qr-code-generator-from-excel">Excel preparation guide</a>.</p></section>
+    <section><h2>Choose what a scan should do</h2><p><a href="/bulk-url-qr-code-generator">Website mode</a> checks complete http/https URLs. General mode stores links or plain text as supplied. <a href="/bulk-wifi-qr-code-generator">WiFi mode</a> builds connection credentials from SSID and password fields. <a href="/bulk-vcard-qr-code-generator">vCard mode</a> builds a contact card from mapped name, phone, email, and optional fields.</p></section>
+    <section><h2>Map content and filenames</h2><p>Map the content column to the information encoded in the pattern, and a stable ID to the filename. A caption in the bulk preview is a placement aid, not text added to the exported image. Use the <a href="/qr-code-generator-with-text">captioned generator</a> for one combined image, or the <a href="/qr-code-label-generator">label workspace</a> for a printable captioned grid.</p></section>
+    <section><h2>Preview, export, and test</h2><p>Inspect the generated previews and scan samples before printing. Blank required content is skipped; duplicate filenames are numbered. SVG preserves crisp edges in design software, while PNG works in image workflows. Keep the quiet zone clear and test the final physical print.</p></section>
+    <section><h2>Free and paid exports</h2><p>Generate individual codes free. Bulk export is free up to 20 codes per batch. A $7 Batch Pass covers one file and worksheet up to 5,000 codes. $39 lifetime Pro adds unlimited batches, logos on batch codes, and PDF label-sheet export. Compare <a href="/pricing">the current plans</a> before starting a production run.</p></section>
     <a class="btn btn-fill" href="/bulk-qr-code-generator">See the bulk workspace →</a>
   </div>
 </Layout>

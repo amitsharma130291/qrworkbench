@@ -1,0 +1,876 @@
+{
+  "pages": 36,
+  "indexed_pages": 32,
+  "sitemap_urls": 32,
+  "issues": [],
+  "metrics": [
+    {
+      "route": "/",
+      "indexed": true,
+      "title": "QR Workbench \u2014 Free QR Code Generator & Bulk Production Tools",
+      "description": "Free QR codes for URLs, WiFi, vCards, email and more \u2014 generated entirely in your browser. Bulk CSV-to-ZIP generation for hundreds at once, one-time payment.",
+      "editorial_words": 1476,
+      "contextual_inbound": [
+        "/404"
+      ],
+      "canonical": [
+        "https://www.qrworkbench.com/"
+      ],
+      "schema_types": [
+        "FAQPage",
+        "WebSite",
+        "Organization"
+      ]
+    },
+    {
+      "route": "/404",
+      "indexed": false,
+      "title": "Page Not Found \u2014 QR Workbench",
+      "description": "This page doesn't exist on QR Workbench.",
+      "editorial_words": 44,
+      "contextual_inbound": [],
+      "canonical": [
+        "https://www.qrworkbench.com/404"
+      ],
+      "schema_types": []
+    },
+    {
+      "route": "/about",
+      "indexed": true,
+      "title": "About QR Workbench",
+      "description": "What QR Workbench is, how the QR encoding actually works, and why it runs entirely in your browser.",
+      "editorial_words": 566,
+      "contextual_inbound": [],
+      "canonical": [
+        "https://www.qrworkbench.com/about"
+      ],
+      "schema_types": []
+    },
+    {
+      "route": "/bulk",
+      "indexed": false,
+      "title": "Bulk QR Generator \u2014 QR Workbench",
+      "description": "",
+      "editorial_words": 777,
+      "contextual_inbound": [
+        "/",
+        "/about",
+        "/bulk-qr-code-generator",
+        "/bulk-url-qr-code-generator",
+        "/bulk-vcard-qr-code-generator",
+        "/bulk-wifi-qr-code-generator",
+        "/disclaimer",
+        "/pricing",
+        "/privacy-policy",
+        "/qr-code-generator-from-csv",
+        "/qr-code-generator-from-excel"
+      ],
+      "canonical": [
+        "https://www.qrworkbench.com/bulk"
+      ],
+      "schema_types": []
+    },
+    {
+      "route": "/bulk-qr-code-generator",
+      "indexed": true,
+      "title": "Bulk (Batch) QR Code Generator \u2014 CSV to ZIP | QR Workbench",
+      "description": "Turn a spreadsheet of URLs, SKUs, or contacts into hundreds of correctly named QR codes, entirely in your browser. Free up to 20 codes, one-time payment for more.",
+      "editorial_words": 525,
+      "contextual_inbound": [
+        "/404",
+        "/about",
+        "/bulk-url-qr-code-generator",
+        "/bulk-vcard-qr-code-generator",
+        "/docs",
+        "/email-qr-code-generator",
+        "/facebook-qr-code-generator",
+        "/google-forms-qr-code-generator",
+        "/instagram-qr-code-generator",
+        "/labels",
+        "/linkedin-qr-code-generator",
+        "/pdf-qr-code-generator",
+        "/phone-qr-code-generator",
+        "/pricing",
+        "/qr-code-generator-for-inventory",
+        "/qr-code-generator-from-csv",
+        "/qr-code-generator-from-excel",
+        "/qr-code-label-generator",
+        "/sms-qr-code-generator",
+        "/spotify-qr-code-generator",
+        "/whatsapp-qr-code-generator",
+        "/youtube-qr-code-generator"
+      ],
+      "canonical": [
+        "https://www.qrworkbench.com/bulk-qr-code-generator"
+      ],
+      "schema_types": [
+        "SoftwareApplication",
+        "FAQPage"
+      ]
+    },
+    {
+      "route": "/bulk-url-qr-code-generator",
+      "indexed": true,
+      "title": "Bulk URL QR Code Generator \u2014 Named ZIP Files | QR Workbench",
+      "description": "Convert a list of website links into named QR files. Import CSV or Excel, flag invalid URL syntax, and export SVG or PNG in a ZIP. First 20 per batch free.",
+      "editorial_words": 527,
+      "contextual_inbound": [
+        "/",
+        "/bulk-qr-code-generator",
+        "/bulk-wifi-qr-code-generator",
+        "/docs",
+        "/qr-code-generator-from-csv",
+        "/qr-code-generator-from-excel",
+        "/qr-code-generator-with-text",
+        "/url-qr-code-generator"
+      ],
+      "canonical": [
+        "https://www.qrworkbench.com/bulk-url-qr-code-generator"
+      ],
+      "schema_types": [
+        "BreadcrumbList",
+        "FAQPage"
+      ]
+    },
+    {
+      "route": "/bulk-vcard-qr-code-generator",
+      "indexed": true,
+      "title": "Bulk vCard QR Code Generator \u2014 CSV to Contact Cards | QR Workbench",
+      "description": "Turn a staff or guest list into hundreds of individual vCard QR codes \u2014 name, phone, email and company per row, generated entirely in your browser.",
+      "editorial_words": 761,
+      "contextual_inbound": [
+        "/bulk-qr-code-generator",
+        "/docs",
+        "/qr-code-generator-for-business-cards",
+        "/qr-code-generator-from-csv",
+        "/qr-code-generator-from-excel",
+        "/vcard-qr-code-generator"
+      ],
+      "canonical": [
+        "https://www.qrworkbench.com/bulk-vcard-qr-code-generator"
+      ],
+      "schema_types": [
+        "SoftwareApplication",
+        "FAQPage"
+      ]
+    },
+    {
+      "route": "/bulk-wifi-qr-code-generator",
+      "indexed": true,
+      "title": "Bulk WiFi QR Code Generator \u2014 CSV & Excel | QR Workbench",
+      "description": "Make a WiFi QR code per network from CSV or Excel. Map SSIDs and passwords, preview locally, and download named files. First 20 codes per batch free.",
+      "editorial_words": 523,
+      "contextual_inbound": [
+        "/",
+        "/bulk-qr-code-generator",
+        "/bulk-url-qr-code-generator",
+        "/bulk-vcard-qr-code-generator",
+        "/docs",
+        "/qr-code-generator-from-excel",
+        "/wifi-qr-code-generator"
+      ],
+      "canonical": [
+        "https://www.qrworkbench.com/bulk-wifi-qr-code-generator"
+      ],
+      "schema_types": [
+        "BreadcrumbList",
+        "FAQPage"
+      ]
+    },
+    {
+      "route": "/contact",
+      "indexed": true,
+      "title": "Contact | QR Workbench",
+      "description": "Get in touch with QR Workbench -- support questions, bug reports, partnership or press inquiries. No phone line; one contact form, answered directly.",
+      "editorial_words": 402,
+      "contextual_inbound": [
+        "/about",
+        "/disclaimer",
+        "/privacy-policy",
+        "/terms"
+      ],
+      "canonical": [
+        "https://www.qrworkbench.com/contact"
+      ],
+      "schema_types": [
+        "FAQPage"
+      ]
+    },
+    {
+      "route": "/disclaimer",
+      "indexed": true,
+      "title": "Disclaimer | QR Workbench",
+      "description": "QR Workbench encodes the data you provide -- it doesn't verify that data, and doesn't guarantee scan reliability at every size or print quality.",
+      "editorial_words": 455,
+      "contextual_inbound": [
+        "/terms"
+      ],
+      "canonical": [
+        "https://www.qrworkbench.com/disclaimer"
+      ],
+      "schema_types": []
+    },
+    {
+      "route": "/docs",
+      "indexed": false,
+      "title": "Documentation \u2014 QR Workbench",
+      "description": "How QR Workbench's static QR generation and bulk workflow work.",
+      "editorial_words": 254,
+      "contextual_inbound": [],
+      "canonical": [
+        "https://www.qrworkbench.com/docs"
+      ],
+      "schema_types": []
+    },
+    {
+      "route": "/email-qr-code-generator",
+      "indexed": true,
+      "title": "Email QR Code Generator \u2014 Pre-Filled mailto: QR, Free | QR Workbench",
+      "description": "Create an email QR with recipient, subject, and message prefilled. Preview in your browser and download free PNG or SVG for cards, labels, or signs.",
+      "editorial_words": 1003,
+      "contextual_inbound": [
+        "/",
+        "/about",
+        "/google-forms-qr-code-generator",
+        "/pdf-qr-code-generator",
+        "/phone-qr-code-generator",
+        "/sms-qr-code-generator",
+        "/vcard-qr-code-generator",
+        "/whatsapp-qr-code-generator"
+      ],
+      "canonical": [
+        "https://www.qrworkbench.com/email-qr-code-generator"
+      ],
+      "schema_types": [
+        "SoftwareApplication",
+        "HowTo",
+        "FAQPage",
+        "BreadcrumbList"
+      ]
+    },
+    {
+      "route": "/facebook-qr-code-generator",
+      "indexed": true,
+      "title": "Facebook QR Code Generator \u2014 Link to Your Page, Free | QR Workbench",
+      "description": "Make a free QR for a Facebook Page, Event, or Group. Choose the right destination, scan-test your link, and download PNG or SVG for signs and flyers.",
+      "editorial_words": 1013,
+      "contextual_inbound": [
+        "/",
+        "/about",
+        "/instagram-qr-code-generator",
+        "/linkedin-qr-code-generator",
+        "/youtube-qr-code-generator"
+      ],
+      "canonical": [
+        "https://www.qrworkbench.com/facebook-qr-code-generator"
+      ],
+      "schema_types": [
+        "SoftwareApplication",
+        "HowTo",
+        "FAQPage",
+        "BreadcrumbList"
+      ]
+    },
+    {
+      "route": "/google-forms-qr-code-generator",
+      "indexed": true,
+      "title": "Google Forms QR Code Generator \u2014 Free, No Sign-Up | QR Workbench",
+      "description": "Turn a Google Form link into a free QR code. Check form access and short links, preview locally, and download PNG or SVG for surveys and registrations.",
+      "editorial_words": 934,
+      "contextual_inbound": [
+        "/",
+        "/about",
+        "/pdf-qr-code-generator",
+        "/url-qr-code-generator"
+      ],
+      "canonical": [
+        "https://www.qrworkbench.com/google-forms-qr-code-generator"
+      ],
+      "schema_types": [
+        "SoftwareApplication",
+        "HowTo",
+        "FAQPage",
+        "BreadcrumbList"
+      ]
+    },
+    {
+      "route": "/instagram-qr-code-generator",
+      "indexed": true,
+      "title": "Instagram QR Code Generator \u2014 Link to Your Profile, Free | QR Workbench",
+      "description": "Make a free QR for an Instagram profile, post, or reel. Choose the right link, preview locally, and download PNG or SVG for packaging and signage.",
+      "editorial_words": 992,
+      "contextual_inbound": [
+        "/",
+        "/about",
+        "/facebook-qr-code-generator",
+        "/linkedin-qr-code-generator",
+        "/spotify-qr-code-generator",
+        "/youtube-qr-code-generator"
+      ],
+      "canonical": [
+        "https://www.qrworkbench.com/instagram-qr-code-generator"
+      ],
+      "schema_types": [
+        "SoftwareApplication",
+        "HowTo",
+        "FAQPage",
+        "BreadcrumbList"
+      ]
+    },
+    {
+      "route": "/labels",
+      "indexed": false,
+      "title": "Label Generator \u2014 QR Workbench",
+      "description": "",
+      "editorial_words": 294,
+      "contextual_inbound": [
+        "/",
+        "/about",
+        "/qr-code-label-generator"
+      ],
+      "canonical": [
+        "https://www.qrworkbench.com/labels"
+      ],
+      "schema_types": []
+    },
+    {
+      "route": "/linkedin-qr-code-generator",
+      "indexed": true,
+      "title": "LinkedIn QR Code Generator \u2014 Link to Your Profile, Free | QR Workbench",
+      "description": "Create a free LinkedIn QR linking to a profile or company page. Preview in your browser and download PNG or SVG for business cards and event materials.",
+      "editorial_words": 923,
+      "contextual_inbound": [
+        "/",
+        "/about",
+        "/facebook-qr-code-generator",
+        "/instagram-qr-code-generator"
+      ],
+      "canonical": [
+        "https://www.qrworkbench.com/linkedin-qr-code-generator"
+      ],
+      "schema_types": [
+        "SoftwareApplication",
+        "HowTo",
+        "FAQPage",
+        "BreadcrumbList"
+      ]
+    },
+    {
+      "route": "/pdf-qr-code-generator",
+      "indexed": true,
+      "title": "PDF QR Code Generator \u2014 Link to a Hosted PDF, Free | QR Workbench",
+      "description": "Create a free QR linking to a hosted PDF. Check file permissions and stable links, then download PNG or SVG for manuals, menus, and printed guides.",
+      "editorial_words": 926,
+      "contextual_inbound": [
+        "/",
+        "/about",
+        "/google-forms-qr-code-generator",
+        "/url-qr-code-generator"
+      ],
+      "canonical": [
+        "https://www.qrworkbench.com/pdf-qr-code-generator"
+      ],
+      "schema_types": [
+        "SoftwareApplication",
+        "HowTo",
+        "FAQPage",
+        "BreadcrumbList"
+      ]
+    },
+    {
+      "route": "/phone-qr-code-generator",
+      "indexed": true,
+      "title": "Phone Number QR Code Generator \u2014 Tap to Call, Free | QR Workbench",
+      "description": "Create a phone-number QR with a tel link. Enter the country code, scan-test the dialer prompt, and download free PNG or SVG for signs and business cards.",
+      "editorial_words": 995,
+      "contextual_inbound": [
+        "/",
+        "/about",
+        "/sms-qr-code-generator",
+        "/vcard-qr-code-generator",
+        "/whatsapp-qr-code-generator",
+        "/wifi-qr-code-generator"
+      ],
+      "canonical": [
+        "https://www.qrworkbench.com/phone-qr-code-generator"
+      ],
+      "schema_types": [
+        "SoftwareApplication",
+        "HowTo",
+        "FAQPage",
+        "BreadcrumbList"
+      ]
+    },
+    {
+      "route": "/pricing",
+      "indexed": true,
+      "title": "Pricing \u2014 QR Workbench",
+      "description": "Free QR code generation, forever. Bulk CSV-to-ZIP production starts at $7 for one batch, or $39 lifetime for unlimited \u2014 one-time payment, no subscription.",
+      "editorial_words": 433,
+      "contextual_inbound": [
+        "/",
+        "/about",
+        "/bulk-qr-code-generator",
+        "/bulk-vcard-qr-code-generator",
+        "/bulk-wifi-qr-code-generator",
+        "/docs",
+        "/labels",
+        "/qr-code-generator-for-business-cards",
+        "/qr-code-generator-for-inventory",
+        "/qr-code-generator-from-csv",
+        "/qr-code-generator-from-excel",
+        "/qr-code-generator-with-text",
+        "/qr-code-label-generator",
+        "/terms"
+      ],
+      "canonical": [
+        "https://www.qrworkbench.com/pricing"
+      ],
+      "schema_types": [
+        "FAQPage"
+      ]
+    },
+    {
+      "route": "/privacy-policy",
+      "indexed": true,
+      "title": "Privacy Policy | QR Workbench",
+      "description": "How QR Workbench handles data: every generator, individual and bulk, runs entirely in your browser -- nothing you type is sent to a server.",
+      "editorial_words": 894,
+      "contextual_inbound": [
+        "/about"
+      ],
+      "canonical": [
+        "https://www.qrworkbench.com/privacy-policy"
+      ],
+      "schema_types": []
+    },
+    {
+      "route": "/qr-code-generator-for-business-cards",
+      "indexed": true,
+      "title": "QR Code for Business Cards \u2014 Free vCard Generator | QR Workbench",
+      "description": "Put a scan-to-save contact QR on your business card. Free vCard generator with print-size and design guidance, plus bulk generation for a whole team.",
+      "editorial_words": 863,
+      "contextual_inbound": [
+        "/bulk-vcard-qr-code-generator"
+      ],
+      "canonical": [
+        "https://www.qrworkbench.com/qr-code-generator-for-business-cards"
+      ],
+      "schema_types": [
+        "WebPage",
+        "FAQPage"
+      ]
+    },
+    {
+      "route": "/qr-code-generator-for-inventory",
+      "indexed": true,
+      "title": "QR Code Generator for Inventory & Asset Labels | QR Workbench",
+      "description": "Generate a QR code per SKU, asset or unit from a spreadsheet \u2014 named files, print-ready label sheets, and no inventory data uploaded anywhere.",
+      "editorial_words": 779,
+      "contextual_inbound": [
+        "/bulk-qr-code-generator",
+        "/bulk-url-qr-code-generator",
+        "/qr-code-generator-from-csv",
+        "/qr-code-label-generator",
+        "/text-qr-code-generator"
+      ],
+      "canonical": [
+        "https://www.qrworkbench.com/qr-code-generator-for-inventory"
+      ],
+      "schema_types": [
+        "WebPage",
+        "FAQPage"
+      ]
+    },
+    {
+      "route": "/qr-code-generator-from-csv",
+      "indexed": true,
+      "title": "QR Code Generator from CSV \u2014 Spreadsheet to QR Codes | QR Workbench",
+      "description": "Everything your CSV needs to become QR codes: required format, common export mistakes, column mapping, and how large a file can actually run.",
+      "editorial_words": 834,
+      "contextual_inbound": [
+        "/bulk-qr-code-generator",
+        "/bulk-url-qr-code-generator",
+        "/docs",
+        "/qr-code-generator-for-inventory",
+        "/qr-code-generator-from-excel",
+        "/qr-code-label-generator",
+        "/text-qr-code-generator"
+      ],
+      "canonical": [
+        "https://www.qrworkbench.com/qr-code-generator-from-csv"
+      ],
+      "schema_types": [
+        "WebPage",
+        "FAQPage"
+      ]
+    },
+    {
+      "route": "/qr-code-generator-from-excel",
+      "indexed": true,
+      "title": "QR Code Generator from Excel \u2014 Import XLSX | QR Workbench",
+      "description": "Upload an Excel .xlsx workbook, choose a worksheet, and generate a QR code per row. Map content and filenames locally, then export SVG or PNG files.",
+      "editorial_words": 610,
+      "contextual_inbound": [
+        "/",
+        "/bulk-qr-code-generator",
+        "/bulk-url-qr-code-generator",
+        "/bulk-vcard-qr-code-generator",
+        "/bulk-wifi-qr-code-generator",
+        "/docs",
+        "/qr-code-generator-for-inventory",
+        "/qr-code-generator-from-csv",
+        "/qr-code-generator-with-text",
+        "/qr-code-label-generator"
+      ],
+      "canonical": [
+        "https://www.qrworkbench.com/qr-code-generator-from-excel"
+      ],
+      "schema_types": [
+        "BreadcrumbList",
+        "FAQPage"
+      ]
+    },
+    {
+      "route": "/qr-code-generator-with-text",
+      "indexed": true,
+      "title": "QR Code Generator with Text \u2014 Captioned PNG & SVG",
+      "description": "Add a readable caption below a QR code and download both together as PNG or SVG. Preview caption size and wrapping. Single downloads are free.",
+      "editorial_words": 442,
+      "contextual_inbound": [
+        "/",
+        "/bulk-url-qr-code-generator",
+        "/bulk-wifi-qr-code-generator",
+        "/docs",
+        "/qr-code-generator-for-inventory",
+        "/qr-code-label-generator",
+        "/text-qr-code-generator",
+        "/url-qr-code-generator"
+      ],
+      "canonical": [
+        "https://www.qrworkbench.com/qr-code-generator-with-text"
+      ],
+      "schema_types": [
+        "BreadcrumbList",
+        "FAQPage"
+      ]
+    },
+    {
+      "route": "/qr-code-label-generator",
+      "indexed": true,
+      "title": "QR Code Label Generator \u2014 Printable A4/Letter PDF Sheets | QR Workbench",
+      "description": "Turn a spreadsheet into a print-ready PDF sheet of QR code labels. Set page size, grid and captions, preview live, generated entirely in your browser.",
+      "editorial_words": 749,
+      "contextual_inbound": [
+        "/bulk-qr-code-generator",
+        "/bulk-url-qr-code-generator",
+        "/bulk-vcard-qr-code-generator",
+        "/bulk-wifi-qr-code-generator",
+        "/docs",
+        "/qr-code-generator-for-business-cards",
+        "/qr-code-generator-for-inventory",
+        "/qr-code-generator-from-csv",
+        "/qr-code-generator-from-excel",
+        "/qr-code-generator-with-text",
+        "/text-qr-code-generator"
+      ],
+      "canonical": [
+        "https://www.qrworkbench.com/qr-code-label-generator"
+      ],
+      "schema_types": [
+        "SoftwareApplication",
+        "FAQPage"
+      ]
+    },
+    {
+      "route": "/sms-qr-code-generator",
+      "indexed": true,
+      "title": "SMS QR Code Generator \u2014 Pre-Filled Text Message QR, Free | QR Workbench",
+      "description": "Create an SMS QR with a phone number and optional message. Preview locally, test the text-message prompt, and download free PNG or SVG for print.",
+      "editorial_words": 995,
+      "contextual_inbound": [
+        "/",
+        "/about",
+        "/email-qr-code-generator",
+        "/phone-qr-code-generator",
+        "/whatsapp-qr-code-generator"
+      ],
+      "canonical": [
+        "https://www.qrworkbench.com/sms-qr-code-generator"
+      ],
+      "schema_types": [
+        "SoftwareApplication",
+        "HowTo",
+        "FAQPage",
+        "BreadcrumbList"
+      ]
+    },
+    {
+      "route": "/spotify-qr-code-generator",
+      "indexed": true,
+      "title": "Spotify QR Code Generator \u2014 Link to a Track or Playlist, Free | QR Workbench",
+      "description": "Create a standard QR for a Spotify track, album, playlist, or podcast. Preview locally and download free PNG or SVG for flyers, artwork, and packaging.",
+      "editorial_words": 427,
+      "contextual_inbound": [
+        "/",
+        "/about"
+      ],
+      "canonical": [
+        "https://www.qrworkbench.com/spotify-qr-code-generator"
+      ],
+      "schema_types": [
+        "SoftwareApplication",
+        "HowTo",
+        "FAQPage",
+        "BreadcrumbList"
+      ]
+    },
+    {
+      "route": "/terms",
+      "indexed": true,
+      "title": "Terms of Service | QR Workbench",
+      "description": "The terms for using QR Workbench's free QR generators and bulk workspace.",
+      "editorial_words": 658,
+      "contextual_inbound": [
+        "/disclaimer"
+      ],
+      "canonical": [
+        "https://www.qrworkbench.com/terms"
+      ],
+      "schema_types": []
+    },
+    {
+      "route": "/text-qr-code-generator",
+      "indexed": true,
+      "title": "Text QR Code Generator \u2014 Free PNG & SVG | QR Workbench",
+      "description": "Encode a plain-text message, instructions, or an identifier in a QR code. Preserve line breaks, preview locally, and download free PNG or SVG files.",
+      "editorial_words": 422,
+      "contextual_inbound": [
+        "/",
+        "/bulk-url-qr-code-generator",
+        "/qr-code-generator-for-inventory",
+        "/qr-code-generator-from-csv",
+        "/qr-code-generator-with-text",
+        "/url-qr-code-generator"
+      ],
+      "canonical": [
+        "https://www.qrworkbench.com/text-qr-code-generator"
+      ],
+      "schema_types": [
+        "SoftwareApplication",
+        "HowTo",
+        "FAQPage",
+        "BreadcrumbList"
+      ]
+    },
+    {
+      "route": "/url-qr-code-generator",
+      "indexed": true,
+      "title": "URL QR Code Generator \u2014 Free, Static, No Expiry | QR Workbench",
+      "description": "Turn any link into a QR code, free. The URL is encoded directly \u2014 no redirect service, no expiry, generated entirely in your browser.",
+      "editorial_words": 518,
+      "contextual_inbound": [
+        "/",
+        "/about",
+        "/bulk-url-qr-code-generator",
+        "/google-forms-qr-code-generator",
+        "/linkedin-qr-code-generator",
+        "/pdf-qr-code-generator",
+        "/pricing",
+        "/qr-code-generator-for-business-cards",
+        "/qr-code-generator-for-inventory",
+        "/qr-code-generator-with-text",
+        "/spotify-qr-code-generator",
+        "/text-qr-code-generator",
+        "/wifi-qr-code-generator",
+        "/youtube-qr-code-generator"
+      ],
+      "canonical": [
+        "https://www.qrworkbench.com/url-qr-code-generator"
+      ],
+      "schema_types": [
+        "SoftwareApplication",
+        "HowTo",
+        "FAQPage",
+        "BreadcrumbList"
+      ]
+    },
+    {
+      "route": "/vcard-qr-code-generator",
+      "indexed": true,
+      "title": "vCard QR Code Generator \u2014 Digital Business Card, Free | QR Workbench",
+      "description": "Turn your contact details into a scannable vCard QR code \u2014 name, company, phone, email and website, saved straight to a phone's contacts. Free, generated in your browser.",
+      "editorial_words": 490,
+      "contextual_inbound": [
+        "/",
+        "/about",
+        "/bulk",
+        "/bulk-vcard-qr-code-generator",
+        "/disclaimer",
+        "/email-qr-code-generator",
+        "/qr-code-generator-for-business-cards",
+        "/text-qr-code-generator",
+        "/wifi-qr-code-generator"
+      ],
+      "canonical": [
+        "https://www.qrworkbench.com/vcard-qr-code-generator"
+      ],
+      "schema_types": [
+        "SoftwareApplication",
+        "HowTo",
+        "FAQPage",
+        "BreadcrumbList"
+      ]
+    },
+    {
+      "route": "/whatsapp-qr-code-generator",
+      "indexed": true,
+      "title": "WhatsApp QR Code Generator \u2014 Click-to-Chat QR, Free | QR Workbench",
+      "description": "Create a WhatsApp QR with a phone number and optional message. Check country-code formatting, preview locally, and download free PNG or SVG.",
+      "editorial_words": 1028,
+      "contextual_inbound": [
+        "/",
+        "/about",
+        "/email-qr-code-generator",
+        "/facebook-qr-code-generator",
+        "/phone-qr-code-generator",
+        "/sms-qr-code-generator",
+        "/vcard-qr-code-generator"
+      ],
+      "canonical": [
+        "https://www.qrworkbench.com/whatsapp-qr-code-generator"
+      ],
+      "schema_types": [
+        "SoftwareApplication",
+        "HowTo",
+        "FAQPage",
+        "BreadcrumbList"
+      ]
+    },
+    {
+      "route": "/wifi-qr-code-generator",
+      "indexed": true,
+      "title": "WiFi QR Code Generator \u2014 Scan to Connect, Free | QR Workbench",
+      "description": "Generate a WiFi QR code so guests can join your network by scanning \u2014 no typing passwords. Free, static, generated in your browser.",
+      "editorial_words": 512,
+      "contextual_inbound": [
+        "/",
+        "/about",
+        "/bulk",
+        "/bulk-wifi-qr-code-generator",
+        "/disclaimer",
+        "/qr-code-generator-with-text",
+        "/text-qr-code-generator"
+      ],
+      "canonical": [
+        "https://www.qrworkbench.com/wifi-qr-code-generator"
+      ],
+      "schema_types": [
+        "SoftwareApplication",
+        "HowTo",
+        "FAQPage",
+        "BreadcrumbList"
+      ]
+    },
+    {
+      "route": "/youtube-qr-code-generator",
+      "indexed": true,
+      "title": "YouTube QR Code Generator \u2014 Link to a Video or Channel, Free | QR Workbench",
+      "description": "Create a free QR for a YouTube video, channel, or playlist. Check the destination and timestamps, then download PNG or SVG for lessons, guides, and flyers.",
+      "editorial_words": 951,
+      "contextual_inbound": [
+        "/",
+        "/about",
+        "/instagram-qr-code-generator",
+        "/spotify-qr-code-generator"
+      ],
+      "canonical": [
+        "https://www.qrworkbench.com/youtube-qr-code-generator"
+      ],
+      "schema_types": [
+        "SoftwareApplication",
+        "HowTo",
+        "FAQPage",
+        "BreadcrumbList"
+      ]
+    }
+  ],
+  "most_similar_pairs": [
+    {
+      "a": "/bulk-qr-code-generator",
+      "b": "/bulk-vcard-qr-code-generator",
+      "jaccard_5word": 0.049
+    },
+    {
+      "a": "/",
+      "b": "/pricing",
+      "jaccard_5word": 0.044
+    },
+    {
+      "a": "/bulk-qr-code-generator",
+      "b": "/qr-code-generator-from-csv",
+      "jaccard_5word": 0.024
+    },
+    {
+      "a": "/sms-qr-code-generator",
+      "b": "/whatsapp-qr-code-generator",
+      "jaccard_5word": 0.021
+    },
+    {
+      "a": "/bulk-vcard-qr-code-generator",
+      "b": "/qr-code-generator-from-csv",
+      "jaccard_5word": 0.019
+    },
+    {
+      "a": "/disclaimer",
+      "b": "/terms",
+      "jaccard_5word": 0.018
+    },
+    {
+      "a": "/about",
+      "b": "/pricing",
+      "jaccard_5word": 0.017
+    },
+    {
+      "a": "/linkedin-qr-code-generator",
+      "b": "/spotify-qr-code-generator",
+      "jaccard_5word": 0.015
+    },
+    {
+      "a": "/bulk-qr-code-generator",
+      "b": "/qr-code-label-generator",
+      "jaccard_5word": 0.014
+    },
+    {
+      "a": "/bulk-url-qr-code-generator",
+      "b": "/bulk-wifi-qr-code-generator",
+      "jaccard_5word": 0.014
+    },
+    {
+      "a": "/bulk-wifi-qr-code-generator",
+      "b": "/qr-code-generator-from-excel",
+      "jaccard_5word": 0.014
+    },
+    {
+      "a": "/instagram-qr-code-generator",
+      "b": "/youtube-qr-code-generator",
+      "jaccard_5word": 0.013
+    },
+    {
+      "a": "/qr-code-generator-for-business-cards",
+      "b": "/vcard-qr-code-generator",
+      "jaccard_5word": 0.013
+    },
+    {
+      "a": "/spotify-qr-code-generator",
+      "b": "/youtube-qr-code-generator",
+      "jaccard_5word": 0.013
+    },
+    {
+      "a": "/bulk-url-qr-code-generator",
+      "b": "/qr-code-generator-from-excel",
+      "jaccard_5word": 0.012
+    }
+  ],
+  "method": "Five-word Jaccard overlap of main text excluding navigation, footer, tool shell, and shared pricing. Similarity and word counts are review signals, not Google ranking thresholds."
+}

@@ -1,4 +1,5 @@
 import { renderQR, inspectQR, qrToSVGString, qrToPNGBlob } from "./qr.js";
+import { renderCaptionedQR, captionedSVG } from './caption.js';
 
 function download(blob, filename) {
   const url = URL.createObjectURL(blob);
@@ -31,7 +32,7 @@ function loadImage(dataUrl) {
   });
 }
 
-export function initGeneratorTool({ getText, filenamePrefix = "qr-code", onEmpty, onReady }) {
+export function initGeneratorTool({ getText, getCaption, getCaptionSize = () => .035, filenamePrefix = "qr-code", onEmpty, onReady }) {
   const el = (id) => document.getElementById(id);
   const canvas = el("qr-canvas");
   const fg = el("ctrl-fg");
@@ -105,13 +106,17 @@ export function initGeneratorTool({ getText, filenamePrefix = "qr-code", onEmpty
   }
 
   let lastText = "";
+  let updateVersion = 0;
 
   async function update() {
+    const version = ++updateVersion;
     const text = getText();
-    lastText = text;
+    lastText = '';
+    dlPng.disabled = true;
+    dlSvg.disabled = true;
     if (!text) {
       canvas.hidden = true;
-      if (empty) empty.hidden = false;
+      if (empty) { empty.hidden = false; empty.textContent = 'Fill in the fields to see a live preview.'; }
       if (meta) meta.textContent = "";
       dlPng.disabled = true;
       dlSvg.disabled = true;
@@ -120,15 +125,28 @@ export function initGeneratorTool({ getText, filenamePrefix = "qr-code", onEmpty
     }
     canvas.hidden = false;
     if (empty) empty.hidden = true;
-    dlPng.disabled = false;
-    dlSvg.disabled = false;
     const opts = currentOpts();
-    await renderQR(canvas, text, { ...opts, width: 400 });
+    try {
+    const rendered = document.createElement('canvas');
+    if (getCaption) await renderCaptionedQR(rendered, text, { ...opts, width: 400 }, getCaption(), getCaptionSize());
+    else await renderQR(rendered, text, { ...opts, width: 400 });
+    if (version !== updateVersion) return;
+    canvas.width = rendered.width; canvas.height = rendered.height;
+    canvas.getContext('2d').drawImage(rendered, 0, 0);
     if (meta) {
       const info = inspectQR(text, opts.errorCorrectionLevel);
       meta.textContent = `${info.size}×${info.size} modules · v${info.version} · ${opts.errorCorrectionLevel}`;
     }
     if (onReady) onReady(text);
+    lastText = text;
+    dlPng.disabled = false;
+    dlSvg.disabled = false;
+    } catch {
+      if (version !== updateVersion) return;
+      canvas.hidden = true;
+      if (empty) { empty.hidden = false; empty.textContent = 'This content cannot fit in a QR code. Shorten it or lower error correction.'; }
+      if (meta) meta.textContent = '';
+    }
   }
 
   [fg, bg, transparent, size, margin, ecc].forEach((elm) => {
@@ -139,14 +157,21 @@ export function initGeneratorTool({ getText, filenamePrefix = "qr-code", onEmpty
   dlPng.addEventListener("click", async () => {
     if (!lastText) return;
     const opts = currentOpts();
-    const blob = await qrToPNGBlob(lastText, { ...opts, width: Math.max(opts.width, 1000) });
+    let blob;
+    if (getCaption) {
+      const rendered = document.createElement('canvas');
+      await renderCaptionedQR(rendered, lastText, { ...opts, width: opts.width }, getCaption(), getCaptionSize());
+      blob = await new Promise(resolve => rendered.toBlob(resolve, 'image/png'));
+    } else blob = await qrToPNGBlob(lastText, { ...opts, width: opts.width });
     download(blob, `${filenamePrefix}.png`);
   });
 
   dlSvg.addEventListener("click", async () => {
     if (!lastText) return;
     const opts = currentOpts();
-    const svg = await qrToSVGString(lastText, { ...opts, width: Math.max(opts.width, 1000) });
+    const svg = getCaption
+      ? await captionedSVG(lastText, { ...opts, width: opts.width }, getCaption(), getCaptionSize())
+      : await qrToSVGString(lastText, { ...opts, width: opts.width });
     download(new Blob([svg], { type: "image/svg+xml" }), `${filenamePrefix}.svg`);
   });
 
